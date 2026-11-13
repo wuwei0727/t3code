@@ -106,21 +106,53 @@
       "status": "blocked-external-configuration"
     },
     "githubActionsExecution": {
-      "ghCli": "2.104.0 installed",
+      "incrementalTranslation": {
+        "actualModelTranslation": "unverified; no pending strings or API/model credentials configured",
+        "apiTokens": 0,
+        "runUrl": "https://github.com/wuwei0727/t3code/actions/runs/43433986072",
+        "createdPullRequests": 0,
+        "conclusion": "success",
+        "apiCalls": 0,
+        "provenanceRegression": "failing test reproduced lost origin, then passed after fix"
+      },
       "public": true,
-      "runtimeGenerationCheck": "passed",
+      "upstreamCheck": {
+        "conclusion": "success",
+        "runUrl": "https://github.com/wuwei0727/t3code/actions/runs/43433057600",
+        "changed": false,
+        "observedTag": "android-beta-784"
+      },
+      "translationEnvironment": {
+        "credentialsConfigured": false,
+        "reviewer": "wuwei0727",
+        "branch": "main"
+      },
       "repository": "wuwei0727/t3code",
-      "runUrl": null,
-      "preflightTestsPassed": 15,
-      "remoteWorkflowCount": 0,
-      "catalogCheck": "passed",
-      "status": "awaiting-authentication-and-source-upload"
+      "build": {
+        "installedOnDevice": false,
+        "runUrl": "https://github.com/wuwei0727/t3code/actions/runs/43433050607",
+        "sourceCommit": "840fc4a4814e04b3df5b86f705167b2098785779",
+        "conclusion": "success",
+        "signing": "unsigned",
+        "architecture": "arm64-v8a",
+        "apkSha256": "474250bc77b271ca5f3750c72420ca59e796d1756e801c16c6e764ac6d1dea1b",
+        "mobileTestsPassed": 73,
+        "nativeClerkTestsPassed": 2,
+        "downloadedHashMatches": true
+      },
+      "status": "passed-scoped-live-runs",
+      "localChecks": "15 maintenance/native-Clerk-script tests passed; commit hooks format, lint and knip passed after full locked dependencies were installed. Initial check:changed did not complete successfully and is not claimed as passing.",
+      "initialFailures": [
+        "checkout credential cleanup failed on vendored gitlinks without root submodule mappings; fixed and rerun passed",
+        "translation no-change run removed origin metadata and attempted redundant PR; metadata preservation fixed; no-change rerun passed"
+      ]
     }
   },
   "previousAcceptance": "community/android/acceptance-v12.json",
   "remaining": [
-    "Physical ARM acceptance in progress; real push and GitHub Actions execution unverified",
-    "Integrated provider/external-service states and human translation review"
+    "Real push delivery blocked by missing community Firebase and compatible sender configuration",
+    "Integrated provider/external-service states and human translation review",
+    "Actual translation-model API invocation and new-upstream/source-sync path remain unverified"
   ],
   "artifacts": [
     {

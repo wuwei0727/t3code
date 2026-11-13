@@ -158,15 +158,15 @@
     "maintenanceTools": "implemented-offline-tests-passed",
     "resourceIntegration": "4125 source/packaged entries; both signed final10 APKs verified; API35/36 scoped acceptance passed; overall external acceptance incomplete",
     "automaticSourceMerge": "blocked-unverified-Android-source-provenance",
-    "automaticApkBuild": "implemented-explicit-reusable-workflow; GitHub-not-run",
+    "automaticApkBuild": "GitHub ARM64 unsigned build passed; run43433050607; source840fc4a4814e04b3df5b86f705167b2098785779",
     "formalRelease": "not-enabled",
     "officialFeatureParity": "Upstream 88 screens retained; real native login/cloud/current-conversation send observed; see acceptance-v7 for scope and gaps"
   },
   "blockers": [
     "Play production version/source mapping is not publicly verified.",
     "The APK mirror creates a tag at publication time, without recording the APK build SHA; the mirror tag is not proof of source provenance.",
-    "No authenticated GitHub CLI or workflow dispatch was available during inspection.",
-    "Specific third-party SSO callback authorization and community Firebase/relay push configuration remain unverified; native email login and T3 Connect passed scoped acceptance."
+    "Real push blocked: community Firebase client configuration and matching official/self-managed relay sender unavailable; user uses official T3 Connect only.",
+    "Translation API credentials and model not configured; real model translation unverified."
   ],
   "verification": {
     "date": "2026-11-12",
@@ -186,7 +186,7 @@
     "workflowSyntax": {
       "yaml": "passed",
       "actionlint": "1.7.12 passed; shellcheck and pyflakes integrations not run",
-      "githubExecution": "not-run",
+      "githubExecution": "Upstream check and no-change translation passed; actual API calls0; ARM64 build passed; evidence in acceptance-v13.json",
       "baselineResourceLimits": "actionlint passed; Gradle workers2, heap4096MiB, CMake compile2/link1, Metro2; CI not executed",
       "files": 4,
       "buildCache": "Gradle cache enabled; fixed action SHA; not executed on GitHub"

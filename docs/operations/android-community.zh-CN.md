@@ -124,7 +124,13 @@ Expo prebuild 自动准备此模块，首次需要网络访问固定上游源码
 
 ## GitHub 首次配置与执行
 
-先将审阅后的分支通过常规方式合入自己的默认分支；当前没有替你推送、创建远程 PR 或公开发布。本机没有可用的 gh 登录，工作流尚未在 GitHub 执行。
+2026-11-13，经维护者授权，社区源码和工作流已上传到 `wuwei0727/t3code` 的 `main` 与 `t3/android-chinese-maintenance` 分支。GitHub CLI 已完成授权，正式 APK 发布仍需单独确认。上游检查确认没有新 Android Beta，增量翻译确认没有待翻译文案、模型调用为 0、没有创建 PR。实际运行证据保存在 `community/android/acceptance-v13.json`。[上游检查运行](https://github.com/wuwei0727/t3code/actions/runs/43433057600)、[增量翻译运行](https://github.com/wuwei0727/t3code/actions/runs/43433986072)
+
+工作流使用稀疏检出排除 `.repos` 参考源码。根目录 `.gitmodules` 为上游遗留的两个 gitlink 提供原仓库地址并设置 `update = none`，供 checkout 清理凭据时识别，构建不初始化它们。
+
+真实推送仍受外部配置阻塞。当前社区 APK 缺少配套 Firebase 配置，维护者使用官方 T3 Connect，尚无可管理的 Firebase 项目与中继。完成真实送达测试需要官方管理员支持社区包接入，或另行配置自有 Firebase 和具有对应发送权限的中继。
+
+`community-translation` 环境已限定 `main` 分支并设置 `wuwei0727` 为审批人。后续翻译运行需维护者在 GitHub 审批，翻译密钥与模型尚待维护者配置。
 
 翻译工作流需要：
 
