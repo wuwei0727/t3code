@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { View } from "react-native";
 
 import { RenderErrorBoundary, RenderFailureView } from "../../components/RenderErrorBoundary";
@@ -15,13 +16,14 @@ function PaneContent(props: {
   readonly pane: InspectorPane;
   readonly resetKeys: ReadonlyArray<unknown> | undefined;
 }) {
+  const { t } = useLanguage();
   const { slot } = useInspectorBarSlot();
   return (
     <WorkspaceSlotOptionsContext value={slot}>
       <RenderErrorBoundary
         resetKeys={props.resetKeys}
         renderFallback={(fallback) => (
-          <RenderFailureView {...fallback} title="The inspector couldn't be displayed" />
+          <RenderFailureView {...fallback} title={t("inspectorAndroid.failed")} />
         )}
       >
         {props.pane.render()}

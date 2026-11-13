@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { SheetHeader } from "../../../components/ui/SheetHeader";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
@@ -20,6 +21,7 @@ export function SettingsLegalDocumentRouteScreen({
   documentName,
   documentUrl,
 }: SettingsLegalDocumentRouteScreenProps) {
+  const { t } = useLanguage();
   const [reloadKey, setReloadKey] = useState(0);
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -29,11 +31,11 @@ export function SettingsLegalDocumentRouteScreen({
   const headerOptions = (
     <SheetHeader
       title={documentName}
-      accessibilityLabel="Close legal document"
+      accessibilityLabel={t("settings.legal.close")}
       onClose={() => navigation.goBack()}
       actions={[
         {
-          accessibilityLabel: "Open legal documents in external browser",
+          accessibilityLabel: t("settings.legal.external"),
           icon: "safari",
           onPress: () => void Linking.openURL(safeExternalUrl).catch(() => undefined),
         },
@@ -58,7 +60,7 @@ export function SettingsLegalDocumentRouteScreen({
           />
           <View className="items-center gap-2">
             <Text className="text-center font-t3-bold text-lg text-foreground">
-              Couldn&apos;t load the {documentName.toLowerCase()}
+              {t("settings.legal.failed", { document: documentName.toLowerCase() })}
             </Text>
             <Text selectable className="text-center text-sm leading-normal text-foreground-muted">
               {loadError}
@@ -66,7 +68,7 @@ export function SettingsLegalDocumentRouteScreen({
           </View>
           <View className="w-full max-w-[320px] gap-2">
             <Button
-              label="Try Again"
+              label={t("settings.legal.retry")}
               tone="contrast"
               fullWidth
               onPress={() => {
@@ -80,7 +82,7 @@ export function SettingsLegalDocumentRouteScreen({
               className="items-center rounded-xl px-4 py-3 active:bg-foreground/5"
             >
               <Text className="font-t3-medium text-base text-foreground-muted">
-                Open in Browser
+                {t("settings.legal.openBrowser")}
               </Text>
             </Pressable>
           </View>
@@ -128,12 +130,12 @@ export function SettingsLegalDocumentRouteScreen({
         }}
         onError={(event) => {
           setLoadProgress(0);
-          setLoadError(event.nativeEvent.description || "The page could not be loaded.");
+          setLoadError(event.nativeEvent.description || t("settings.legal.loadFailed"));
         }}
         onHttpError={(event) => {
           if (!isLegalDocumentUrl(event.nativeEvent.url)) return;
           setLoadProgress(0);
-          setLoadError(`The server returned status ${event.nativeEvent.statusCode}.`);
+          setLoadError(t("settings.legal.httpError", { status: event.nativeEvent.statusCode }));
         }}
         renderLoading={() => (
           <View className="absolute inset-0 items-center justify-center bg-sheet">

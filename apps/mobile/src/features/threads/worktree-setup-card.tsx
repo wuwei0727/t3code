@@ -1,9 +1,7 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { worktreeSetupStagePresentation } from "./worktree-setup-state";
 import { Button } from "../../components/ui/Button";
-import {
-  worktreeSetupStageLabel,
-  type WorktreeSetupSnapshot,
-  type WorktreeSetupStage,
-} from "@t3tools/contracts";
+import { type WorktreeSetupSnapshot, type WorktreeSetupStage } from "@t3tools/contracts";
 import { worktreeSetupAgentStarted } from "@t3tools/client-runtime/worktree-setup";
 import { formatDuration } from "@t3tools/shared/orchestrationTiming";
 import { useState } from "react";
@@ -40,32 +38,33 @@ const icons: Record<WorktreeSetupStage["status"], AppSymbolName> = {
 };
 
 export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
+  const { t } = useLanguage();
   const { snapshot, turnStarted, turnStartedAt, working } = props;
   const handedOff = turnStarted && worktreeSetupAgentStarted(snapshot);
   const running = snapshot.phase === "running";
   const backgroundSetup = handedOff && running;
-  const scriptName = snapshot.setupScript?.name ?? "Setup script";
+  const scriptName = snapshot.setupScript?.name ?? t("worktreeSetupUi.script");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const now = useVisibleSecondClock(running || working);
   const failed =
     snapshot.phase === "failed" || snapshot.stages.some((stage) => stage.status === "failed");
   const label =
     handedOff && working
-      ? `Working for ${elapsed(turnStartedAt, null, now) ?? "0s"}`
+      ? t("worktreeSetupUi.working", { duration: elapsed(turnStartedAt, null, now) ?? "0s" })
       : running
         ? handedOff
-          ? "Setup continues…"
-          : "Setting up worktree…"
+          ? t("worktreeSetupUi.continues")
+          : t("worktreeSetupUi.setting")
         : snapshot.phase === "cancelled"
-          ? "Worktree setup cancelled"
+          ? t("worktreeSetupUi.cancelled")
           : snapshot.phase === "failed"
-            ? "Worktree setup failed"
+            ? t("worktreeSetupUi.failed")
             : failed
-              ? "Setup script failed"
-              : "Worktree ready";
+              ? t("worktreeSetupUi.scriptFailed")
+              : t("worktreeSetupUi.ready");
 
   return (
-    <View accessibilityLabel="Worktree setup" className="py-1">
+    <View accessibilityLabel={t("worktreeSetupUi.title")} className="py-1">
       <View className="min-h-11 flex-row items-center gap-2 border-b border-border px-1">
         <HeaderLabel
           label={label}
@@ -84,8 +83,8 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
           accessibilityRole="button"
           accessibilityLabel={
             backgroundSetup
-              ? `Background setup is still running: ${scriptName}. Show setup progress.`
-              : "Worktree setup details"
+              ? t("worktreeSetupUi.backgroundHint", { name: scriptName })
+              : t("worktreeSetupUi.details")
           }
           accessibilityState={{ expanded: detailsOpen }}
           onPress={() => setDetailsOpen(true)}
@@ -116,7 +115,7 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
               />
             ) : null}
             <Text numberOfLines={1} className="shrink text-2xs text-foreground-secondary">
-              {backgroundSetup ? "Background setup" : "Details"}
+              {backgroundSetup ? t("worktreeSetupUi.background") : t("worktreeSetupUi.detail")}
             </Text>
             {!backgroundSetup ? (
               <SymbolView name="chevron.right" size={10} tintColorClassName="accent-icon-muted" />
@@ -148,11 +147,15 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
 }
 
 export function WorktreeWorkingHeader({ startedAt }: { startedAt: string }) {
+  const { t } = useLanguage();
   const now = useVisibleSecondClock(true);
   return (
     <View className="py-1">
       <View className="min-h-11 flex-row items-center border-b border-border px-1">
-        <HeaderLabel label={`Working for ${elapsed(startedAt, null, now) ?? "0s"}`} active />
+        <HeaderLabel
+          label={t("worktreeSetupUi.working", { duration: elapsed(startedAt, null, now) ?? "0s" })}
+          active
+        />
       </View>
     </View>
   );
@@ -197,10 +200,11 @@ function SetupDetailsSheet({
   onClose,
   now,
 }: WorktreeSetupCardProps & { onClose: () => void; now: number }) {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const canCancel = snapshot.phase === "running" && !turnStarted;
   return (
-    <Sheet title="Worktree setup" onClose={onClose}>
+    <Sheet title={t("worktreeSetupUi.title")} onClose={onClose}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         bounces={false}
@@ -229,9 +233,9 @@ function SetupDetailsSheet({
         {canCancel ? (
           <View className="mt-3 flex-row items-center justify-end gap-4 border-t border-border pt-1">
             <Button
-              label="Cancel setup"
+              label={t("worktreeSetupUi.cancel")}
               tone="danger"
-              accessibilityLabel="Cancel worktree setup"
+              accessibilityLabel={t("worktreeSetupUi.cancelWorktree")}
               onPress={() => {
                 onClose();
                 onCancel();
@@ -239,7 +243,7 @@ function SetupDetailsSheet({
             />
             {onWorkLocally ? (
               <Button
-                label="Work locally"
+                label={t("worktreeSetupUi.local")}
                 tone="secondary"
                 onPress={() => {
                   onClose();
@@ -267,21 +271,48 @@ function StageRow({
   compact?: boolean;
   animate?: boolean;
 }) {
+  const { t } = useLanguage();
   const label =
     stage.id === "setup-script"
-      ? (scriptName ?? worktreeSetupStageLabel(stage.id))
-      : worktreeSetupStageLabel(stage.id);
-  const detail =
-    stage.status === "pending"
-      ? null
-      : stage.status === "skipped"
-        ? (stage.detail ?? "skipped")
-        : stage.id === "checkout" && stage.status === "running" && stage.percent !== null
-          ? `${stage.percent}%`
-          : stage.detail;
+      ? (scriptName ??
+        t(
+          (
+            {
+              fetch: "worktreeSetupUi.fetch",
+              checkout: "worktreeSetupUi.checkout",
+              submodules: "worktreeSetupUi.submodules",
+              "setup-script": "worktreeSetupUi.run",
+              agent: "worktreeSetupUi.agent",
+            } as const
+          )[stage.id],
+        ))
+      : t(
+          (
+            {
+              fetch: "worktreeSetupUi.fetch",
+              checkout: "worktreeSetupUi.checkout",
+              submodules: "worktreeSetupUi.submodules",
+              "setup-script": "worktreeSetupUi.run",
+              agent: "worktreeSetupUi.agent",
+            } as const
+          )[stage.id],
+        );
+  const { detail, showElapsed } = worktreeSetupStagePresentation(stage, t);
+  const statusLabel = t(
+    (
+      {
+        pending: "worktreeSetupUi.status.pending",
+        running: "worktreeSetupUi.status.running",
+        done: "worktreeSetupUi.status.done",
+        failed: "worktreeSetupUi.status.failed",
+        warning: "worktreeSetupUi.status.warning",
+        skipped: "worktreeSetupUi.skipped",
+      } as const
+    )[stage.status],
+  );
   return (
     <View
-      accessibilityLabel={`${label}, ${stage.status}`}
+      accessibilityLabel={`${label}, ${statusLabel}`}
       className={compact ? "min-h-8 flex-row items-center" : "min-h-11 flex-row items-center"}
       style={{ columnGap: 8, opacity: stage.status === "pending" ? 0.4 : 1 }}
     >
@@ -330,7 +361,7 @@ function StageRow({
           {detail}
         </Text>
       ) : null}
-      {stage.status !== "pending" && stage.status !== "skipped" ? (
+      {showElapsed ? (
         <Text
           className="text-2xs text-foreground-secondary"
           style={{ fontVariant: ["tabular-nums"] }}
@@ -345,9 +376,10 @@ function StageRow({
 const OUTPUT_TAIL_SLOTS = [0, 1, 2, 3] as const;
 
 function OutputTail({ lines, failed }: { lines: ReadonlyArray<string>; failed: boolean }) {
+  const { t } = useLanguage();
   return (
     <View
-      accessibilityLabel="Setup script output"
+      accessibilityLabel={t("worktreeSetupUi.output")}
       className={
         failed
           ? "mb-2 ml-8 rounded-md border border-danger-border bg-danger px-3 py-2"

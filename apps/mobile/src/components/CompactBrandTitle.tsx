@@ -1,4 +1,5 @@
 import { NATIVE_WORKSPACE_COLUMNS_SUPPORTED } from "../native/NativeWorkspaceColumns";
+import { useLanguage } from "../i18n/LanguageProvider";
 import Constants from "expo-constants";
 import { useState } from "react";
 import { Platform, View } from "react-native";
@@ -24,7 +25,15 @@ export function CompactBrandTitle(
     readonly fit?: boolean;
   } = {},
 ) {
-  const stageLabel = resolveMobileStageLabel(Constants.expoConfig?.extra?.appVariant);
+  const { t } = useLanguage();
+  const stage = resolveMobileStageLabel(Constants.expoConfig?.extra?.appVariant);
+  const stageLabel = t(
+    stage === "Nightly"
+      ? "compactBrandUi.nightly"
+      : stage === "Dev"
+        ? "compactBrandUi.dev"
+        : "compactBrandUi.beta",
+  );
   const titleOffset = brandTitleOffset();
   const { scale } = useAndroidControlSizing();
   const [availableWidth, setAvailableWidth] = useState<number | null>(null);
@@ -39,7 +48,7 @@ export function CompactBrandTitle(
         props.fit && showStage ? (event) => setFullWidth(event.nativeEvent.layout.width) : undefined
       }
       aria-level={1}
-      accessibilityLabel={props.accessibilityLabel ?? "T3 Code, Threads"}
+      accessibilityLabel={props.accessibilityLabel ?? t("compactBrandUi.heading")}
       accessible
       role="heading"
       className="flex-row items-center gap-1.5"

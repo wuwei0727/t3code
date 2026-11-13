@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import type { OrchestrationV2UserMessageInputIntent } from "@t3tools/contracts";
 
 export interface UserMessageIntentBadgePresentation {
@@ -8,24 +9,24 @@ export interface UserMessageIntentBadgePresentation {
 export function resolveUserMessageIntentBadge(
   intent: OrchestrationV2UserMessageInputIntent | undefined,
   unread = false,
+  t: UiTranslator = makeTranslator("en"),
 ): UserMessageIntentBadgePresentation | null {
   if (unread && (intent === "steer" || intent === "promoted_queued_to_steer")) {
     return {
-      label: "Steer · waiting to be read",
-      accessibilityLabel:
-        "Steer waiting for the agent to read it after the running command finishes",
+      label: t("messageIntent.waiting"),
+      accessibilityLabel: t("messageIntent.waitingHint"),
     };
   }
   switch (intent) {
     case "steer":
       return {
-        label: "Steer",
-        accessibilityLabel: "Steered the active turn",
+        label: t("messageIntent.steer"),
+        accessibilityLabel: t("messageIntent.steered"),
       };
     case "promoted_queued_to_steer":
       return {
-        label: "Steer",
-        accessibilityLabel: "Originally queued, then promoted to steer the active turn",
+        label: t("messageIntent.steer"),
+        accessibilityLabel: t("messageIntent.promoted"),
       };
     case "queued_turn":
     case "turn_start":

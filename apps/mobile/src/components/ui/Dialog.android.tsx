@@ -19,13 +19,17 @@ import { useSyncExternalStore } from "react";
 import { themeColorWithContrast } from "../../lib/mobileTheme";
 import type { Alert, AlertButton } from "react-native";
 import type { ConfirmDialogRequest, TextInputDialogRequest } from "./Dialog.types";
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
 
 export type { ConfirmDialogRequest, TextInputDialogRequest } from "./Dialog.types";
+
+type DialogAlertButton = AlertButton & { readonly defaultText?: true };
 
 type AlertRequest = {
   readonly title: Parameters<typeof Alert.alert>[0];
   readonly message: Parameters<typeof Alert.alert>[1];
-  readonly buttons: Parameters<typeof Alert.alert>[2];
+  readonly buttons: readonly DialogAlertButton[];
   readonly options: Parameters<typeof Alert.alert>[3];
 };
 
@@ -69,9 +73,9 @@ function getPresented() {
 }
 
 export function alert(...[title, message, buttons, options]: Parameters<typeof Alert.alert>): void {
-  const actions = buttons?.length ? buttons.slice(0, 3) : [{ text: "OK" }];
-  const normalized = actions.map((action, index) =>
-    index === actions.length - 1 ? { ...action, text: action.text || "OK" } : action,
+  const actions = buttons?.length ? buttons.slice(0, 3) : [{}];
+  const normalized = actions.map((action, index): DialogAlertButton =>
+    index === actions.length - 1 && !action.text ? { ...action, defaultText: true } : action,
   );
   submitRequest({
     kind: "alert",
@@ -116,7 +120,7 @@ export function Host() {
           message: presented.request.message ?? undefined,
           confirmText: "",
         }}
-        alertActions={presented.request.buttons ?? [{ text: "OK" }]}
+        alertActions={presented.request.buttons}
         dismissable={presented.request.options?.cancelable ?? false}
         onAlertAction={(action) => {
           dismiss(presented.id);
@@ -143,6 +147,7 @@ export function Host() {
 }
 
 function DialogPresentation(props: DialogPresentationProps) {
+  const { t } = useLanguage();
   const { themeVariables: colors } = useAppearancePreferences();
   const titleTypography = useScaledTextRole("title");
   const bodyTypography = useScaledTextRole("footnote");
@@ -154,7 +159,7 @@ function DialogPresentation(props: DialogPresentationProps) {
     props.onConfirm(value);
   };
   const actions = props.alertActions ?? [
-    { text: props.request.cancelText ?? "Cancel", onPress: props.onCancel },
+    { text: props.request.cancelText ?? t("common.cancel"), onPress: props.onCancel },
     {
       text: props.request.confirmText,
       style: props.request.destructive ? ("destructive" as const) : ("default" as const),
@@ -164,7 +169,7 @@ function DialogPresentation(props: DialogPresentationProps) {
   const destructive = actions.some((action) => action.style === "destructive");
   // Error text colors can be pastel in dark themes. Filled actions need a white-label contrast pair.
   const destructiveFill = themeColorWithContrast(colors["--color-danger-foreground"], "#ffffff");
-  const renderAction = (action: AlertButton, index: number) => {
+  const renderAction = (action: DialogAlertButton, index: number) => {
     const isDestructive = action.style === "destructive";
     const isPrimary = isDestructive || index === actions.length - 1;
     const Component = isPrimary ? Button : OutlinedButton;
@@ -185,7 +190,9 @@ function DialogPresentation(props: DialogPresentationProps) {
               : colors["--color-foreground"],
         }}
       >
-        <Text style={bodyTypography}>{action.text ?? ""}</Text>
+        <Text style={bodyTypography}>
+          {action.defaultText ? t("common.ok") : (action.text ?? "")}
+        </Text>
       </Component>
     );
   };
@@ -220,7 +227,7 @@ function DialogPresentation(props: DialogPresentationProps) {
           <AlertDialog.Text>
             <Column verticalArrangement={{ spacedBy: 16 }}>
               {props.request.message ? (
-                <Text style={bodyTypography}>{props.request.message}</Text>
+                <Text style={bodyTypography}>{appErrorText(props.request.message, t)}</Text>
               ) : null}
               <OutlinedTextField
                 autoFocus
@@ -254,7 +261,7 @@ function DialogPresentation(props: DialogPresentationProps) {
         ) : props.request.message ? (
           <AlertDialog.Text>
             <Text modifiers={[verticalScroll()]} style={bodyTypography}>
-              {props.request.message}
+              {appErrorText(props.request.message, t)}
             </Text>
           </AlertDialog.Text>
         ) : null}
@@ -274,7 +281,7 @@ function DialogPresentation(props: DialogPresentationProps) {
 }
 
 interface DialogPresentationProps {
-  readonly alertActions?: readonly AlertButton[];
+  readonly alertActions?: readonly DialogAlertButton[];
   readonly onAlertAction?: (action: AlertButton) => void;
   readonly dismissable?: boolean;
   readonly request: Pick<

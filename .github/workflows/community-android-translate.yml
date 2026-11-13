@@ -1,0 +1,174 @@
+name: Community Android Translate
+
+on:
+  workflow_dispatch:
+    inputs:
+      reviewed_infrastructure:
+        description: "I reviewed maintenance scripts, workflows, source catalog and API configuration on the default branch"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-android-maintenance
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    outputs:
+      source_sha: ${{ steps.pr.outputs.sha }}
+    if: inputs.reviewed_infrastructure && github.repository != 'pingdotgg/t3code' && github.ref_name == github.event.repository.default_branch
+    environment: community-translation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Verify maintenance code before exposing translation key
+        run: node --test scripts/android-community/maintenance.test.mjs
+      - name: Prepare one translation branch per source catalog
+        id: branch
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {createHash} from 'node:crypto';
+          import {readFileSync, appendFileSync} from 'node:fs';
+          const hash = createHash('sha256').update(readFileSync('community/android/locales/en.json')).update(readFileSync('community/android/glossary.json')).update(readFileSync('community/android/translation-style.json')).digest('hex').slice(0, 16);
+          appendFileSync(process.env.GITHUB_OUTPUT, `name=community/android/translations-${hash}\n`);
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Resume existing branch without force pushing
+        env:
+          BRANCH: ${{ steps.branch.outputs.name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          remote_status=0
+          git ls-remote --exit-code --heads origin "$BRANCH" || remote_status=$?
+          if [ "$remote_status" -eq 0 ]; then
+            git fetch origin "$BRANCH"
+            git switch -c "$BRANCH" FETCH_HEAD
+            git merge --no-edit "origin/$DEFAULT_BRANCH"
+          elif [ "$remote_status" -eq 2 ]; then
+            git switch -c "$BRANCH"
+          else
+            exit "$remote_status"
+          fi
+          git diff --exit-code "$GITHUB_SHA" -- scripts/android-community .github/workflows
+          git diff --name-only "$GITHUB_SHA" > "$RUNNER_TEMP/translation-branch-files.txt"
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const allowed = new Set([
+            'community/android/locales/zh-CN.json',
+            'community/android/translation-state.json',
+            'apps/mobile/src/i18n/messages.generated.json',
+            'apps/mobile/modules/t3-review-diff/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml',
+            'apps/mobile/modules/t3-agent-notifications/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml'
+          ]);
+          const files = readFileSync(`${process.env.RUNNER_TEMP}/translation-branch-files.txt`, 'utf8').trim().split('\n').filter(Boolean);
+          if (files.some(file => !allowed.has(file))) throw new Error('Maintenance branch contains changes outside translation data; manual review required');
+          NODE
+      - name: Restore validated translation cache only
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6, upstream setup-ci-deps pin
+        with:
+          path: .t3/community-translation-cache
+          key: community-translation-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: community-translation-v1-
+      - name: Incremental translation, maximum 8 calls including retries
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
+          TRANSLATION_MODEL: ${{ vars.TRANSLATION_MODEL }}
+        run: |
+          node --input-type=module -e "import {rmSync} from 'node:fs'; rmSync('.t3/community-translation-cache/last-run.json', {force: true});"
+          node scripts/android-community/translate.mjs --apply --max-calls=8 --max-output-tokens=16384
+      - name: Save validated cache even if a later batch failed
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: .t3/community-translation-cache
+          key: community-translation-v1-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Validate resources and inventory untranslated UI candidates
+        run: |
+          node scripts/android-community/translate.mjs --check
+          node scripts/android-community/generate-runtime.mjs --write
+          node scripts/android-community/generate-runtime.mjs --check
+          node scripts/android-community/scan.mjs > "$RUNNER_TEMP/android-ui-inventory.json"
+          node scripts/android-community/export-review.mjs "$RUNNER_TEMP/android-translation-review"
+      - name: Create or update a draft translation PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git add community/android/locales/zh-CN.json community/android/translation-state.json apps/mobile/src/i18n/messages.generated.json \
+            apps/mobile/modules/t3-review-diff/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml \
+            apps/mobile/modules/t3-agent-notifications/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(mobile): update community Chinese translation data'
+          fi
+          if git diff --quiet "origin/$DEFAULT_BRANCH" HEAD; then exit 0; fi
+          gh pr list --head "$BRANCH" --base "$DEFAULT_BRANCH" --state all --json number,state > "$RUNNER_TEMP/translation-prs.json"
+          node --input-type=module <<'NODE'
+          import {readFileSync, writeFileSync} from 'node:fs';
+          const prs = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/translation-prs.json`));
+          const open = prs.find(pr => pr.state === 'OPEN');
+          if (!open && prs.length) throw new Error('Previous PR is closed or merged; manual review is required');
+          writeFileSync(`${process.env.RUNNER_TEMP}/translation-pr-body.md`, 'Update the Simplified Chinese community resource catalog and generated mobile messages.\n\nValidation: offline maintenance tests and resource checks passed. The dependent community build job tests and builds this exact commit without translation or signing credentials. Device behavior remains unverified. Review workflow artifacts for actual API usage, untranslated UI candidates and build results.\n\nGenerated by the configured translation model through GitHub Actions.\n');
+          writeFileSync(`${process.env.RUNNER_TEMP}/existing-translation-pr.txt`, String(open?.number ?? ''));
+          NODE
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$BRANCH"
+          existing_pr="$(cat "$RUNNER_TEMP/existing-translation-pr.txt")"
+          if [ -n "$existing_pr" ]; then
+            gh pr edit "$existing_pr" --body-file "$RUNNER_TEMP/translation-pr-body.md"
+          else
+            gh pr create --draft --head "$BRANCH" --base "$DEFAULT_BRANCH" --title 'feat(mobile): update community Chinese translation data' --body-file "$RUNNER_TEMP/translation-pr-body.md"
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Stage usage evidence outside the hidden cache directory
+        if: always()
+        run: |
+          if [ -f .t3/community-translation-cache/last-run.json ]; then
+            cp .t3/community-translation-cache/last-run.json "$RUNNER_TEMP/android-translation-usage.json"
+          fi
+      - name: Upload data and usage only, never credentials or raw API responses
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: android-translation-review-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            community/android/locales/zh-CN.json
+            community/android/translation-state.json
+            apps/mobile/src/i18n/messages.generated.json
+            apps/mobile/modules/t3-review-diff/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml
+            apps/mobile/modules/t3-agent-notifications/android/src/main/res/values-zh-rCN/t3_community_strings.generated.xml
+            ${{ runner.temp }}/android-translation-usage.json
+            ${{ runner.temp }}/android-ui-inventory.json
+            ${{ runner.temp }}/android-translation-review
+
+  build:
+    needs: translate
+    if: needs.translate.outputs.source_sha != ''
+    uses: ./.github/workflows/community-android-build.yml
+    with:
+      source_ref: ${{ needs.translate.outputs.source_sha }}
+      architecture: arm64-v8a
+    permissions:
+      contents: read

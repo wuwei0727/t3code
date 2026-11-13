@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-12T19:31:09.532745+00:00",
+  "versionName": "2.3.0-zh.10",
+  "versionCode": 10,
+  "applicationId": "io.github.wuwei0727.t3code.zh",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "status": "built-partial-acceptance-third-party-login-blocked-native-error-untranslated",
+  "authFollowUp": "community/android/auth-acceptance.json",
+  "complete": false,
+  "fullyLocalized": false,
+  "humanReviewed": false,
+  "catalogEntries": 4125,
+  "newEntriesSinceV9": 5,
+  "historicalAcceptance": [
+    "community/android/acceptance-v8.json",
+    "community/android/acceptance-v9.json"
+  ],
+  "changes": [
+    "Android non-AVCC decoder backpressure preserves queued work, drops deltas until next keyframe; true errors/session/stop still close decoder",
+    "Gradle bundle tracks client-runtime/contracts/shared source directories, preventing stale JS from incremental workspace changes",
+    "Local host default and missing-device fallback names translated in both thread/preview entry points; remote/user names preserved",
+    "Known decoder codec/detail error templates localized while preserving identifiers and raw diagnostic payload"
+  ],
+  "checks": {
+    "mobileTests": {
+      "passed": 38,
+      "failed": 0,
+      "files": 5,
+      "log": ".t3/acceptance-v10-device/mobile-tests.log"
+    },
+    "sharedStreamTests": {
+      "passed": 18,
+      "failed": 0,
+      "files": 2,
+      "red": ".t3/acceptance-v9-device/android-queue-red.log",
+      "green": ".t3/acceptance-v9-device/android-queue-green.log"
+    },
+    "buildInputs": {
+      "red": ".t3/acceptance-v9-device/shared-input-red.log",
+      "green": ".t3/acceptance-v9-device/shared-input-green.log",
+      "redReason": "Shared device stream source missing from release bundle inputs",
+      "behaviorEvidence": "Shared-source-only change initially produced identical diagnostic APK SHA256; after input fix bundle regenerated and APK changed"
+    },
+    "mobileTypecheck": "passed",
+    "clientRuntimeTypecheck": "passed",
+    "targetedLint": "passed",
+    "maintenanceTests": {
+      "passed": 12,
+      "failed": 0,
+      "log": ".t3/acceptance-v9-device/maintenance-tests.log"
+    },
+    "resources": {
+      "mode": "check",
+      "pending": [],
+      "stale": [],
+      "missing": [],
+      "removed": [],
+      "manualReviewRequired": [],
+      "untracked": [],
+      "usage": {
+        "calls": 0,
+        "reservedOutputTokens": 0,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "totalTokens": 0,
+        "usageComplete": true,
+        "cost": null,
+        "maxCalls": 8,
+        "maxOutputTokens": 16384
+      }
+    },
+    "review": "Independent scoped queue/keyframe/late-output review: no concrete findings; mobile host-label adapter additionally preserves remote/user names in existing test",
+    "mirrorSource": {
+      "files": 405,
+      "mismatches": [],
+      "temporaryDiagnosticRestored": true
+    },
+    "bothApkPackaging": "version10/ABI/fixed certificate/v2-v3 signatures/Connect config/all4125 current Chinese literals passed; actual embedded device script matches generated script; no temporary diagnostics",
+    "runtimeResourceSha256": "93f569fc523687a599ef4837c52cb49160044ace164c32f3d1a8a2b8fb2f3bed",
+    "errorPayloads": {
+      "knownCodecPreserved": true,
+      "multilineDiagnosticPreserved": true,
+      "unknownLogUnchanged": true
+    }
+  },
+  "diagnosticAcceptance": {
+    "status": "passed-scoped",
+    "version": "Temporary version9 diagnostic signed APK with candidate10 queue fix; not final candidate10 APK acceptance",
+    "viewer": "frostplay Android15 emulator, real sole T3 Connect route",
+    "target": "T3_ZH_K70_API36_1440x3200, Android16 emulator, local device host",
+    "picture": "Actual target T3 app list and launcher displayed inside mobile viewer",
+    "remoteInput": "Native viewer Home button returned target to Android launcher; separately confirmed target accessibility tree",
+    "before": {
+      "packets": 813,
+      "keys": 9,
+      "sps": 9,
+      "configured": 5,
+      "decoded": 56,
+      "outputs": 0,
+      "decoderErrors": 0,
+      "codec": "avc1.42c020"
+    },
+    "proof": [
+      ".t3/acceptance-v9-device/media-diagnostic-phase2.png",
+      ".t3/acceptance-v9-device/queuefix-target36.png",
+      ".t3/acceptance-v9-device/queuefix-remote-home.png",
+      ".t3/acceptance-v9-device/remote-home-target.txt"
+    ],
+    "temporarySource": "Only mirror document instrumented; restored byte-for-byte after every build; no URLs/tickets/headers/message contents in trace",
+    "notClaimed": "Diagnostic APK is not delivered as final version10"
+  },
+  "installed": true,
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".t3/artifacts/community-v10/t3code-zh-2.3.0-zh.10-arm64-v8a.apk",
+      "sha256": "05cfbdfc55a1468cae4d20214ee1a3108fede5bd72ad0f3b93c083bf7ef4e2da",
+      "sizeBytes": 103109266,
+      "installedAndLaunched": false,
+      "deviceStream": {
+        "generatedScriptSha256": "09ded324ba6c51057bbf3ed9467e46ec36ffdac33c37e8c8d22cb2d2578f1a49",
+        "sharedStreamSourceSha256": "6cb1a1ed1afe8d363215341d5d094c0f1817268ee1e86366a71680617dbc7b41",
+        "mirrorMatches": true,
+        "packagedScriptMatches": true
+      }
+    },
+    {
+      "abi": "x86_64",
+      "path": ".t3/artifacts/community-v10/t3code-zh-2.3.0-zh.10-x86_64.apk",
+      "sha256": "a23c9c526756a0495a661fe0df62ce875a3fce952b10adae61b6d0bcdef4e418",
+      "sizeBytes": 106504718,
+      "installedAndLaunched": true,
+      "deviceStream": {
+        "generatedScriptSha256": "09ded324ba6c51057bbf3ed9467e46ec36ffdac33c37e8c8d22cb2d2578f1a49",
+        "sharedStreamSourceSha256": "6cb1a1ed1afe8d363215341d5d094c0f1817268ee1e86366a71680617dbc7b41",
+        "mirrorMatches": true,
+        "packagedScriptMatches": true
+      }
+    }
+  ],
+  "remaining": [
+    "Actual Firebase push delivery with matching community project/sender",
+    "Physical ARM/HyperOS behavior",
+    "Third-party SSO: all four entries reported blocked by unauthorized community redirect URI; native English error remains an unfixed localization defect (auth-acceptance.json)",
+    "Independent desktop UI/external integrations",
+    "Maintainer translation review/protected GitHub workflow execution",
+    "Google Play production/source provenance remains unverified",
+    "Human maintainer translation approval remains separate; all4125 catalog entries current, not a percentage of every reachable external UI state"
+  ],
+  "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+  "buildHistory": {
+    "x86NativeFirst": "10m52s passed before final dynamic error templates",
+    "finalX86First": "Windows Node0xC0000005 after Metro output; failed build not signed/accepted",
+    "finalX86Retry": "1m46s passed",
+    "arm64": "6m1s passed",
+    "diagnostic": "Separate ignored APKs/source overlays, restored; not delivered as final candidate"
+  },
+  "deviceAcceptance": {
+    "testedApkSha256": "a23c9c526756a0495a661fe0df62ce875a3fce952b10adae61b6d0bcdef4e418",
+    "scope": "Final signed x86_64 candidate, no diagnostic code; both emulator data retained",
+    "installedTargets": [
+      {
+        "name": "frostplay",
+        "android": 15,
+        "api": 35,
+        "upgrade": "9 to10 (including temporary diagnostic installs in between)",
+        "nativeAccountRetained": true
+      },
+      {
+        "name": "T3_ZH_K70_API36_1440x3200",
+        "android": 16,
+        "api": 36,
+        "pixels": [1440, 3200],
+        "densityDpi": 560,
+        "densityAssumed": true,
+        "upgrade": "8 to10",
+        "followSystemPreferenceRetained": true
+      }
+    ],
+    "language": {
+      "status": "passed",
+      "cases": [
+        "Chinese system + follow-system retained across8-to10 update",
+        "Explicit English selected, relaunch, reopened Appearance: English selected and UI English",
+        "Follow-system restored from English: UI Chinese; Android activity returned to list, then reopened Appearance confirmed choice",
+        "Explicit Chinese selected, relaunch, reopened Appearance: Chinese selected",
+        "Final follow-system restored, normal font1.0"
+      ],
+      "evidence": [
+        "api36-follow-system-after-upgrade.txt",
+        "api36-english-after-restart.txt",
+        "api36-restored-system.txt",
+        "api36-chinese-after-restart.txt",
+        "api36-final-follow-system.txt"
+      ],
+      "automationNote": "Wait for appearance initially timed out because native locale change returned to thread list; documented advised retry with --debug after reopening Appearance passed. Not counted as a language failure."
+    },
+    "layout": {
+      "status": "passed-scoped",
+      "fontScales": [1.0, 1.5],
+      "screens": ["Appearance", "Settings root", "Native Clerk sign-in entry"],
+      "observed": "Chinese fallback font readable, no observed overlap/cut-off in inspected controls; scrollable lower content remains scrollable",
+      "evidence": [
+        "api36-large-appearance.png",
+        "api36-settings-large.png",
+        "api36-login-large.png",
+        "api36-normal-appearance.png"
+      ],
+      "limits": "Not all external provider/remote repository/native OS states; logical density560 is assumed, not measured on Redmi"
+    },
+    "realCloud": {
+      "status": "passed",
+      "nativeAccount": {
+        "manageAccount": true,
+        "security": true,
+        "signOut": true
+      },
+      "route": {
+        "connected": true,
+        "cloudUsed": true,
+        "solePath": true
+      },
+      "liveHistory": "Current conversation/live assistant updates loaded",
+      "mobileMarker": "【v10 最终包云连接复验】第十版覆盖升级后，账号保留，继续当前会话。",
+      "markerReceivedInActiveTask": true,
+      "newLogin": "No new credentials entered during this pass; historical user email sign-in retained. Subsequent user report confirms all four third-party entries blocked before provider authentication; see auth-acceptance.json."
+    },
+    "deviceVideo": {
+      "status": "passed-scoped",
+      "route": "Real T3 Connect from frostplay mobile viewer to computer local device host",
+      "target": "Different API36/1440x3200 emulator with final10 installed",
+      "observed": [
+        "Actual Chinese Settings screen rendered",
+        "Native viewer Home button returned target to Android launcher; separately confirmed target AX tree",
+        "Reload screen menu opened fresh stream and displayed actual target native Chinese sign-in screen",
+        "Device chooser shows Android · 本机, original device names/IDs preserved"
+      ],
+      "evidence": [
+        "final-cloud-video-settings.png",
+        "final-cloud-video-home.png",
+        "final-remote-home-target.txt",
+        "final-video-login-after-reload.png",
+        "final-device-chooser.png"
+      ],
+      "scopeLimit": "Cross-emulator path. Self-preview black feedback was not used as picture proof. No claim of physical device/video variants."
+    },
+    "nativeLoginEntry": {
+      "status": "passed-scoped",
+      "scope": "Email entry, continue button and four third-party provider entries visible/readable in Chinese at1.5; no credentials entered or new callback flow executed"
+    },
+    "unchangedCoreBaseline": "v8 actual direct pairing, mobile send/computer receive, free Replay question/allow-once approval, offline queue/reconnect and attachment bytes are historical integration evidence; not represented as each being rerun on v10."
+  },
+  "teardown": {
+    "originalCloudAccountRetained": true,
+    "isolatedServerPid": 15504,
+    "testConnectionDisabled": true,
+    "testDataDeleted": false,
+    "portOwnershipVerified": true,
+    "isolatedServerStopped": true,
+    "matchedProfileShutdown": true,
+    "matchedProfileDataRetained": true,
+    "normalFontRestored": 1.0,
+    "originalAccountEmulatorRunningFinal10": true
+  }
+}

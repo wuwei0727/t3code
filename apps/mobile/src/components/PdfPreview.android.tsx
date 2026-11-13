@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageProvider";
+import { appErrorText } from "../i18n/appErrorPresentation";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import * as Effect from "effect/Effect";
 import * as Option from "effect/Option";
@@ -43,6 +45,7 @@ const preparedPdfAtom = Atom.family((uri: string) =>
 );
 
 export function PdfPreview(props: { readonly uri: string }) {
+  const { t } = useLanguage();
   const atom = preparedPdfAtom(props.uri);
   const prepared = useAtomValue(atom);
   const refresh = useAtomRefresh(atom);
@@ -51,7 +54,7 @@ export function PdfPreview(props: { readonly uri: string }) {
   const file = prepared._tag === "Success" && !prepared.waiting ? prepared.value : null;
   const error =
     file !== null && unrenderable === file
-      ? "The PDF could not be rendered. It may be damaged or password protected."
+      ? t("pdfAndroid.render")
       : prepared._tag === "Failure" && !prepared.waiting
         ? Option.getOrElse(AsyncResult.error(prepared), () => "The PDF could not be loaded.")
         : null;
@@ -60,14 +63,17 @@ export function PdfPreview(props: { readonly uri: string }) {
   if (error) {
     return (
       <View className="flex-1 gap-4 bg-card">
-        <FilePreviewNotice title="Could not load PDF">{error}</FilePreviewNotice>
+        <FilePreviewNotice title={t("pdfAndroid.failed")}>
+          {appErrorText(error, t)}
+        </FilePreviewNotice>
         <View className="items-center">
-          <ControlPill label="Try again" variant="pill" onPress={refresh} />
+          <ControlPill label={t("pdfAndroid.retry")} variant="pill" onPress={refresh} />
         </View>
       </View>
     );
   }
-  if (localUri === null) return <FilePreviewLoading message="Loading PDF..." background="card" />;
+  if (localUri === null)
+    return <FilePreviewLoading message={t("pdfAndroid.loading")} background="card" />;
 
   return (
     <Pdf

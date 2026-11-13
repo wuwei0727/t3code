@@ -1,11 +1,11 @@
+import { makeTranslator } from "../../i18n/translator";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { pipe } from "effect/Function";
 import {
-  SECRET_REQUEST_DEFAULT_PLACEHOLDER,
   secretRequestAnswerInput,
   secretRequestDisplay,
   secretRequestFailureMessage,
   secretRequestLink,
-  secretRequestPrivacyNote,
   secretRequestReference,
   secretRequestSources,
   type SecretRequestItem,
@@ -41,6 +41,7 @@ export function SecretRequestCard(props: {
   readonly projectedItem: OrchestrationV2ProjectedTurnItem;
   readonly iconColor: ColorValue;
 }) {
+  const { t } = useLanguage();
   const { item, visibility } = props.projectedItem;
   if (item.type !== "secret_request") return null;
   const display = secretRequestDisplay(item, visibility);
@@ -63,7 +64,16 @@ export function SecretRequestCard(props: {
     <View className="mb-3 min-h-9 flex-row items-center gap-2 px-1">
       <SymbolView name={icon} size={13} tintColor={props.iconColor} type="monochrome" />
       <Text className="flex-1 font-sans text-sm text-foreground-muted" numberOfLines={2}>
-        {item.label} · {display.label}
+        {item.label} ·{" "}
+        {t(
+          display.kind === "pending-elsewhere"
+            ? "secretRequest.waiting"
+            : display.outcome === "saved"
+              ? "secretRequest.saved"
+              : display.outcome === "declined"
+                ? "secretRequest.declined"
+                : "secretRequest.ended",
+        )}
       </Text>
     </View>
   );
@@ -74,6 +84,7 @@ function PendingSecretRequestForm(props: {
   readonly item: SecretRequestItem;
   readonly iconColor: ColorValue;
 }) {
+  const { t } = useLanguage();
   const { item } = props;
   const answer = useAtomCommand(serverEnvironment.answerSecretRequest, {
     label: "answer secret request",
@@ -136,7 +147,7 @@ function PendingSecretRequestForm(props: {
       {link !== null ? (
         <View className="gap-1.5">
           <Button
-            label={`Open ${link.host}`}
+            label={t("secretRequest.open", { host: link.host })}
             tone="secondary"
             fullWidth
             onPress={() => void tryOpenExternalUrl(link.href, "secret-request")}
@@ -152,7 +163,7 @@ function PendingSecretRequestForm(props: {
       {sources.length > 0 ? (
         <View className="flex-row flex-wrap gap-2">
           <Chip
-            label="Value"
+            label={t("secretRequest.value")}
             size="small"
             selected={source === null}
             disabled={submitting}
@@ -179,7 +190,7 @@ function PendingSecretRequestForm(props: {
       {source === null ? (
         <SecretTextInput
           accessibilityLabel={item.label}
-          placeholder={item.placeholder ?? SECRET_REQUEST_DEFAULT_PLACEHOLDER}
+          placeholder={item.placeholder ?? t("secretRequest.placeholder")}
           value={secret}
           onChangeText={setSecret}
           editable={!submitting}
@@ -188,7 +199,10 @@ function PendingSecretRequestForm(props: {
       ) : (
         <TextInput
           key={source.id}
-          accessibilityLabel={`${item.label} reference in ${source.label}`}
+          accessibilityLabel={t("secretRequest.reference", {
+            label: item.label,
+            source: source.label,
+          })}
           placeholder={source.referencePlaceholder}
           value={reference}
           onChangeText={(next) => {
@@ -212,11 +226,15 @@ function PendingSecretRequestForm(props: {
           accessibilityLiveRegion="polite"
           className="font-sans text-sm text-danger-foreground"
         >
-          {error}
+          {error === makeTranslator("en")("secretRequest.failed")
+            ? t("secretRequest.failed")
+            : error === makeTranslator("en")("secretRequest.invalidReference")
+              ? t("secretRequest.invalidReference")
+              : error}
         </Text>
       ) : null}
       <Button
-        label="Save securely"
+        label={t("secretRequest.save")}
         tone="primary"
         fullWidth
         disabled={submitting || draft.trim().length === 0}
@@ -231,11 +249,15 @@ function PendingSecretRequestForm(props: {
             type="monochrome"
           />
           <Text className="flex-1 font-sans text-xs text-foreground-muted">
-            {secretRequestPrivacyNote(item)}
+            {t(
+              item.delivery === "file"
+                ? "secretRequest.privacyFile"
+                : "secretRequest.privacyStored",
+            )}
           </Text>
         </View>
         <Button
-          label="Decline"
+          label={t("secretRequest.decline")}
           tone="text"
           disabled={submitting}
           onPress={() => void send({ type: "decline" })}

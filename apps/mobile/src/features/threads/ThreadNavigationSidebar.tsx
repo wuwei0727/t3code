@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useActiveNewTask } from "../../state/active-new-task";
 import { ThreadUndoNotice } from "../home/ThreadUndoNotice";
 import { useAndroidControlSizing } from "../../components/ui/useAndroidControlSizing";
@@ -113,6 +114,7 @@ export function ThreadNavigationSidebar(props: ThreadNavigationSidebarProps) {
 }
 
 function ThreadNavigationSidebarPane(props: ThreadNavigationSidebarProps) {
+  const { t } = useLanguage();
   const floatingTabsEnabled = useAndroidFloatingTabs();
   const { themeVariables: materialTheme } = useAppearancePreferences();
   const drawerColor = materialTheme["--color-drawer"];
@@ -529,18 +531,19 @@ function ThreadNavigationSidebarPane(props: ThreadNavigationSidebarProps) {
   };
   const header = (
     <WorkspaceListHeader
-      accessibilityLabel="T3 Code, Threads"
+      accessibilityLabel={t("threadSidebar.title")}
       onOpenEnvironments={props.onOpenEnvironmentSettings}
       onOpenSettings={props.onOpenSettings}
       search={{
         value: props.searchQuery,
         onChangeText: props.onSearchQueryChange,
-        placeholder: "Search",
-        accessibilityLabel: "Search threads",
+        placeholder: t("threadSidebar.search"),
+        accessibilityLabel: t("threadSidebar.searchThreads"),
       }}
       filter={{
         customized: options.selectedEnvironmentId !== null || selectedProjectKey !== null,
         items: buildHomeListFilterMenuItems({
+          translate: t,
           environments,
           projects: projectFilterOptions,
           selectedEnvironmentId: options.selectedEnvironmentId,
@@ -570,7 +573,7 @@ function ThreadNavigationSidebarPane(props: ThreadNavigationSidebarProps) {
           ? "No environments connected"
           : props.searchQuery.trim().length > 0
             ? threadSearch.isPending
-              ? "Searching thread messages…"
+              ? t("threadSidebar.searching")
               : "No matching threads"
             : selectedProjectScope !== null
               ? `No threads in ${selectedProjectScope.title}`

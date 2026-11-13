@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { SegmentedControl } from "../../components/ui/SegmentedControl";
 import {
   BasicAlertDialog,
@@ -46,21 +48,24 @@ type Props = {
 
 const roundedCorner = Shape.RoundedCorner;
 
-const modes = [
-  { value: "date", label: "Date and time" },
-  { value: "duration", label: "Duration" },
-] as const;
-const units = [
-  { value: "minutes", label: "Minutes" },
-  { value: "hours", label: "Hours" },
-  { value: "days", label: "Days" },
-] as const;
+const modes = (t: UiTranslator) =>
+  [
+    { value: "date", label: t("snooze.date") },
+    { value: "duration", label: t("snooze.duration") },
+  ] as const;
+const units = (t: UiTranslator) =>
+  [
+    { value: "minutes", label: t("snooze.minutes") },
+    { value: "hours", label: t("snooze.hours") },
+    { value: "days", label: t("snooze.days") },
+  ] as const;
 
 function systemUses24HourClock() {
   return requireNativeModule<{ is24HourFormat(): boolean }>("T3NativeControls").is24HourFormat();
 }
 
 export function CustomSnoozeSheet(props: Props) {
+  const { t, locale } = useLanguage();
   const { themeAppearance, themeVariables: colors } = useAppearancePreferences();
   const [is24Hour, setIs24Hour] = useState(systemUses24HourClock);
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- subscribes to AppState to re-read the native 24-hour clock setting when the app resumes
@@ -86,9 +91,7 @@ export function CustomSnoozeSheet(props: Props) {
         : { mode, amount: String(amount), unit };
     const snoozedUntil = resolveCustomSnooze(input, new Date());
     if (!snoozedUntil) {
-      setError(
-        mode === "date" ? "Choose a date and time in the future." : "Enter a positive duration.",
-      );
+      setError(mode === "date" ? t("snooze.future") : t("snooze.positive"));
       return;
     }
     props.onSnooze(snoozedUntil);
@@ -144,11 +147,11 @@ export function CustomSnoozeSheet(props: Props) {
                 verticalArrangement={{ spacedBy: 16 }}
                 modifiers={[fillMaxWidth(), padding(24, 24, 24, 16)]}
               >
-                <Text style={titleTypography}>Custom snooze</Text>
+                <Text style={titleTypography}>{t("snooze.title")}</Text>
                 <RNHostView matchContents={{ vertical: true }} modifiers={[fillMaxWidth()]}>
                   <SegmentedControl
                     variant="card"
-                    options={modes}
+                    options={modes(t)}
                     selected={mode}
                     onSelect={(value) => {
                       setMode(value);
@@ -163,11 +166,14 @@ export function CustomSnoozeSheet(props: Props) {
                       options={[
                         {
                           value: "date",
-                          label: date.toLocaleDateString([], { month: "short", day: "numeric" }),
+                          label: date.toLocaleDateString(locale, {
+                            month: "short",
+                            day: "numeric",
+                          }),
                         },
                         {
                           value: "time",
-                          label: date.toLocaleTimeString([], {
+                          label: date.toLocaleTimeString(locale, {
                             hour: "numeric",
                             minute: "2-digit",
                             hourCycle: is24Hour ? "h23" : "h12",
@@ -237,7 +243,7 @@ export function CustomSnoozeSheet(props: Props) {
                   <RNHostView matchContents={{ vertical: true }} modifiers={[fillMaxWidth()]}>
                     <SegmentedControl
                       variant="card"
-                      options={units}
+                      options={units(t)}
                       selected={unit}
                       onSelect={setUnit}
                     />
@@ -258,13 +264,13 @@ export function CustomSnoozeSheet(props: Props) {
                     onClick={props.onClose}
                     colors={{ contentColor: colors["--color-foreground"] }}
                   >
-                    <Text style={bodyTypography}>Cancel</Text>
+                    <Text style={bodyTypography}>{t("snooze.cancel")}</Text>
                   </TextButton>
                   <TextButton
                     onClick={submit}
                     colors={{ contentColor: colors["--color-foreground"] }}
                   >
-                    <Text style={bodyTypography}>Snooze</Text>
+                    <Text style={bodyTypography}>{t("snooze.snooze")}</Text>
                   </TextButton>
                 </Row>
               </Column>

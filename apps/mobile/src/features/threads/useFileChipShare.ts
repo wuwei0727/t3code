@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import * as Dialog from "../../components/ui/Dialog";
 import { resolveAssetUrl } from "@t3tools/client-runtime/state/assets";
 import type { EnvironmentId, ThreadId } from "@t3tools/contracts";
@@ -15,6 +16,7 @@ export function useFileChipShare(
   threadId: ThreadId,
   sourceIdentifier: string,
 ) {
+  const { t } = useLanguage();
   const connection = usePreparedConnection(environmentId);
   const httpBaseUrl = Option.isSome(connection) ? connection.value.httpBaseUrl : null;
   const createUrl = useAtomQueryRunner(assetEnvironment.createUrl, {
@@ -47,8 +49,8 @@ export function useFileChipShare(
       .catch((error: unknown) => {
         if (!request.signal.aborted) {
           Dialog.alert(
-            "Could not share file",
-            error instanceof Error ? error.message : "Try again.",
+            t("fileShareError.failed"),
+            error instanceof Error ? error.message : t("fileShareError.retry"),
           );
         }
       })

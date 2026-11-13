@@ -1,4 +1,5 @@
 import { sanitizeNewRefName } from "@t3tools/shared/git";
+import type { UiTranslator } from "../../i18n/translator";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { resolveSendEnvMode } from "@t3tools/shared/projectSettings";
 import type { ComposerDraftWorkspaceSelection } from "../../state/use-composer-drafts";
@@ -15,14 +16,19 @@ export function resolveNewTaskWorkspaceSelection(input: {
   return input.isGitRepo ? selection : { mode, branch: null, worktreePath: null };
 }
 
-export function resolveNewTaskWorkspaceLabel(input: {
-  readonly workspaceMode: WorkspaceMode;
-  readonly worktreePath: string | null;
-}): "Current checkout" | "Current worktree" | "New worktree" {
+export function resolveNewTaskWorkspaceLabel(
+  input: {
+    readonly workspaceMode: WorkspaceMode;
+    readonly worktreePath: string | null;
+  },
+  t?: UiTranslator,
+) {
   if (input.workspaceMode === "worktree") {
-    return "New worktree";
+    return t?.("newContextUi.newWorktree") ?? "New worktree";
   }
-  return input.worktreePath ? "Current worktree" : "Current checkout";
+  return input.worktreePath
+    ? (t?.("newContextUi.currentWorktree") ?? "Current worktree")
+    : (t?.("newContextUi.checkout") ?? "Current checkout");
 }
 
 export function resolveNewTaskBranchWorktreePath(input: {
@@ -72,18 +78,26 @@ export function resolveNewTaskLocalWorkspaceSelection(input: {
   };
 }
 
-export function resolveNewTaskBranchLabel(input: {
-  readonly branchName: string | null;
-  readonly startFromOrigin: boolean;
-  readonly workspaceMode: WorkspaceMode;
-  readonly pullRequestReference?: string;
-}): string {
+export function resolveNewTaskBranchLabel(
+  input: {
+    readonly branchName: string | null;
+    readonly startFromOrigin: boolean;
+    readonly workspaceMode: WorkspaceMode;
+    readonly pullRequestReference?: string;
+  },
+  t?: UiTranslator,
+): string {
   if (input.workspaceMode === "worktree" && input.pullRequestReference) {
     const parsed = sourceControlClients.parseChangeRequestUrl(input.pullRequestReference);
-    if (parsed) return `From ${parsed.definition.changeRequest.shortLabel} #${parsed.link.number}`;
+    if (parsed)
+      return t
+        ? t("newContextUi.reference", {
+            reference: `${parsed.definition.changeRequest.shortLabel} #${parsed.link.number}`,
+          })
+        : `From ${parsed.definition.changeRequest.shortLabel} #${parsed.link.number}`;
   }
   if (!input.branchName) {
-    return "Choose branch";
+    return t?.("newContextUi.choose") ?? "Choose branch";
   }
 
   if (input.workspaceMode === "local") {
@@ -91,7 +105,13 @@ export function resolveNewTaskBranchLabel(input: {
   }
 
   // Only the server can determine a local branch's configured remote.
-  return input.startFromOrigin ? `From ${input.branchName} (remote)` : `From ${input.branchName}`;
+  return t
+    ? t(input.startFromOrigin ? "newContextUi.remote" : "newContextUi.from", {
+        branch: input.branchName,
+      })
+    : input.startFromOrigin
+      ? `From ${input.branchName} (remote)`
+      : `From ${input.branchName}`;
 }
 
 export function shouldCheckoutNewTaskBranch(input: {

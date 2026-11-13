@@ -1244,7 +1244,10 @@ private class DiffCanvasView(context: Context) : View(context) {
       size = style.fileHeaderSubtextFontSizePx,
       weight = style.fileHeaderSubtextFontWeight,
     )
-    val title = "Comment on ${row.commentRangeLabel.ifEmpty { "line" }}"
+    val title = context.getString(
+      R.string.t3_review_comment_on,
+      row.commentRangeLabel.ifEmpty { context.getString(R.string.t3_review_line) },
+    )
     canvas.drawText(
       ellipsize(title, textPaint, cardRect.right - chevronRect.right - 20f * density),
       chevronRect.right + 10f * density,
@@ -1256,7 +1259,7 @@ private class DiffCanvasView(context: Context) : View(context) {
       val bodyX = cardRect.left + 18f * density
       canvas.drawText(
         ellipsize(
-          row.commentText.ifEmpty { "Comment" },
+          row.commentText.ifEmpty { context.getString(R.string.t3_review_comment) },
           textPaint,
           cardRect.right - bodyX - 18f * density
         ),

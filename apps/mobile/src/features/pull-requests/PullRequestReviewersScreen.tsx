@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { AppBar, type AppBarSearch } from "../../components/ui/AppBar";
 import { AsyncResult } from "effect/reactivity";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
@@ -27,17 +29,17 @@ import { useAtomCommand } from "../../state/use-atom-command";
 import { PullRequestAvatar } from "./PullRequestPresentation";
 import { pullRequestTarget, type PullRequestParams } from "./usePullRequestDiff";
 
-const TRUNCATED_LABELS: Record<ReviewerTruncation, (error: string | null) => string> = {
-  unsearchable: () =>
-    "The provider has more reviewers than it returned. Find additional reviewers on the provider.",
-  searchable: () => "The provider has more reviewers than are listed here. Search to find them.",
-  "search-failed": (error) =>
-    `Only listed reviewers are matched: the provider search failed. ${error ?? ""}`,
-  "search-truncated": () =>
-    "More reviewers match than the provider returned. Keep typing to narrow it down.",
-};
+const truncatedLabels = (
+  t: UiTranslator,
+): Record<ReviewerTruncation, (error: string | null) => string> => ({
+  unsearchable: () => t("prReviewers.unsearchable"),
+  searchable: () => t("prReviewers.searchable"),
+  "search-failed": (error) => t("prReviewers.searchFailed", { error: error ?? "" }),
+  "search-truncated": () => t("prReviewers.searchTruncated"),
+});
 
 export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequestParams>) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const contentTopInset = useContentTopInset();
   const listRef = useRef<FlatList<PullRequestReviewerCandidate>>(null);
@@ -118,9 +120,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
     setPending(null);
     if (AsyncResult.isFailure(response)) {
       const cause = squashAtomCommandFailure(response);
-      setError(
-        cause instanceof Error ? cause.message : "Couldn't update this review request. Try again.",
-      );
+      setError(cause instanceof Error ? cause.message : t("prReviewers.failed"));
       return;
     }
     if (hostQuery !== null) searchResult.refresh();
@@ -136,17 +136,17 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
         compactToolbar: true,
         value: query,
         onChangeText: search,
-        placeholder: "Search reviewers",
+        placeholder: t("prReviewers.search"),
       }
     : undefined;
   const searchToolbarInset = useSearchToolbarInset(reviewerSearch);
   return (
     <View className="flex-1 bg-sheet">
       <AppBar
-        title="Request review"
+        title={t("prReviewers.title")}
         subtitle={`#${route.params.number} · ${route.params.repository}`}
         onClose={() => navigation.goBack()}
-        closeAccessibilityLabel="Close request review"
+        closeAccessibilityLabel={t("prReviewers.close")}
         search={reviewerSearch}
       />
       {listCandidates ? (
@@ -162,12 +162,10 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
           contentContainerStyle={{ paddingBottom: 24 + searchToolbarInset }}
           ListHeaderComponent={
             <View className="gap-3 px-4 py-4">
-              <Text className="text-xs text-foreground-muted">
-                Tap someone to request a review. Tap a requested reviewer to remove the request.
-              </Text>
+              <Text className="text-xs text-foreground-muted">{t("prReviewers.hint")}</Text>
               {!allowed ? (
                 <Text className="text-xs text-foreground-muted">
-                  Requesting reviews requires write access and an open {singular}.
+                  {t("prReviewers.permission", { request: singular })}
                 </Text>
               ) : null}
               {error ? (
@@ -182,7 +180,16 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
             return (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${item.isRequested ? "Remove review request from" : "Request review from"} ${item.login}${item.kind === "team" ? " team" : ""}`}
+                accessibilityLabel={t(
+                  item.isRequested
+                    ? item.kind === "team"
+                      ? "prReviewers.removeTeam"
+                      : "prReviewers.removeFrom"
+                    : item.kind === "team"
+                      ? "prReviewers.requestTeam"
+                      : "prReviewers.requestFrom",
+                  { login: item.login },
+                )}
                 accessibilityState={{ disabled: !allowed || pending !== null }}
                 disabled={!allowed || pending !== null}
                 onPress={() => void update(item)}
@@ -195,14 +202,16 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                   </Text>
                   <Text className="text-xs text-foreground-muted" numberOfLines={1}>
                     {item.login}
-                    {item.kind === "team" ? " · Team" : ""}
+                    {item.kind === "team" ? t("prReviewers.team") : ""}
                   </Text>
                 </View>
                 {pending === id ? (
                   <AppActivityIndicator />
                 ) : item.isRequested ? (
                   <View className="flex-row items-center gap-1.5">
-                    <Text className="text-xs text-foreground-muted">Requested</Text>
+                    <Text className="text-xs text-foreground-muted">
+                      {t("prReviewers.requested")}
+                    </Text>
                     <SymbolView name="checkmark" size={14} tintColorClassName="accent-icon" />
                   </View>
                 ) : (
@@ -219,17 +228,17 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                 <EmptyState
                   title={
                     queryError
-                      ? "Couldn't load reviewers"
+                      ? t("prReviewers.loadFailed")
                       : query.trim()
-                        ? "No matching reviewers"
-                        : "No reviewers available"
+                        ? t("prReviewers.noMatch")
+                        : t("prReviewers.empty")
                   }
-                  detail={queryError ?? "Search people and teams with access to this repository."}
+                  detail={queryError ?? t("prReviewers.searchHint")}
                   variant="plain"
                 />
                 {queryError ? (
                   <Button
-                    label="Retry"
+                    label={t("prReviewers.retry")}
                     onPress={result.error ? result.refresh : searchResult.refresh}
                   />
                 ) : null}
@@ -239,7 +248,7 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
           ListFooterComponent={
             view.truncation ? (
               <Text className="px-4 py-4 text-xs text-foreground-muted">
-                {TRUNCATED_LABELS[view.truncation](view.searchError)}
+                {truncatedLabels(t)[view.truncation](view.searchError)}
               </Text>
             ) : undefined
           }
@@ -256,17 +265,15 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
               <AppActivityIndicator />
             ) : (
               <Text className="text-danger-foreground">
-                {detail.error ?? `Couldn't load this ${singular}.`}
+                {detail.error ?? t("prReviewers.detailFailed", { request: singular })}
               </Text>
             )
           ) : (
             <>
-              <Text className="text-sm text-foreground-muted">
-                This provider accepts a reviewer ID but cannot list candidates.
-              </Text>
+              <Text className="text-sm text-foreground-muted">{t("prReviewers.byId")}</Text>
               <TextInput
-                accessibilityLabel="Reviewer ID"
-                placeholder="Reviewer login or ID"
+                accessibilityLabel={t("prReviewers.id")}
+                placeholder={t("prReviewers.idPlaceholder")}
                 placeholderTextColorClassName="accent-foreground-muted"
                 value={query}
                 onChangeText={search}
@@ -275,13 +282,13 @@ export function PullRequestReviewersScreen({ route }: StaticScreenProps<PullRequ
                 className="min-h-12 rounded-xl bg-grouped-card px-3 text-base"
               />
               <Button
-                label="Request review"
+                label={t("prReviewers.title")}
                 fullWidth
                 disabled={!allowed || !query.trim() || pending !== null}
                 onPress={() => void update({ id: query.trim(), kind: "user", isRequested: false })}
               />
               <Button
-                label="Remove review request"
+                label={t("prReviewers.remove")}
                 fullWidth
                 tone="text"
                 disabled={!allowed || !query.trim() || pending !== null}

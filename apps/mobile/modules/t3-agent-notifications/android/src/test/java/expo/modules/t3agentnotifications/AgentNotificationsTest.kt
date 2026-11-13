@@ -9,6 +9,7 @@ import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
@@ -24,6 +25,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.util.Locale
 
 abstract class AgentNotificationsFixture {
   protected lateinit var context: Application
@@ -47,6 +49,7 @@ abstract class AgentNotificationsFixture {
       }
     )
     AgentNotifications.clear(context)
+    context.getSharedPreferences("t3-community-language", 0).edit().clear().commit()
     AgentNotifications.configure(context, "device", "user", "t3code-dev", true)
     AgentNotifications.setThreadOnScreen("/threads/environment/thread")
   }
@@ -182,6 +185,21 @@ class AgentNotificationsTest : AgentNotificationsFixture() {
     assertEquals("5 agents finished", alert.notification.extras.getString(Notification.EXTRA_TITLE))
     assertEquals(titles, alert.notification.extras.getString(Notification.EXTRA_BIG_TEXT))
     assertEquals("t3code-dev://", shadowOf(alert.notification.contentIntent).savedIntent.dataString)
+
+    context.getSharedPreferences("t3-community-language", 0).edit()
+      .putString("resolvedLocale", "zh-CN").commit()
+    AgentNotifications.receive(context, grouped + ("alert_id" to "localized-group"))
+    val chinese = manager.activeNotifications.single { it.id == "localized-group".hashCode() }
+    assertEquals("5 个智能体已完成", chinese.notification.extras.getString(Notification.EXTRA_TITLE))
+    assertEquals(titles, chinese.notification.extras.getString(Notification.EXTRA_BIG_TEXT))
+
+    AgentNotifications.receive(context, update("localized-single", false) + mapOf(
+      "alert_title" to "Working",
+      "alert_body" to "Input: Project: English",
+    ))
+    val single = manager.activeNotifications.single { it.id == "localized-single".hashCode() }
+    assertEquals("Working", single.notification.extras.getString(Notification.EXTRA_TITLE))
+    assertEquals("输入: Project: English", single.notification.extras.getString(Notification.EXTRA_TEXT))
   }
 
   @Test
@@ -348,6 +366,22 @@ class AgentNotificationsTest : AgentNotificationsFixture() {
       shadowOf(next.actions[0].actionIntent).savedIntent.dataString
     )
     assertEquals("Answer", next.extras.getString(NotificationCompat.EXTRA_SHORT_CRITICAL_TEXT))
+
+    val chinese = context.createConfigurationContext(
+      Configuration(context.resources.configuration).apply { setLocale(Locale.SIMPLIFIED_CHINESE) }
+    )
+    val localizedData = data + ("activity_line_0" to "Approval\tWorking\tProject")
+    val localized = NotificationCompat.Builder(chinese, "agent-activity")
+    ActivityPresentation(localizedData, true, chinese).applyTo(localized, chinese)
+    val translated = localized.build()
+    assertEquals("1 项需要你处理", translated.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
+    assertEquals(
+      "审批 Working · Project\n正在工作 Another thread · Other project",
+      translated.extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
+    )
+    assertEquals("Approval", activityRows(localizedData).first().status)
+    assertEquals(ActivityPhase.APPROVAL, activityPhase(localizedData, activityRows(localizedData)))
+    assertEquals("/threads/environment/thread", localizedData["activity_path"])
   }
 
   @Test

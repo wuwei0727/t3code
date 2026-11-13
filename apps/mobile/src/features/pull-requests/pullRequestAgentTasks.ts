@@ -1,3 +1,5 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiLocale } from "../../i18n/locale";
 import {
   sourceControlClients,
   type ChangeRequestTerminology,
@@ -21,7 +23,9 @@ export function pullRequestAgentThreadActions(
   threads: PullRequestLinkedThreadsResult["threads"],
   task: PullRequestAgentTask,
   canAsk: boolean,
+  locale: UiLocale = "en",
 ): MenuAction[] {
+  const t = makeTranslator(locale);
   const active: MenuAction[] = [];
   const settled: MenuAction[] = [];
   for (const thread of threads) {
@@ -29,20 +33,20 @@ export function pullRequestAgentThreadActions(
       id: `${task}:${thread.id}`,
       title: thread.title,
       subtitle: thread.archivedAt
-        ? "Archived thread"
+        ? t("prAgent.archived")
         : thread.settled
-          ? "Settled thread"
-          : "Continue thread",
+          ? t("prAgent.settled")
+          : t("prAgent.continue"),
       image: "bubble.left.and.bubble.right",
       attributes: { disabled: task !== "ask" && Boolean(thread.archivedAt) },
     };
     (thread.settled ? settled : active).push(action);
   }
   return [
-    ...(canAsk ? [{ id: `${task}:new`, title: "Start a new thread", image: "plus" }] : []),
+    ...(canAsk ? [{ id: `${task}:new`, title: t("prAgent.new"), image: "plus" }] : []),
     ...active,
     ...(settled.length
-      ? [{ id: `${task}:settled`, title: "Settled threads", subactions: settled }]
+      ? [{ id: `${task}:settled`, title: t("prAgent.settledThreads"), subactions: settled }]
       : []),
   ];
 }
@@ -66,31 +70,41 @@ export function pullRequestAgentPrompt(
   }
 }
 
-export function pullRequestAgentActions(pr: PullRequestDetail, canWatch: boolean) {
+export function pullRequestAgentActions(
+  pr: PullRequestDetail,
+  canWatch: boolean,
+  locale: UiLocale = "en",
+) {
+  const t = makeTranslator(locale);
   const { shortLabel } = sourceControlClients.get(pr.provider).changeRequest;
   return [
     {
       task: "ask",
-      title: "Ask a question",
+      title: t("prAgent.ask"),
       icon: "bubble.left.and.text.bubble.right",
       disabled: false,
     },
-    { task: "explain", title: `Explain this ${shortLabel}`, icon: "book", disabled: false },
+    {
+      task: "explain",
+      title: t("prAgent.explain", { request: shortLabel }),
+      icon: "book",
+      disabled: false,
+    },
     {
       task: "feedback",
-      title: "Address feedback",
+      title: t("prAgent.feedback"),
       icon: "wrench.and.screwdriver",
       disabled: pr.state !== "open",
     },
     {
       task: "conflicts",
-      title: "Resolve conflicts",
+      title: t("prAgent.conflicts"),
       icon: "arrow.triangle.branch",
       disabled: pr.state !== "open" || pr.mergeability !== "conflicting",
     },
     {
       task: "watch",
-      title: `Watch ${shortLabel}`,
+      title: t("prAgent.watch", { request: shortLabel }),
       icon: "eye",
       disabled: pr.state !== "open" || !canWatch,
     },

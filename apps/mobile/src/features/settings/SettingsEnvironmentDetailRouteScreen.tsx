@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { providerMaintenanceMessage } from "./providerMaintenancePresentation";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtom, useAtomValue } from "@effect/atom-react";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
@@ -9,7 +11,7 @@ import {
   type ServerProvider,
 } from "@t3tools/contracts";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
-import { sessionPermissionsUnavailableMessage } from "@t3tools/shared/authScopeOptions";
+import { sessionPermissionsText } from "../connection/connectionSettingsPresentation";
 import * as Cause from "effect/Cause";
 import * as Exit from "effect/Exit";
 import { AsyncResult } from "effect/reactivity";
@@ -53,6 +55,7 @@ export function SettingsEnvironmentDetailRouteScreen({
 }
 
 function EnvironmentDetail({ environmentId }: { readonly environmentId: EnvironmentId }) {
+  const { t, locale } = useLanguage();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const connections = useRemoteConnections();
@@ -111,9 +114,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
     setPending(null);
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
-      setError(
-        cause instanceof Error ? cause.message : "The action could not be completed. Try again.",
-      );
+      setError(cause instanceof Error ? cause.message : t("environmentDetail.actionFailed"));
     }
   }
 
@@ -122,12 +123,19 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
     if (disabled || !targetVersion || !capabilities || !supportsEnvironmentUpdate(capabilities))
       return;
     Dialog.alert(
-      `Update ${environment?.environmentLabel ?? "environment"}?`,
-      `Install T3 Code ${targetVersion}. ${capabilities.serverSelfUpdate === "desktop-managed" ? "The desktop app will close and relaunch." : "The server will restart and reconnect."} Running threads may be interrupted.`,
+      t("environmentDetail.updateTitle", {
+        environment: environment?.environmentLabel ?? t("environmentDetail.environment"),
+      }),
+      t(
+        capabilities.serverSelfUpdate === "desktop-managed"
+          ? "environmentDetail.updateDesktopConfirmation"
+          : "environmentDetail.updateServerConfirmation",
+        { version: targetVersion },
+      ),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("environmentDetail.cancel"), style: "cancel" },
         {
-          text: "Update",
+          text: t("environmentDetail.update"),
           onPress: () =>
             void run("server", async () => {
               if (
@@ -145,7 +153,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                 input: { targetVersion },
               });
               if (AsyncResult.isFailure(result)) throw squashAtomCommandFailure(result);
-              setNotice(`Updated to ${result.value.targetVersion}.`);
+              setNotice(t("environmentDetail.updated", { version: result.value.targetVersion }));
             }),
         },
       ],
@@ -172,7 +180,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
   }
 
   return (
-    <SettingsScreen title={environment?.environmentLabel ?? "Environment"}>
+    <SettingsScreen title={environment?.environmentLabel ?? t("environmentDetail.title")}>
       <ScreenScrollView
         contentInsetAdjustmentBehavior="automatic"
         className="flex-1"
@@ -180,12 +188,10 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
         {!environment ? (
-          <Text className="text-base text-foreground-muted">
-            This environment is no longer saved on this device.
-          </Text>
+          <Text className="text-base text-foreground-muted">{t("environmentDetail.removed")}</Text>
         ) : (
           <>
-            <SettingsSection title="Connection">
+            <SettingsSection title={t("environmentDetail.connection")}>
               <ConnectionEnvironmentRow
                 environment={environment}
                 expanded={connectionExpanded}
@@ -210,18 +216,18 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
               />
             ) : !connected ? (
               <Text className="px-2 text-sm text-foreground-muted">
-                Connect this environment to manage it.
+                {t("environmentDetail.connectFirst")}
               </Text>
             ) : !allowed ? (
               <Text className="px-2 text-sm text-foreground-muted">
                 {AsyncResult.isFailure(sessionResult) || session === null || !session.authenticated
-                  ? sessionPermissionsUnavailableMessage({
+                  ? sessionPermissionsText(locale, {
                       connected,
                       failed: AsyncResult.isFailure(sessionResult),
                       rejected:
                         !AsyncResult.isFailure(sessionResult) && session?.authenticated === false,
                     })
-                  : "This connection does not have permission to manage the environment."}
+                  : t("environmentDetail.denied")}
               </Text>
             ) : null}
             {error ? (
@@ -234,20 +240,28 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
               <>
                 <SettingsSection title="T3 Code">
                   <View className="gap-1 p-4">
-                    <Text className="text-base text-foreground">Version {version}</Text>
+                    <Text className="text-base text-foreground">
+                      {t("environmentDetail.version", { version: version ?? "" })}
+                    </Text>
                     {managedPolicy ? (
                       <Text className="text-sm text-foreground-muted">
-                        Managed by {managedPolicy.organization}
+                        {t("environmentDetail.managed", {
+                          organization: managedPolicy.organization,
+                        })}
                       </Text>
                     ) : null}
                     {updatesDenial ? (
-                      <Text className="text-sm text-foreground-muted">{updatesDenial}</Text>
+                      <Text className="text-sm text-foreground-muted">
+                        {t("environmentDetail.managedUpdates", {
+                          organization: managedPolicy?.organization ?? "",
+                        })}
+                      </Text>
                     ) : null}
                     {running ? (
                       <Text className="text-sm text-foreground-muted">
                         {updateState.stage === "resuming"
-                          ? "Restarting and reconnecting…"
-                          : "Downloading update…"}
+                          ? t("environmentDetail.restarting")
+                          : t("environmentDetail.downloading")}
                       </Text>
                     ) : updateState.status === "failed" ? (
                       <Text selectable className="text-sm text-danger-foreground">
@@ -257,8 +271,10 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                     {checkedRelease && !updatesDenial ? (
                       <Text className="text-sm text-foreground-muted">
                         {checkedRelease.targetVersion
-                          ? `Version ${checkedRelease.targetVersion} is available.`
-                          : "You are up to date."}
+                          ? t("environmentDetail.available", {
+                              version: checkedRelease.targetVersion,
+                            })
+                          : t("environmentDetail.upToDate")}
                       </Text>
                     ) : null}
                     {checkedRelease?.targetVersion &&
@@ -266,22 +282,24 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                     !supportsEnvironmentUpdate(config.environment.capabilities) ? (
                       <Text className="text-sm text-foreground-muted">
                         {capabilities?.serverSelfUpdate === "desktop-managed"
-                          ? "Update the desktop app on this machine."
-                          : "Update and restart T3 Code on this machine."}
+                          ? t("environmentDetail.updateDesktop")
+                          : t("environmentDetail.updateServer")}
                       </Text>
                     ) : null}
                   </View>
                   {supportUrl ? (
                     <SettingsActionRow
                       icon="questionmark.bubble"
-                      label={`Get help from ${managedPolicy.organization}`}
+                      label={t("environmentDetail.help", {
+                        organization: managedPolicy.organization,
+                      })}
                       onPress={() => void Linking.openURL(supportUrl).catch(() => undefined)}
                     />
                   ) : null}
                   {updatesDenial ? null : (
                     <SettingsActionRow
                       icon="arrow.clockwise"
-                      label="Check for updates"
+                      label={t("environmentDetail.checkUpdates")}
                       disabled={disabled}
                       loading={pending === "check"}
                       onPress={() => {
@@ -300,17 +318,19 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                   supportsEnvironmentUpdate(config.environment.capabilities) ? (
                     <SettingsActionRow
                       icon="arrow.up.circle"
-                      label={`Update to ${checkedRelease.targetVersion}`}
+                      label={t("environmentDetail.updateVersion", {
+                        version: checkedRelease.targetVersion,
+                      })}
                       disabled={disabled}
                       loading={pending === "server" || running}
                       onPress={requestServerUpdate}
                     />
                   ) : null}
                 </SettingsSection>
-                <SettingsSection title="Providers">
+                <SettingsSection title={t("environmentDetail.providers")}>
                   <SettingsActionRow
                     icon="arrow.clockwise"
-                    label="Refresh providers"
+                    label={t("environmentDetail.refreshProviders")}
                     disabled={busy || !canRead}
                     loading={pending === "refresh"}
                     onPress={() => {
@@ -323,7 +343,7 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                           input: { reloadSecrets: true },
                         });
                         if (AsyncResult.isFailure(result)) throw squashAtomCommandFailure(result);
-                        setNotice("Provider status refreshed.");
+                        setNotice(t("environmentDetail.refreshed"));
                       });
                     }}
                   />
@@ -344,10 +364,12 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                           </View>
                           <Text className="text-sm text-foreground-muted">
                             {provider.installed
-                              ? (provider.version ?? "Version unknown")
-                              : "Not installed"}
+                              ? (provider.version ?? t("environmentDetail.versionUnknown"))
+                              : t("environmentDetail.notInstalled")}
                             {provider.versionAdvisory?.latestVersion
-                              ? ` · Latest ${provider.versionAdvisory.latestVersion}`
+                              ? t("environmentDetail.latest", {
+                                  version: provider.versionAdvisory.latestVersion,
+                                })
                               : ""}
                           </Text>
                           {provider.updateState && provider.updateState.status !== "idle" ? (
@@ -359,8 +381,11 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                                   : "text-sm text-foreground-muted"
                               }
                             >
-                              {provider.updateState.message ??
-                                `Update ${provider.updateState.status}`}
+                              {provider.updateState.message
+                                ? providerMaintenanceMessage(provider.updateState.message, t)
+                                : t(
+                                    `environmentDetail.providerUpdate.${provider.updateState.status}`,
+                                  )}
                             </Text>
                           ) : null}
                           {provider.compatibilityAdvisory?.message ? (
@@ -376,14 +401,16 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                           {provider.versionAdvisory?.status === "behind_latest" &&
                           !provider.versionAdvisory.canUpdate ? (
                             <Text className="text-sm text-foreground-muted">
-                              Update this provider on the environment's machine.
+                              {t("environmentDetail.providerUpdateHint")}
                             </Text>
                           ) : null}
                         </View>
                         {canUpdateEnvironmentProvider(provider) ? (
                           <SettingsActionRow
                             icon="arrow.up.circle"
-                            label={`Update ${provider.displayName ?? provider.driver}`}
+                            label={t("environmentDetail.updateProvider", {
+                              provider: provider.displayName ?? provider.driver,
+                            })}
                             disabled={busy || !canManageProviders}
                             loading={pending === provider.instanceId}
                             onPress={() => requestProviderUpdate(provider)}

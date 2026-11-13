@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { LegendList } from "@legendapp/list/react-native";
 import { useMemo } from "react";
@@ -19,6 +20,7 @@ import { useLinkedPullRequestActions } from "./useLinkedPullRequestActions";
 export function ThreadPullRequestsSheet(
   _props: StaticScreenProps<{ readonly environmentId: string; readonly threadId: string }>,
 ) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { selectedThread, selectedThreadProject, selectedEnvironmentRuntime } =
@@ -41,7 +43,7 @@ export function ThreadPullRequestsSheet(
   });
   const rowInputs = { lines, actions };
   const { singular } = actions.terminology;
-  const title = `Linked ${actions.terminology.plural}`;
+  const title = t("linkedRequestSheet.title", { requests: actions.terminology.plural });
 
   const content = (
     <View className="flex-1 android:bg-sheet-solid ios:bg-screen">
@@ -72,13 +74,13 @@ export function ThreadPullRequestsSheet(
         ListHeaderComponent={
           lines.length > 0 ? (
             <Text className="px-4 pt-2 pb-1 text-xs text-foreground-muted">
-              {openCount} open · {lines.length} linked
+              {t("linkedRequestSheet.counts", { open: openCount, total: lines.length })}
             </Text>
           ) : null
         }
         ListEmptyComponent={
           <Text className="pt-6 text-center text-sm text-foreground-muted">
-            No linked {actions.terminology.plural}.
+            {t("linkedRequestSheet.empty", { requests: actions.terminology.plural })}
           </Text>
         }
       />
@@ -94,7 +96,7 @@ export function ThreadPullRequestsSheet(
           actions.canLink
             ? [
                 {
-                  accessibilityLabel: `Link ${singular}`,
+                  accessibilityLabel: t("linkedRequestSheet.link", { request: singular }),
                   icon: "plus",
                   onPress: actions.promptLink,
                 },

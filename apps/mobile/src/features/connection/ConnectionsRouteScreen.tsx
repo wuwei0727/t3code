@@ -1,4 +1,5 @@
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 import { useNavigation } from "@react-navigation/native";
 import type { EnvironmentId } from "@t3tools/contracts";
@@ -13,6 +14,7 @@ import { PullRequestRoutingSettings } from "./PullRequestRoutingSettings";
 import { LinkedEnvironmentsSection } from "./LinkedEnvironmentsSection";
 
 export function ConnectionsRouteScreen() {
+  const { t } = useLanguage();
   const {
     connectedEnvironments,
     onReconnectEnvironment,
@@ -30,12 +32,12 @@ export function ConnectionsRouteScreen() {
   return (
     <View collapsable={false} className="flex-1 bg-sheet">
       <AppBar
-        title="Environments"
+        title={t("connection.environments")}
         onClose={() => navigation.goBack()}
-        closeAccessibilityLabel="Close environments"
+        closeAccessibilityLabel={t("connection.close")}
         actions={[
           {
-            accessibilityLabel: "Add environment",
+            accessibilityLabel: t("connection.add"),
             icon: "plus",
             onPress: () => navigation.navigate("ConnectionsNew"),
           },

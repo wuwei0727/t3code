@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   WorkspaceColumnsRendererContext,
   WorkspacePresentationHostContext,
@@ -254,6 +255,7 @@ function AdaptiveWorkspaceLayoutContent(
     readonly savedThreadListFilters?: ThreadListFilters | undefined;
   },
 ) {
+  const { t } = useLanguage();
   const floatingTabsEnabled = useAndroidFloatingTabs();
   const projectGroupingMode = props.projectGroupingMode;
   const nativeWorkspace = use(NativeWorkspaceModeContext);
@@ -1005,8 +1007,8 @@ function AdaptiveWorkspaceLayoutContent(
                 renderFallback={(fallback) => (
                   <RenderFailureView
                     {...fallback}
-                    title="The sidebar couldn't be displayed"
-                    exit={{ label: "Open settings", onPress: handleOpenSettings }}
+                    title={t("workspaceShell.sidebar")}
+                    exit={{ label: t("workspaceShell.settings"), onPress: handleOpenSettings }}
                   />
                 )}
               >
@@ -1103,7 +1105,7 @@ function AdaptiveWorkspaceLayoutContent(
           style={[{ zIndex: 1 }, scrimAnimatedStyle]}
         >
           <Pressable
-            accessibilityLabel="Hide sidebar"
+            accessibilityLabel={t("workspaceShell.hide")}
             className="flex-1"
             onPress={() => setPrimarySidebarVisible(false)}
           />

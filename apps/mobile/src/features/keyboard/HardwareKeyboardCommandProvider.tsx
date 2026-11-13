@@ -1,4 +1,5 @@
 import { StackActions, useNavigation } from "@react-navigation/native";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Platform } from "react-native";
 import { resolveThreadReferenceCopyTarget } from "@t3tools/client-runtime/thread-reference";
 import {
@@ -52,6 +53,7 @@ export function HardwareKeyboardCommandProvider({
   children,
   pathname,
 }: PropsWithChildren<{ readonly pathname: string }>) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const closePalette = useCallback(() => setPaletteOpen(false), []);
@@ -141,13 +143,19 @@ export function HardwareKeyboardCommandProvider({
             didCopy
               ? {
                   phase: "success",
-                  label: copyTarget.successTitle,
+                  label: t(
+                    copyTarget.kind === "thread" ? "keyboardCopyUi.thread" : "keyboardCopyUi.pr",
+                  ),
                   description: copyTarget.description,
                 }
               : {
                   phase: "error",
-                  label: copyTarget.failureTitle,
-                  description: "Try again.",
+                  label: t(
+                    copyTarget.kind === "thread"
+                      ? "keyboardCopyUi.threadFailed"
+                      : "keyboardCopyUi.prFailed",
+                  ),
+                  description: t("keyboardCopyUi.retry"),
                 },
           );
         });
@@ -182,7 +190,7 @@ export function HardwareKeyboardCommandProvider({
         navigation.navigate("ThreadReview", thread);
       }
     },
-    [copyTarget, navigation, pathname, showCopyFeedback],
+    [copyTarget, navigation, pathname, showCopyFeedback, t],
   );
 
   const palette = useMemo(

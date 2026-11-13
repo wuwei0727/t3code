@@ -1,3 +1,5 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiLocale } from "../../i18n/locale";
 import type { PullRequestReviewPosition, PullRequestReviewThread } from "@t3tools/contracts";
 import type { NativeReviewDiffRow } from "../diffs/nativeReviewDiffSurface";
 import type { NativeReviewDiffData } from "../review/nativeReviewDiffAdapter";
@@ -18,13 +20,16 @@ export function reviewPosition(row: NativeReviewDiffRow): PullRequestReviewPosit
     };
   return null;
 }
-export function discussionCommentCountLabel(count: number) {
-  return `${count} ${count === 1 ? "comment" : "comments"}`;
+export function discussionCommentCountLabel(count: number, locale: UiLocale = "en") {
+  return makeTranslator(locale)(count === 1 ? "prDiff.commentOne" : "prDiff.commentMany", {
+    count,
+  });
 }
-export function reviewPositionLabel(position: PullRequestReviewPosition) {
+export function reviewPositionLabel(position: PullRequestReviewPosition, locale: UiLocale = "en") {
+  const t = makeTranslator(locale);
   const oldSide =
     position.kind === "deleted" || (position.kind === "context" && position.side === "left");
-  return `${oldSide ? "Old line" : "Line"} ${reviewLine(position)}`;
+  return t(oldSide ? "prDiff.oldLine" : "prDiff.line", { line: reviewLine(position) });
 }
 function reviewLine(position: PullRequestReviewPosition) {
   if (position.kind === "deleted" || (position.kind === "context" && position.side === "left"))
@@ -36,7 +41,9 @@ export function annotatePullRequestDiff(
   threads: readonly PullRequestReviewThread[],
   drafts: readonly PendingReviewComment[],
   headSha: string | undefined,
+  locale: UiLocale = "en",
 ): NativeReviewDiffData {
+  const t = makeTranslator(locale);
   if (threads.length === 0 && drafts.length === 0) return data;
   const anchors = new Map<string, NativeReviewDiffRow[]>();
   const firstByPath = new Map<string, NativeReviewDiffRow>();
@@ -82,7 +89,7 @@ export function annotatePullRequestDiff(
     attach(
       anchor,
       `discussion:${thread.id}`,
-      `${first?.author?.login ?? "Discussion"}${thread.isResolved ? " · Resolved" : ""}\n${first?.body ?? ""}\n${discussionCommentCountLabel(thread.commentCount ?? thread.comments.length)} · Tap to open`,
+      `${first?.author?.login ?? t("prDiff.discussion")}${thread.isResolved ? t("prDiff.resolved") : ""}\n${first?.body ?? ""}\n${discussionCommentCountLabel(thread.commentCount ?? thread.comments.length, locale)}${t("prDiff.open")}`,
       thread.line === null ? "file" : String(thread.line),
     );
   }
@@ -98,7 +105,7 @@ export function annotatePullRequestDiff(
     attach(
       lines.get(JSON.stringify([draft.path, side, line])),
       `draft:${draft.id}`,
-      `Pending review · Tap to edit\n${draft.body}`,
+      t("prDiff.pending", { body: draft.body }),
       String(line),
     );
   }

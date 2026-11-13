@@ -1,20 +1,27 @@
-export function relativeTime(input: string, nowMs: number = Date.now()): string {
+import type { UiLocale } from "../i18n/locale";
+import { makeTranslator } from "../i18n/translator";
+export function relativeTime(
+  input: string,
+  nowMs: number = Date.now(),
+  locale: UiLocale = "en",
+): string {
+  const t = makeTranslator(locale);
   const timestamp = Date.parse(input);
   if (Number.isNaN(timestamp)) {
-    return "<1m";
+    return t("time.lessMinute");
   }
 
   const deltaSeconds = Math.max(0, Math.floor((nowMs - timestamp) / 1000));
-  if (deltaSeconds < 60) return "<1m";
+  if (deltaSeconds < 60) return t("time.lessMinute");
 
   const deltaMinutes = Math.floor(deltaSeconds / 60);
-  if (deltaMinutes < 60) return `${deltaMinutes}m`;
+  if (deltaMinutes < 60) return t("time.minutes", { count: deltaMinutes });
 
   const deltaHours = Math.floor(deltaMinutes / 60);
-  if (deltaHours < 24) return `${deltaHours}h`;
+  if (deltaHours < 24) return t("time.hours", { count: deltaHours });
 
   const deltaDays = Math.floor(deltaHours / 24);
-  return `${deltaDays}d`;
+  return t("time.days", { count: deltaDays });
 }
 
 /** Milliseconds until the relative-time label next changes. */

@@ -5,6 +5,7 @@ import { AuthAccessReadScope, type EnvironmentId } from "@t3tools/contracts";
 import * as DateTime from "effect/DateTime";
 import { useCallback, useState } from "react";
 import { AppState, View } from "react-native";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 import { AppText as Text } from "../../components/ui/AppText";
 import { useEnvironmentServerConfig } from "../../state/entities";
@@ -17,6 +18,7 @@ export function LinkedEnvironmentsSection(props: {
   readonly environmentId: EnvironmentId;
   readonly environmentLabel: string;
 }) {
+  const { t } = useLanguage();
   const config = useEnvironmentServerConfig(props.environmentId);
   const canRead = useEnvironmentScope(props.environmentId, AuthAccessReadScope);
   const supported = canRead && offersLinkedEnvironments(config);
@@ -44,19 +46,24 @@ export function LinkedEnvironmentsSection(props: {
   const now = DateTime.makeUnsafe(nowMs);
   return (
     <View className="mt-5 gap-3">
-      <SettingsSection title={`Linked from ${props.environmentLabel}`}>
+      <SettingsSection title={t("linkedEnvironment.from", { environment: props.environmentLabel })}>
         {links.data.links.map((link) => {
           const health = peerLinkHealth(link, now);
           const status =
             health.kind === "expired"
-              ? "Expired. Link it again with a new pairing code."
+              ? t("linkedEnvironment.expired")
               : health.kind === "unreachable"
-                ? (health.detail ?? "Not answering right now.")
+                ? (health.detail ?? t("linkedEnvironment.unreachable"))
                 : health.kind === "failing"
                   ? health.detail
                   : health.expiresInDays !== null
-                    ? `Expires in ${health.expiresInDays} ${health.expiresInDays === 1 ? "day" : "days"}`
-                    : "Reachable";
+                    ? t(
+                        health.expiresInDays === 1
+                          ? "linkedEnvironment.expiresOne"
+                          : "linkedEnvironment.expiresMany",
+                        { count: health.expiresInDays },
+                      )
+                    : t("linkedEnvironment.reachable");
           return (
             <View key={link.environmentId} className="gap-0.5 p-4">
               <Text className="text-base font-t3-bold text-foreground">{link.label}</Text>

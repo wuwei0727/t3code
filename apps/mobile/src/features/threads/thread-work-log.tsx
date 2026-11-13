@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Button } from "../../components/ui/Button";
 import { ThreadSubagentGroup } from "./thread-subagent-group";
 import { ProposedPlanCard } from "./ProposedPlanCard";
@@ -773,6 +774,7 @@ function WorkspacePreparationRetryButton(props: {
   readonly threadId: ThreadId;
   readonly runId: RunId;
 }) {
+  const { t } = useLanguage();
   const retryable = useAtomValue(
     environmentThreadDetails.threadAtom(scopeThreadRef(props.environmentId, props.threadId)),
     (thread) => {
@@ -786,9 +788,9 @@ function WorkspacePreparationRetryButton(props: {
   return (
     <View className="ml-7 mt-2">
       <Button
-        label="Retry"
+        label={t("workLogUi.retry")}
         tone="secondary"
-        accessibilityLabel="Retry workspace preparation"
+        accessibilityLabel={t("workLogUi.retrySetup")}
         disabled={busy}
         onPress={() => {
           setBusy(true);
@@ -880,6 +882,7 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
     readonly expanded: boolean;
   },
 ) {
+  const { t } = useLanguage();
   const { row, expanded } = props;
   const openLinkedThread = useOpenLinkedThread();
   const streamsOutput =
@@ -905,12 +908,14 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
         })} (${new Intl.DateTimeFormat().resolvedOptions().timeZone})`
       : null;
     const label = warning
-      ? `Usage limit reached.${resetTime ? ` Retry after ${resetTime}.` : ""}`
+      ? t("workSummaryUi.usage", {
+          retry: resetTime ? t("workSummaryUi.retry", { time: resetTime }) : "",
+        })
       : row.summary;
     return (
       <WorkLogPressable
         accessibilityLabel={warning ? label : `${row.summary}: ${failureItem.failure.message}`}
-        accessibilityHint="Long press to copy."
+        accessibilityHint={t("workLogUi.copyHint")}
         onLongPress={() => props.onCopyRow(row.id, row.getCopyText())}
       >
         <View className="flex-1 py-1">
@@ -933,7 +938,7 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
             </Text>
             {props.copied ? (
               <Text className="pr-1 font-t3-medium text-3xs text-adaptive-emerald-600-400">
-                Copied
+                {t("workLogUi.copied")}
               </Text>
             ) : null}
             <Text
@@ -1003,13 +1008,13 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
         ? turnItemOutputText(shownItem)
         : fetchedItem
           ? (turnItemOutputText(fetchedItem) ??
-            (outputImages.length > 0 || viewedImagePath ? null : "No output."))
+            (outputImages.length > 0 || viewedImagePath ? null : t("workLogExtra.noOutput")))
           : fetchedDetail.error
-            ? `Couldn't load output: ${fetchedDetail.error}`
+            ? t("workLogExtra.loadError", { error: fetchedDetail.error })
             : row.fetchesDetail
               ? fetchedDetail.data
-                ? "Output is no longer available."
-                : "Loading output…"
+                ? t("workLogExtra.unavailable")
+                : t("workLogExtra.loading")
               : null;
   const exitLine =
     failedExitCode === null ? null : (
@@ -1018,12 +1023,18 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
       </Text>
     );
   const toolPresentation = resolveWorkEntryToolPresentation(row.workEntry);
-  const previewText = row.groupStandIn?.label ?? workEntryRowLabel(row.workEntry);
+  const previewText =
+    row.groupStandIn?.displayLabel?.(t) ??
+    row.groupStandIn?.label ??
+    workEntryRowLabel(row.workEntry, false, t);
   const answerPreview = row.workEntry.questionAnswer
     ? getQuestionAnswerPreview(row.workEntry.questionAnswer)
     : null;
   const accessiblePreview = [previewText, answerPreview].filter(Boolean).join(": ");
-  const displayText = row.groupStandIn?.label ?? workEntryRowLabel(row.workEntry, expanded);
+  const displayText =
+    row.groupStandIn?.displayLabel?.(t) ??
+    row.groupStandIn?.label ??
+    workEntryRowLabel(row.workEntry, expanded, t);
   const isSystemNotice = row.projectedItem.item.type === "system_notice";
   const isUsageLimit =
     row.projectedItem.item.type === "error" &&
@@ -1045,13 +1056,15 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
         accessibilityRole={
           notifiedSubagentThreadId !== undefined ? "link" : canExpand ? "button" : undefined
         }
-        accessibilityLabel={failed ? `${accessiblePreview}, tool call failed` : accessiblePreview}
+        accessibilityLabel={
+          failed ? t("workLogExtra.callFailed", { label: accessiblePreview }) : accessiblePreview
+        }
         accessibilityHint={
           notifiedSubagentThreadId !== undefined
-            ? "Opens this agent's thread. Long press to copy."
+            ? t("workLogUi.agentHint")
             : canExpand
-              ? `Double tap to ${expanded ? "hide" : "show"} full details. Long press to copy.`
-              : "Long press to copy."
+              ? t(expanded ? "workLogUi.hideHint" : "workLogUi.showHint")
+              : t("workLogUi.copyHint")
         }
         accessibilityState={canExpand ? { expanded } : undefined}
         onPress={() => {
@@ -1128,7 +1141,7 @@ const ThreadWorkLogRow = function ThreadWorkLogRow(
         <View className="shrink-0 flex-row items-center gap-px">
           {props.copied ? (
             <Text className="pr-1 font-t3-medium text-3xs text-adaptive-emerald-600-400">
-              Copied
+              {t("workLogUi.copied")}
             </Text>
           ) : null}
           {failed && toolIcon !== undefined ? (
@@ -1332,7 +1345,10 @@ export function ThreadWorkGroupToggle(props: {
   readonly trailing?: ReactNode;
   readonly onToggle: () => void;
 }) {
-  const statusLabel = props.hasFailure ? `${props.summary}, tool call failed` : props.summary;
+  const { t } = useLanguage();
+  const statusLabel = props.hasFailure
+    ? t("workLogExtra.callFailed", { label: props.summary })
+    : props.summary;
   const accessibilityLabel = props.thought ? `${props.thought} ${statusLabel}` : statusLabel;
   const icon =
     props.summaryToolIcon ??
@@ -1367,7 +1383,9 @@ export function ThreadWorkGroupToggle(props: {
             accessibilityRole="button"
             accessibilityState={{ expanded: props.expanded }}
             accessibilityLabel={accessibilityLabel}
-            accessibilityHint={`Double tap to ${props.expanded ? "hide" : "show"} ${props.hiddenCount} tool ${props.hiddenCount === 1 ? "call" : "calls"}.`}
+            accessibilityHint={t(props.expanded ? "workSummaryUi.hide" : "workSummaryUi.show", {
+              count: props.hiddenCount,
+            })}
             onPress={() => {
               void Haptics.selectionAsync();
               props.onToggle();
@@ -1417,7 +1435,8 @@ export function ThreadThinkingRow(props: {
   readonly iconSubtleColor: ColorValue;
   readonly label?: string;
 }) {
-  const label = props.label ?? "Thinking";
+  const { t } = useLanguage();
+  const label = props.label ?? t("workLogExtra.thinking");
   return (
     <View
       accessible

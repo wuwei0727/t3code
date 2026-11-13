@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { AsyncResult } from "effect/reactivity";
 import { useAtomRefresh } from "@effect/atom-react";
 import { StackActions, useNavigation, type StaticScreenProps } from "@react-navigation/native";
@@ -23,6 +25,7 @@ import { PullRequestCompletionSuggestions } from "./PullRequestCompletionSuggest
 import { usePullRequestCompletions } from "./usePullRequestCompletions";
 
 function useActionSubmission(params: PullRequestParams) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const refreshDetail = useAtomRefresh(composerPullRequests.detail(pullRequestTarget(params)));
   const refreshActivity = useAtomRefresh(composerPullRequests.activity(pullRequestTarget(params)));
@@ -44,28 +47,26 @@ function useActionSubmission(params: PullRequestParams) {
     setBusy(false);
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "The provider could not complete this action. Try again.",
-      );
+      setError(cause instanceof Error ? cause.message : t("prReview.failed"));
     }
   };
   return { busy, error, submit };
 }
 
-const VERDICTS = [
-  { value: "comment", title: "Comment" },
-  { value: "approve", title: "Approve" },
-  {
-    value: "request-changes",
-    title: "Request changes",
-  },
-] as const;
+const verdictOptions = (t: UiTranslator) =>
+  [
+    { value: "comment", title: t("prReview.comment") },
+    { value: "approve", title: t("prReview.approve") },
+    {
+      value: "request-changes",
+      title: t("prReview.changes"),
+    },
+  ] as const;
 
 export function PullRequestReviewSheet({
   route,
 }: StaticScreenProps<PullRequestParams & { readonly mode: "review" | "comment" }>) {
+  const { t, locale } = useLanguage();
   const params = route.params;
   const target = pullRequestTarget(params);
   const result = useEnvironmentQuery(composerPullRequests.detail(target));
@@ -92,7 +93,7 @@ export function PullRequestReviewSheet({
   });
   const stale = store.draft.comments.some((comment) => comment.headSha !== result.data?.headSha);
   const [requestedVerdict, setRequestedVerdict] = useState<PullRequestReviewVerdict>("comment");
-  const offered = VERDICTS.filter((option) => permissions.verdicts.includes(option.value));
+  const offered = verdictOptions(t).filter((option) => permissions.verdicts.includes(option.value));
   const verdict = offered.find((option) => option.value === requestedVerdict) ?? offered[0];
   const reviewing = params.mode === "review";
   const canSubmitComments = !store.draft.comments.length || permissions.canInlineComment;
@@ -114,8 +115,7 @@ export function PullRequestReviewSheet({
       : permissions.canComment && body.trim().length > 0);
   const perform = () =>
     submission.submit(async () => {
-      if (!canSubmit)
-        throw new Error("Add your feedback and check your permissions before submitting.");
+      if (!canSubmit) throw new Error(t("prReview.check"));
       const submitted = store.draft;
       const response =
         reviewing && verdict
@@ -141,21 +141,28 @@ export function PullRequestReviewSheet({
     });
   return (
     <SheetContent
-      title={reviewing ? "Submit review" : "Add comment"}
-      subtitle={`#${params.number}${reviewing && result.data?.headSha ? ` · reviewing ${result.data.headSha.slice(0, 7)}` : ` · ${params.repository}`}`}
+      title={reviewing ? t("prReview.submit") : t("prReview.addComment")}
+      subtitle={
+        reviewing && result.data?.headSha
+          ? t("prReview.reviewingCommit", {
+              number: params.number,
+              sha: result.data.headSha.slice(0, 7),
+            })
+          : `#${params.number} · ${params.repository}`
+      }
       busy={submission.busy}
       footer={
         <Button
           label={
             submission.busy
-              ? "Submitting…"
+              ? t("prReview.submitting")
               : reviewing
                 ? verdict?.value === "approve"
-                  ? "Approve"
+                  ? t("prReview.approve")
                   : verdict?.value === "request-changes"
-                    ? "Request changes"
-                    : "Submit review"
-                : "Post comment"
+                    ? t("prReview.changes")
+                    : t("prReview.submit")
+                : t("prReview.post")
           }
           fullWidth
           tone={Platform.OS === "android" ? "primary" : "contrast"}
@@ -176,7 +183,7 @@ export function PullRequestReviewSheet({
         />
       ) : null}
       <Text className="px-4 text-xs text-foreground-muted">
-        {reviewing ? "Summary" : "Comment"}
+        {reviewing ? t("prReview.summary") : t("prReview.comment")}
       </Text>
       <PullRequestCompletionSuggestions completions={completions} />
       <TextInput
@@ -184,13 +191,13 @@ export function PullRequestReviewSheet({
         selection={completions.selection}
         onSelectionChange={completions.onSelectionChange}
         onBlur={completions.onBlur}
-        accessibilityLabel={reviewing ? "Review summary" : "Comment"}
+        accessibilityLabel={reviewing ? t("prReview.summaryLabel") : t("prReview.comment")}
         placeholder={
           reviewing
             ? summaryRequired
-              ? "Summary required to request changes…"
-              : "Summarize your review…"
-            : "Write a comment…"
+              ? t("prReview.required")
+              : t("prReview.summarize")
+            : t("prReview.write")
         }
         placeholderTextColorClassName="accent-foreground-muted"
         editable={store.ready && !submission.busy}
@@ -203,8 +210,9 @@ export function PullRequestReviewSheet({
       {reviewing && store.draft.comments.length ? (
         <View className="gap-2">
           <Text className="text-sm font-t3-medium">
-            {store.draft.comments.length} pending line{" "}
-            {store.draft.comments.length === 1 ? "comment" : "comments"}
+            {t(store.draft.comments.length === 1 ? "prReview.pendingOne" : "prReview.pendingMany", {
+              count: store.draft.comments.length,
+            })}
           </Text>
           {store.draft.comments.map((draft) => (
             <Pressable
@@ -233,30 +241,28 @@ export function PullRequestReviewSheet({
               className="gap-1 rounded-[20px] bg-grouped-card p-4"
             >
               <Text className="font-mono text-xs text-foreground-muted">
-                {draft.path} · {reviewPositionLabel(draft.position)}
+                {draft.path} · {reviewPositionLabel(draft.position, locale)}
               </Text>
               <Text numberOfLines={3} className="text-sm">
                 {draft.body}
               </Text>
               <Text className="text-2xs text-foreground-muted">
                 {draft.headSha !== result.data?.headSha
-                  ? "Branch changed · Tap to choose a new line"
-                  : "Tap to edit"}
+                  ? t("prReview.branchChanged")
+                  : t("prReview.edit")}
               </Text>
             </Pressable>
           ))}
         </View>
       ) : null}
       {reviewing && stale ? (
-        <Text className="text-sm text-danger-foreground">
-          The branch changed since you wrote a comment. Choose its current line before submitting.
-        </Text>
+        <Text className="text-sm text-danger-foreground">{t("prReview.stale")}</Text>
       ) : null}
       {reviewing && !canSubmitComments ? (
         <Text className="text-sm text-danger-foreground">
-          You can no longer submit line comments on this{" "}
-          {sourceControlClients.get(result.data?.provider).changeRequest.singular}. Your drafts are
-          kept here.
+          {t("prReview.cannotInline", {
+            request: sourceControlClients.get(result.data?.provider).changeRequest.singular,
+          })}
         </Text>
       ) : null}
       {submission.error || result.error || store.error ? (

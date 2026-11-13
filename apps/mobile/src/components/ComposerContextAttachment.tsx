@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import { Button } from "./ui/Button";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
@@ -24,6 +25,7 @@ export function ComposerContextAttachment(props: {
   environmentId?: EnvironmentId;
   attachment?: DraftComposerAttachment;
 }) {
+  const { t } = useLanguage();
   const { record, attachment } = props;
   const shareSourceIdentifier = useId();
   const resource = {
@@ -39,7 +41,7 @@ export function ComposerContextAttachment(props: {
   const asset = useAssetUrlState(remoteEnvironmentId, resource);
   const refresh = useRefreshAssetUrl(remoteEnvironmentId, resource);
   const localPreview = useLocalAttachmentPreview(local ?? null);
-  const error = localPreview.error ? "The local file is unavailable. Attach it again." : null;
+  const error = localPreview.error ? t("contextAttachment.local") : null;
   const [sharing, setSharing] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const uri = local
@@ -73,8 +75,8 @@ export function ComposerContextAttachment(props: {
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not open attachment",
-        cause instanceof Error ? cause.message : "Try again.",
+        t("contextAttachment.failed"),
+        cause instanceof Error ? cause.message : t("contextAttachment.retry"),
       );
     }
   };
@@ -83,7 +85,7 @@ export function ComposerContextAttachment(props: {
       {record.kind === "image" && uri ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Preview ${record.name}`}
+          accessibilityLabel={t("contextAttachment.preview", { name: record.name })}
           onPress={() => setPreviewOpen(true)}
         >
           <Image
@@ -99,13 +101,11 @@ export function ComposerContextAttachment(props: {
         </Pressable>
       ) : null}
       {error || (!local && asset._tag === "Failure") ? (
-        <Text className="text-foreground-muted">
-          {error ?? "Attachment unavailable. Reconnect and try again."}
-        </Text>
+        <Text className="text-foreground-muted">{error ?? t("contextAttachment.unavailable")}</Text>
       ) : null}
       <PresentationSource identifier={shareSourceIdentifier}>
         <Button
-          label={sharing ? "Opening attachment…" : "Open or share attachment"}
+          label={t(sharing ? "contextAttachment.opening" : "contextAttachment.openOrShare")}
           tone="secondary"
           disabled={sharing}
           onPress={() => void share()}

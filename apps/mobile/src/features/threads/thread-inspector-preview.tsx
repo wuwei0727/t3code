@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useIsFocused, useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { EnvironmentId, ThreadId } from "@t3tools/contracts";
 import { type ReactNode } from "react";
@@ -24,13 +25,14 @@ export type ThreadInspectorPresentation =
 export function ThreadInspectorHeader(
   props: ThreadInspectorPresentation & { readonly title: string },
 ) {
+  const { t } = useLanguage();
   if ("onMaximize" in props) {
     return (
       <AppBar
         title={props.title}
         actions={[
           {
-            accessibilityLabel: "Maximize thread",
+            accessibilityLabel: t("threadInspector.maximize"),
             icon: "arrow.up.left.and.arrow.down.right",
             onPress: props.onMaximize,
           },
@@ -39,7 +41,11 @@ export function ThreadInspectorHeader(
     );
   }
   return (
-    <SheetHeader title={props.title} onClose={props.onClose} accessibilityLabel="Close thread" />
+    <SheetHeader
+      title={props.title}
+      onClose={props.onClose}
+      accessibilityLabel={t("threadInspector.close")}
+    />
   );
 }
 

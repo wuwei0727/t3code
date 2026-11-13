@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import * as Dialog from "./ui/Dialog";
 import { ComposerContextId } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
@@ -59,6 +60,7 @@ export function ComposerEditor({
   onInertChipPress,
   ...props
 }: ComposerEditorProps) {
+  const { t } = useLanguage();
   const draft = useComposerDraft(draftKey ?? null);
   const readResetGeneration = useComposerDraftResetGeneration(draftKey ?? null);
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
@@ -116,25 +118,21 @@ export function ComposerEditor({
         return;
       }
       if (!insertComposerDraftContext(draftKey, result, insertion)) {
-        Dialog.alert(
-          "Could not paste context",
-          "Remove some attachments or context items from the draft, then paste again.",
-        );
+        Dialog.alert(t("composerEditorUi.pasteFailed"), t("composerEditorUi.remove"));
         return;
       }
       const warnings: string[] = [];
-      if (result.failures.length > 0)
-        warnings.push(
-          "Some attachments could not be copied. Reconnect to the source environment and copy them again.",
-        );
+      if (result.failures.length > 0) warnings.push(t("composerEditorUi.copyFailed"));
       if (result.skippedThreads.length > 0)
         warnings.push(
-          `${result.skippedThreads.map((title) => `"${title}"`).join(", ")} ${result.skippedThreads.length === 1 ? "is" : "are"} on another machine.`,
+          t("composerEditorUi.otherMachine", {
+            titles: result.skippedThreads.map((title) => `"${title}"`).join(", "),
+          }),
         );
       if (warnings.length > 0)
         Dialog.alert(
-          "Some context is unavailable",
-          [...warnings, "Those references are marked unavailable."].join("\n\n"),
+          t("composerEditorUi.unavailable"),
+          [...warnings, t("composerEditorUi.marked")].join("\n\n"),
         );
     });
     operation.finish();
@@ -142,8 +140,8 @@ export function ComposerEditor({
     if (AsyncResult.isFailure(settled) && !signal.aborted) {
       const error = squashAtomCommandFailure(settled);
       Dialog.alert(
-        "Could not paste context",
-        error instanceof Error ? error.message : "Try copying again.",
+        t("composerEditorUi.pasteFailed"),
+        error instanceof Error ? error.message : t("composerEditorUi.retry"),
       );
     }
   };
@@ -224,12 +222,15 @@ export function ComposerEditor({
         }}
       />
       {importing ? (
-        <Text className="py-2 text-xs text-foreground-muted">Copying context…</Text>
+        <Text className="py-2 text-xs text-foreground-muted">{t("composerEditorUi.copying")}</Text>
       ) : null}
       {selected && (selectedReference || selectedSkill) ? (
         <ComposerContextSheet
           label={
-            selectedReference?.label ?? selectedSkill?.displayName ?? selectedSkill?.name ?? "Skill"
+            selectedReference?.label ??
+            selectedSkill?.displayName ??
+            selectedSkill?.name ??
+            t("composerEditorUi.skill")
           }
           record={
             record ??

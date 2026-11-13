@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { NativeScrollView } from "../../native/NativeScrollViewMarker";
 import { Button } from "../../components/ui/Button";
 import * as Dialog from "../../components/ui/Dialog";
@@ -60,14 +61,20 @@ function EnvironmentPickerRow(props: {
   isLast: boolean;
   onPress: () => void;
 }) {
+  const { t, locale } = useLanguage();
   const [expanded, setExpanded] = useState(false);
   const { presentation } = useEnvironmentPresentation(props.environmentId);
-  const { diagnosis, state } = useConnectionDiagnosis(props.environmentId, presentation);
+  const { diagnosis, rawDiagnosis, state } = useConnectionDiagnosis(
+    props.environmentId,
+    presentation,
+  );
   const { onReconnectEnvironment } = useRemoteConnections();
   const connection = presentation?.connection;
   const status =
     diagnosis?.headline ??
-    (connection ? environmentStatusText({ ...connection, error: null }) : "Offline");
+    (connection
+      ? environmentStatusText({ ...connection, error: null }, locale)
+      : t("newTask.picker.offline"));
   return (
     <View className={cn("bg-grouped-card", !props.isLast && "border-b border-border-subtle")}>
       <View className="flex-row items-center">
@@ -101,7 +108,10 @@ function EnvironmentPickerRow(props: {
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${expanded ? "Hide" : "Show"} connection details for ${props.title}`}
+          accessibilityLabel={t(
+            expanded ? "newTask.picker.hideDetails" : "newTask.picker.showDetails",
+            { environment: props.title },
+          )}
           accessibilityState={{ expanded }}
           onPress={() => setExpanded(!expanded)}
           className="min-h-11 min-w-11 items-center justify-center active:opacity-65"
@@ -116,18 +126,24 @@ function EnvironmentPickerRow(props: {
       {expanded ? (
         <View className="gap-3 px-4 pb-4">
           {diagnosis ? (
-            <ConnectionDiagnosisDetails hostLabel={props.title} diagnosis={diagnosis} />
+            <ConnectionDiagnosisDetails
+              hostLabel={props.title}
+              diagnosis={diagnosis}
+              rawDiagnosis={rawDiagnosis}
+            />
           ) : (
             <Text className="text-sm text-foreground-muted">{status}</Text>
           )}
           {state.retryAt ? (
             <Text className="text-sm text-foreground-muted">
-              Next reconnect at {new Date(state.retryAt).toLocaleTimeString()}
+              {t("newTask.picker.nextRetry", {
+                time: new Date(state.retryAt).toLocaleTimeString(locale),
+              })}
             </Text>
           ) : null}
           {connection?.phase !== "connected" ? (
             <Button
-              label="Reconnect now"
+              label={t("newTask.picker.reconnect")}
               onPress={() => onReconnectEnvironment(props.environmentId)}
             />
           ) : null}
@@ -177,12 +193,17 @@ function PickerSurface(props: { readonly children: ReactNode }) {
 }
 
 export function NewTaskEnvironmentPickerRouteScreen() {
+  const { t } = useLanguage();
   const flow = useNewTaskFlow();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   return (
     <View className="flex-1 bg-sheet" collapsable={false}>
-      <AppBar title="Environment" hideBottomBorder onBack={() => navigation.goBack()} />
+      <AppBar
+        title={t("newTask.picker.environment")}
+        hideBottomBorder
+        onBack={() => navigation.goBack()}
+      />
       <ScreenContent>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
@@ -218,6 +239,7 @@ export function NewTaskEnvironmentPickerRouteScreen() {
 }
 
 export function NewTaskBranchPickerRouteScreen() {
+  const { t } = useLanguage();
   const flow = useNewTaskFlow();
   const canWriteSourceControl = useEnvironmentScope(
     flow.selectedProject?.environmentId ?? null,
@@ -281,8 +303,8 @@ export function NewTaskBranchPickerRouteScreen() {
       if (navigation.isFocused() && !isAtomCommandInterrupted(result)) {
         const error = squashAtomCommandFailure(result);
         Dialog.alert(
-          "Could not switch branch",
-          error instanceof Error ? error.message : "The branch could not be checked out.",
+          t("newTask.picker.switchFailed"),
+          error instanceof Error ? error.message : t("newTask.picker.checkoutFailed"),
         );
       }
       return;
@@ -300,7 +322,11 @@ export function NewTaskBranchPickerRouteScreen() {
 
   return (
     <BranchPickerScreen
-      title={flow.workspaceMode === "worktree" ? "Base branch" : "Branch"}
+      title={
+        flow.workspaceMode === "worktree"
+          ? t("newTask.picker.baseBranch")
+          : t("newTask.picker.branch")
+      }
       project={flow.selectedProject}
       branches={filterNewTaskBranches(branchState.refs, branchQuery)}
       selectedBranchName={
@@ -351,13 +377,14 @@ export function BranchPickerScreen(props: {
     readonly onChangeStartFromOrigin: (value: boolean) => void;
   };
 }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const search: AppBarSearch = {
     value: props.query,
     onChangeText: props.onQueryChange,
-    placeholder: "Find a branch",
-    clearAccessibilityLabel: "Clear branch search",
+    placeholder: t("newTask.picker.find"),
+    clearAccessibilityLabel: t("newTask.picker.clear"),
     mode: "inline",
     compactToolbar: true,
   };
@@ -385,7 +412,10 @@ export function BranchPickerScreen(props: {
       isLast={index === props.branches.length - 1}
       onPress={() => props.onSelect(item)}
       selected={selectedBranchName === item.name}
-      subtitle={branchBadgeLabel({ branch: item, project: props.project })?.toUpperCase()}
+      subtitle={(() => {
+        const badge = branchBadgeLabel({ branch: item, project: props.project });
+        return badge ? t(`newTask.picker.badge.${badge}`) : undefined;
+      })()}
       title={item.name}
     />
   );
@@ -399,7 +429,7 @@ export function BranchPickerScreen(props: {
     >
       <ToggleRow
         onValueChange={props.worktree.onChangeStartFromOrigin}
-        title="Start from remote"
+        title={t("newTask.picker.remote")}
         value={props.worktree.startFromOrigin}
       />
     </View>
@@ -424,16 +454,20 @@ export function BranchPickerScreen(props: {
           {props.loading ? <AppActivityIndicator /> : null}
           <Text className="text-center text-sm text-foreground-muted">
             {props.loading
-              ? "Loading branches…"
+              ? t("newTask.picker.loading")
               : props.error
                 ? props.error
                 : props.query
-                  ? "No matching branches"
-                  : "No branches available"}
+                  ? t("newTask.picker.noMatch")
+                  : t("newTask.picker.empty")}
           </Text>
           {!props.loading && props.error ? (
             <View className="self-center">
-              <Button label="Try again" tone="secondary" onPress={props.onRefresh} />
+              <Button
+                label={t("newTask.picker.retry")}
+                tone="secondary"
+                onPress={props.onRefresh}
+              />
             </View>
           ) : null}
         </View>

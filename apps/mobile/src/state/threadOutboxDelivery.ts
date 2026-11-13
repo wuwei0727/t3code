@@ -1,3 +1,4 @@
+import { currentTranslator } from "../i18n/currentLanguage";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import * as Dialog from "../components/ui/Dialog";
 import {
@@ -1441,11 +1442,14 @@ function loadThreadOutbox(isActive: () => boolean): void {
   void threadOutboxManager.load().then((loaded) => {
     if (loaded || !isActive()) return;
     Dialog.alert(
-      "Some queued messages could not be loaded",
-      "Unreadable records and attachment files are still saved. Other messages can still be sent.",
+      currentTranslator()("outboxLoadUi.title"),
+      currentTranslator()("outboxLoadUi.detail"),
       [
-        { text: "Dismiss", style: "cancel" },
-        { text: "Retry", onPress: () => loadThreadOutbox(isActive) },
+        { text: currentTranslator()("outboxLoadUi.dismiss"), style: "cancel" },
+        {
+          text: currentTranslator()("outboxLoadUi.retry"),
+          onPress: () => loadThreadOutbox(isActive),
+        },
       ],
     );
   });

@@ -16,6 +16,7 @@ import {
 } from "@t3tools/contracts";
 import { ToolCallVisibility } from "@t3tools/contracts/settings";
 import type { AndroidNavigationStyle } from "../lib/androidNavigationStyle";
+import type { LanguagePreference } from "../i18n/locale";
 import type { ComposerEnterBehavior } from "../lib/composerEnterBehavior";
 import type { FollowUpBehavior } from "../lib/followUpBehavior";
 import { isMicrophoneKind, type MicrophoneEntry } from "../lib/microphonePriority";
@@ -89,6 +90,7 @@ const ThreadProject = Schema.Struct({
 const isThreadProject = Schema.is(ThreadProject);
 
 export interface Preferences {
+  readonly language?: LanguagePreference;
   readonly navigationTabOrder?: readonly string[];
   readonly hiddenNavigationTabs?: readonly string[];
   readonly pullRequestHideTestFiles?: boolean;
@@ -175,6 +177,7 @@ const isToolCallVisibility = Schema.is(ToolCallVisibility);
 
 function sanitizePreferences(parsed: Preferences): Preferences {
   const preferences: {
+    language?: LanguagePreference;
     navigationTabOrder?: readonly string[];
     hiddenNavigationTabs?: readonly string[];
     pullRequestHideTestFiles?: boolean;
@@ -212,6 +215,10 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     pullRequestListFilters?: PullRequestListPreferences;
     workspaceSelections?: WorkspaceSelections;
   } = {};
+
+  if (parsed.language === "system" || parsed.language === "en" || parsed.language === "zh-CN") {
+    preferences.language = parsed.language;
+  }
 
   if (Array.isArray(parsed.hiddenNavigationTabs)) {
     preferences.hiddenNavigationTabs = parsed.hiddenNavigationTabs.filter(

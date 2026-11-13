@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useState } from "react";
 import { View } from "react-native";
 import { useOpenWorkspaceDetail } from "../layout/useOpenWorkspaceDetail";
@@ -14,6 +15,7 @@ export function PullRequestStackCard(props: {
   readonly params: PullRequestParams;
   readonly state: PullRequestStackState;
 }) {
+  const { t, locale } = useLanguage();
   const openDetail = useOpenWorkspaceDetail();
   const [expanded, setExpanded] = useState(false);
   const stack = props.state.stack;
@@ -26,9 +28,9 @@ export function PullRequestStackCard(props: {
     return (
       <PullRequestCardGroup>
         <PullRequestCardRow
-          title="Stack"
+          title={t("prStack.title")}
           icon={PullRequestGlyph.stack}
-          value={`${summary.position} of ${summary.size}`}
+          value={t("prStack.position", { position: summary.position, size: summary.size })}
           last
         />
       </PullRequestCardGroup>
@@ -38,10 +40,14 @@ export function PullRequestStackCard(props: {
   return (
     <PullRequestCardGroup>
       <PullRequestCardRow
-        title="Stack"
+        title={t("prStack.title")}
         icon={PullRequestGlyph.stack}
-        value={`${position} of ${stack.layers.length}`}
-        accessibilityLabel={`Stack, ${position} of ${stack.layers.length}${props.state.isFresh ? "" : ", showing saved stack"}`}
+        value={t("prStack.position", { position, size: stack.layers.length })}
+        accessibilityLabel={t("prStack.status", {
+          position,
+          size: stack.layers.length,
+          saved: props.state.isFresh ? "" : t("prStack.saved"),
+        })}
         expanded={expanded}
         onPress={() => setExpanded(!expanded)}
         last={!expanded}
@@ -50,18 +56,21 @@ export function PullRequestStackCard(props: {
         <View>
           {stack.layers.map((layer, index) => {
             const selected = layer.number === props.params.number;
-            const status = pullRequestStatus({
-              state: layer.state,
-              isDraft: layer.isDraft === true,
-            });
+            const status = pullRequestStatus(
+              {
+                state: layer.state,
+                isDraft: layer.isDraft === true,
+              },
+              locale,
+            );
             return (
               <View key={layer.number} className={selected ? "bg-thread-selected" : undefined}>
                 <PullRequestCardRow
                   title={layer.title ?? layer.headBranch}
                   icon={status.icon}
                   tint={status.tint}
-                  value={selected ? "Current" : status.label}
-                  detail={`#${layer.number} · ${index + 1} of ${stack.layers.length}`}
+                  value={selected ? t("prStack.current") : status.label}
+                  detail={`#${layer.number} · ${t("prStack.position", { position: index + 1, size: stack.layers.length })}`}
                   onPress={
                     selected
                       ? undefined
@@ -79,7 +88,7 @@ export function PullRequestStackCard(props: {
             );
           })}
           <Text className="px-4 py-3 text-xs text-foreground-muted">
-            Base: {stack.base}. Open a layer to review it or merge the stack through that layer.
+            {t("prStack.base", { base: stack.base })}
           </Text>
         </View>
       ) : null}

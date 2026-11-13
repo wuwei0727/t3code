@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import {
   MAX_SIDEBAR_AUTO_SETTLE_AFTER_DAYS,
   MIN_SIDEBAR_AUTO_SETTLE_AFTER_DAYS,
@@ -11,13 +12,16 @@ export type AutoSettleDaysFieldProps = Pick<
 >;
 
 export function AutoSettleDaysField(props: AutoSettleDaysFieldProps) {
+  const { t } = useLanguage();
   return (
     <NumberField
       {...props}
       min={MIN_SIDEBAR_AUTO_SETTLE_AFTER_DAYS}
       max={MAX_SIDEBAR_AUTO_SETTLE_AFTER_DAYS}
-      label="Days before auto-settle"
-      formatValue={(value) => `${value} ${value === 1 ? "day" : "days"}`}
+      label={t("settings.autoSettle.daysLabel")}
+      formatValue={(value) =>
+        t(value === 1 ? "settings.autoSettle.day" : "settings.autoSettle.days", { count: value })
+      }
     />
   );
 }

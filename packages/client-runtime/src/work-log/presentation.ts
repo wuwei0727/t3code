@@ -562,14 +562,23 @@ function summaryActionPriority(action: ToolGroupAction | T3McpToolSummaryAction)
   }
 }
 
-export function summarizeToolGroup(entries: ReadonlyArray<WorkLogPresentationEntry>): {
+export function summarizeToolGroup(
+  entries: ReadonlyArray<WorkLogPresentationEntry>,
+  display?: {
+    readonly label: (label: string) => string;
+    readonly sources: (names: ReadonlyArray<string>, integrations: boolean) => string;
+    readonly join: (labels: ReadonlyArray<string>) => string;
+  },
+): {
   summary: string;
   hasFailure: boolean;
 } {
   const toolEntries = entries.filter((entry) => entry.itemType !== "reasoning");
   if (entries.length > 0 && toolEntries.length === 0) {
     return {
-      summary: entries.length === 1 ? "Thought" : `Thought (×${entries.length})`,
+      summary:
+        display?.label(entries.length === 1 ? "Thought" : `Thought (×${entries.length})`) ??
+        (entries.length === 1 ? "Thought" : `Thought (×${entries.length})`),
       hasFailure: false,
     };
   }
@@ -616,7 +625,7 @@ export function summarizeToolGroup(entries: ReadonlyArray<WorkLogPresentationEnt
     .sort((a, b) => a.priority - b.priority || a.index - b.index)
     .slice(0, 2)
     .sort((a, b) => a.index - b.index);
-  const labels = selected.map(({ label }) => label);
+  const labels = selected.map(({ label }) => display?.label(label) ?? label);
   if (sources.size > 0) {
     const sourceValues = [...sources.values()];
     const sourceNames = [...new Set(sourceValues.map((source) => source.name))];
@@ -628,7 +637,8 @@ export function summarizeToolGroup(entries: ReadonlyArray<WorkLogPresentationEnt
           : `${sourceNames.slice(0, -1).join(", ")}, and ${sourceNames.at(-1)}`;
     const allIntegrations = sourceValues.every((source) => source.kind === "integration");
     labels.unshift(
-      `Used ${formattedNames}${allIntegrations ? ` ${sourceNames.length === 1 ? "integration" : "integrations"}` : ""}`,
+      display?.sources(sourceNames, allIntegrations) ??
+        `Used ${formattedNames}${allIntegrations ? ` ${sourceNames.length === 1 ? "integration" : "integrations"}` : ""}`,
     );
   }
   const sourcedCount = entries.filter(
@@ -639,15 +649,17 @@ export function summarizeToolGroup(entries: ReadonlyArray<WorkLogPresentationEnt
   const remainingCount =
     entries.length - sourcedCount - selected.reduce((count, group) => count + group.count, 0);
   if (remainingCount > 0) {
-    labels.push(`Performed ${remainingCount} other ${remainingCount === 1 ? "action" : "actions"}`);
+    const label = `Performed ${remainingCount} other ${remainingCount === 1 ? "action" : "actions"}`;
+    labels.push(display?.label(label) ?? label);
   }
   const sentenceLabels = labels.map((label, index) =>
     index === 0 ? label : label.charAt(0).toLowerCase() + label.slice(1),
   );
   const summary =
-    sentenceLabels.length < 3
+    display?.join(labels) ??
+    (sentenceLabels.length < 3
       ? sentenceLabels.join(" and ")
-      : `${sentenceLabels.slice(0, -1).join(", ")}, and ${sentenceLabels.at(-1)}`;
+      : `${sentenceLabels.slice(0, -1).join(", ")}, and ${sentenceLabels.at(-1)}`);
   return { summary, hasFailure: summaries.some((group) => group.failedCount > 0) };
 }
 

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAndroidFloatingTabs } from "../settings/appearance/AppearancePreferencesProvider";
 import { useState } from "react";
 import { useKeyboardState } from "react-native-keyboard-controller";
@@ -19,6 +20,7 @@ import {
 } from "./thread-undo-notice";
 
 export function ThreadUndoNotice(props: { readonly visible: boolean }) {
+  const { t } = useLanguage();
   const floatingTabsEnabled = useAndroidFloatingTabs();
   const notice = useThreadUndoNotice();
   const insets = useSafeAreaInsets();
@@ -78,9 +80,15 @@ export function ThreadUndoNotice(props: { readonly visible: boolean }) {
       pointerEvents="box-none"
     >
       <Toast
-        message={`${notice.action} thread`}
+        message={t(
+          notice.action === "Settled"
+            ? "threadUndo.settled"
+            : notice.action === "Snoozed"
+              ? "threadUndo.snoozed"
+              : "threadUndo.unpinned",
+        )}
         action={{
-          label: "Undo",
+          label: t("threadUndo.undo"),
           onPress: () => {
             void notice.undo();
           },

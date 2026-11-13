@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useIsFocused, useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { EnvironmentId, ThreadId, TurnItemId } from "@t3tools/contracts";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/shell";
@@ -56,6 +57,7 @@ function descendsFrom(
 
 /** Resolve apps from stored tool calls so links cannot supply apps the call never produced. */
 export function McpAppFullscreenScreen({ route }: McpAppFullscreenScreenProps) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   // Wait for focus before goBack; an exit under another screen must not pop that screen.
@@ -110,9 +112,9 @@ export function McpAppFullscreenScreen({ route }: McpAppFullscreenScreenProps) {
   return (
     <View className="flex-1 bg-screen">
       <AppBar
-        title={app?.server ?? "App"}
+        title={app?.server ?? t("mcpFullscreen.app")}
         onClose={onClose}
-        closeAccessibilityLabel="Exit full screen"
+        closeAccessibilityLabel={t("mcpFullscreen.exit")}
       />
       <View
         className="flex-1"
@@ -126,7 +128,9 @@ export function McpAppFullscreenScreen({ route }: McpAppFullscreenScreenProps) {
       >
         {app === undefined ? (
           detail.data === undefined ? null : (
-            <Text className="m-6 text-sm text-foreground-muted">This app cannot be shown.</Text>
+            <Text className="m-6 text-sm text-foreground-muted">
+              {t("mcpFullscreen.unavailable")}
+            </Text>
           )
         ) : size.width > 0 ? (
           <ThreadMcpApp

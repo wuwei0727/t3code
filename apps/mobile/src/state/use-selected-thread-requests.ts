@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import * as Dialog from "../components/ui/Dialog";
 import { useServerConfigs } from "./entities";
 import {
@@ -164,6 +165,7 @@ function collectAnsweredRequestDrafts(
 }
 
 export function useSelectedThreadRequests() {
+  const { t } = useLanguage();
   const respondToApproval = useAtomCommand(
     threadEnvironment.respondToApproval,
     "thread approval response",
@@ -359,10 +361,7 @@ export function useSelectedThreadRequests() {
             attachment.uploadEnvironmentId !== selectedThreadShell.environmentId,
         )
       ) {
-        Dialog.alert(
-          "Attachments are not ready",
-          "Wait for uploads to finish, or retry failed uploads.",
-        );
+        Dialog.alert(t("requestAttachmentsUi.title"), t("requestAttachmentsUi.detail"));
         return;
       }
       attachmentsByQuestionId.set(

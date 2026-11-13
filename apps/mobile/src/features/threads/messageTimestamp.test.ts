@@ -12,6 +12,12 @@ describe("formatMessageTimestamp", () => {
     const yesterday = new Date(2026, 10, 7, 23, 55);
     const lastYear = new Date(2025, 10, 5, 19, 17);
     expect(formatMessageTimestamp(today.toISOString(), now)).toBe(time(today));
+    expect(formatMessageTimestamp(today.toISOString(), now, "zh-CN")).toBe(
+      today.toLocaleTimeString("zh-CN", { hour: "numeric", minute: "2-digit" }),
+    );
+    expect(formatMessageTimestamp(lastYear.toISOString(), now, "zh-CN")).toBe(
+      `${lastYear.toLocaleDateString("zh-CN", { month: "numeric", day: "numeric", year: "numeric" })} ${lastYear.toLocaleTimeString("zh-CN", { hour: "numeric", minute: "2-digit" })}`,
+    );
     expect(formatMessageTimestamp(yesterday.toISOString(), now)).toBe(
       `${yesterday.toLocaleDateString(undefined, { month: "numeric", day: "numeric" })} ${time(yesterday)}`,
     );

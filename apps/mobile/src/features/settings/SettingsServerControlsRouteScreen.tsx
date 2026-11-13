@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { useNavigation } from "@react-navigation/native";
 import { SettingsRow } from "./components/SettingsRow";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
@@ -19,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   RUNTIME_MODE_CHOICES,
+  localizeRuntimeModeChoice,
   withManagedRuntimeModeLimits,
 } from "../threads/thread-settings-options";
 import { SettingsScreen } from "./components/SettingsScreen";
@@ -46,12 +49,14 @@ import { supportsSharedSettingsSync } from "@t3tools/client-runtime/state/shared
 
 type SettingsPage = "threads" | "source-control" | "worktrees" | "maintenance";
 
-const PAGE_TITLES: Record<SettingsPage, string> = {
-  threads: "Threads",
-  "source-control": "Source control",
-  worktrees: "Worktrees",
-  maintenance: "Maintenance",
-};
+function getPAGE_TITLES(t: UiTranslator): Record<SettingsPage, string> {
+  return {
+    threads: t("settings.server.threads"),
+    "source-control": t("settings.server.sourceControl"),
+    worktrees: t("settings.server.worktrees"),
+    maintenance: t("settings.server.maintenance"),
+  };
+}
 
 const PAGE_PROJECT_KEYS: Record<SettingsPage, readonly ProjectScopedServerSettingKey[]> = {
   threads: [
@@ -73,63 +78,73 @@ const PAGE_PROJECT_KEYS: Record<SettingsPage, readonly ProjectScopedServerSettin
   maintenance: ["continueThreadsAfterServerUpdate"],
 };
 
-const SUBMODULE_CHOICES: ReadonlyArray<{
+function getSUBMODULE_CHOICES(t: UiTranslator): ReadonlyArray<{
   readonly mode: WorktreeSubmodules | null;
   readonly label: string;
   readonly description: string;
-}> = [
-  {
-    mode: null,
-    label: "Inherit",
-    description: "Use the repository's t3.json, or initialize recursively.",
-  },
-  { mode: "recursive", label: "Recursive", description: "Initialize nested submodules too." },
-  {
-    mode: "top-level",
-    label: "Top level only",
-    description: "Skip submodules declared inside other submodules.",
-  },
-  { mode: "none", label: "Skip", description: "Leave submodules empty for a setup script." },
-];
+}> {
+  return [
+    {
+      mode: null,
+      label: t("settings.server.inherit"),
+      description: t("settings.server.submoduleInherit"),
+    },
+    {
+      mode: "recursive",
+      label: t("settings.server.recursive"),
+      description: t("settings.server.recursiveHelp"),
+    },
+    {
+      mode: "top-level",
+      label: t("settings.server.topLevel"),
+      description: t("settings.server.topLevelHelp"),
+    },
+    { mode: "none", label: t("settings.server.skip"), description: t("settings.server.skipHelp") },
+  ];
+}
 
-const WORKSPACE_CHOICES: ReadonlyArray<{
+function getWORKSPACE_CHOICES(t: UiTranslator): ReadonlyArray<{
   readonly mode: ThreadEnvMode | null;
   readonly label: string;
   readonly description: string;
-}> = [
-  {
-    mode: null,
-    label: "Inherit",
-    description: "Use the repository's t3.json, or the current checkout.",
-  },
-  {
-    mode: "local",
-    label: "Current checkout",
-    description: "Start new threads in the existing workspace.",
-  },
-  {
-    mode: "worktree",
-    label: "New worktree",
-    description: "Give each new thread a separate checkout.",
-  },
-];
+}> {
+  return [
+    {
+      mode: null,
+      label: t("settings.server.inherit"),
+      description: t("settings.server.workspaceInherit"),
+    },
+    {
+      mode: "local",
+      label: t("settings.server.currentCheckout"),
+      description: t("settings.server.currentCheckoutHelp"),
+    },
+    {
+      mode: "worktree",
+      label: t("settings.server.newWorktree"),
+      description: t("settings.server.newWorktreeHelp"),
+    },
+  ];
+}
 
-const STREAMING_CHOICES: ReadonlyArray<{
+function getSTREAMING_CHOICES(t: UiTranslator): ReadonlyArray<{
   readonly mode: ResponseStreamingMode;
   readonly label: string;
   readonly description: string;
-}> = [
-  {
-    mode: "turn",
-    label: "After the turn",
-    description: "Show the answer when the agent finishes.",
-  },
-  {
-    mode: "paragraph",
-    label: "Finished paragraphs",
-    description: "Show each paragraph or code block as it completes.",
-  },
-];
+}> {
+  return [
+    {
+      mode: "turn",
+      label: t("settings.server.afterTurn"),
+      description: t("settings.server.afterTurnHelp"),
+    },
+    {
+      mode: "paragraph",
+      label: t("settings.server.paragraphs"),
+      description: t("settings.server.paragraphsHelp"),
+    },
+  ];
+}
 
 // Only servers with thread auto-settlement store these, so other targets get the rest of a patch.
 const AUTO_SETTLE_SETTING_KEYS: ReadonlySet<string> = new Set([
@@ -174,6 +189,11 @@ export function SettingsEnvironmentMaintenanceRouteScreen() {
 }
 
 function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
+  const { t } = useLanguage();
+  const PAGE_TITLES = getPAGE_TITLES(t);
+  const SUBMODULE_CHOICES = getSUBMODULE_CHOICES(t);
+  const WORKSPACE_CHOICES = getWORKSPACE_CHOICES(t);
+  const STREAMING_CHOICES = getSTREAMING_CHOICES(t);
   const environmentMenu = useSettingsEnvironmentMenu();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -269,7 +289,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
     return reason === undefined ? subtitle : `${subtitle} ${reason}`;
   };
   const runtimeModeChoices = withManagedRuntimeModeLimits(
-    RUNTIME_MODE_CHOICES,
+    RUNTIME_MODE_CHOICES.map((choice) => localizeRuntimeModeChoice(choice, t)),
     targets.map((target) => target.environment.serverConfig.managedPolicy),
   );
   const disabledFor = (key: string) =>
@@ -292,15 +312,15 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
         {!hasConnectedSelection || reference === null ? (
           <Text className="px-2 text-base text-foreground-muted">
             {projectSelected
-              ? "Select a project with a checkout on a connected environment."
-              : "Use the filter above to select a connected environment."}
+              ? t("settings.server.selectProject")
+              : t("settings.server.selectEnvironment")}
           </Text>
         ) : (
           <>
             <ManagedPolicyNotice targets={targets} />
             {projectSelected ? (
               <SettingsProjectOverridesSection
-                projectLabel={selectedProject?.label ?? "Unavailable project"}
+                projectLabel={selectedProject?.label ?? t("settings.server.unavailableProject")}
                 hasOverrides={targets.some((target) =>
                   PAGE_PROJECT_KEYS[props.page].some((key) => target.sources[key] === "project"),
                 )}
@@ -312,7 +332,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
             {props.page === "threads" ? (
               <>
                 <SettingsSection
-                  title="Default workspace"
+                  title={t("settings.server.defaultWorkspace")}
                   footer={managed("defaultThreadEnvMode")}
                   trailing={
                     pendingWrites === 0 && isMixed("defaultThreadEnvMode") ? (
@@ -338,7 +358,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                   ))}
                 </SettingsSection>
                 <SettingsSection
-                  title="Default permissions"
+                  title={t("settings.server.defaultPermissions")}
                   footer={managed("defaultRuntimeMode")}
                   trailing={
                     pendingWrites === 0 && uniform("defaultRuntimeMode") === null ? (
@@ -361,7 +381,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                   ))}
                 </SettingsSection>
                 <SettingsSection
-                  title="Response streaming"
+                  title={t("settings.server.streaming")}
                   footer={managed("responseStreamingMode")}
                   trailing={
                     pendingWrites === 0 && uniform("responseStreamingMode") === null ? (
@@ -381,13 +401,13 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     />
                   ))}
                 </SettingsSection>
-                <SettingsSection title="Preview browser">
+                <SettingsSection title={t("settings.server.preview")}>
                   <SettingsSwitchRow
                     icon="globe"
-                    label="Agent browser access"
+                    label={t("settings.server.browserAccess")}
                     subtitle={managedSubtitle(
                       "enableAgentBrowserAccess",
-                      "Allow agents to use the in-app preview browser.",
+                      t("settings.server.browserHelp"),
                     )}
                     value={uniform("enableAgentBrowserAccess")}
                     disabled={disabledFor("enableAgentBrowserAccess")}
@@ -406,37 +426,34 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     canWrite={(environmentId) => writableEnvironments.has(environmentId)}
                   />
                 )}
-                <SettingsSection title="Pull requests">
+                <SettingsSection title={t("settings.server.pullRequests")}>
                   <SettingsSwitchRow
                     icon={PullRequestGlyph.merged}
-                    label="Remove agent credits when merging"
+                    label={t("settings.server.removeCredits")}
                     subtitle={managedSubtitle(
                       "removeAgentCreditsOnMerge",
-                      "Remove recognized agent credits from merge and squash messages on hosts that support it, keeping human co-authors. Includes auto-merge. Excludes merge queues, stack merges, and existing commits.",
+                      t("settings.server.removeCreditsHelp"),
                     )}
                     value={uniform("removeAgentCreditsOnMerge")}
                     disabled={disabledFor("removeAgentCreditsOnMerge")}
                     onValueChange={(value) => write({ removeAgentCreditsOnMerge: value })}
                   />
                 </SettingsSection>
-                <SettingsSection title="Default branch">
+                <SettingsSection title={t("settings.server.defaultBranch")}>
                   <SettingsSwitchRow
                     icon="arrow.down.circle"
-                    label="Automatically pull"
-                    subtitle={managedSubtitle(
-                      "defaultAutoPull",
-                      "Keep the default branch current when there are no local changes.",
-                    )}
+                    label={t("settings.server.autoPull")}
+                    subtitle={managedSubtitle("defaultAutoPull", t("settings.server.autoPullHelp"))}
                     value={uniform("defaultAutoPull")}
                     disabled={disabledFor("defaultAutoPull")}
                     onValueChange={(value) => write({ defaultAutoPull: value })}
                   />
                 </SettingsSection>
-                <SettingsSection title="Clones">
+                <SettingsSection title={t("settings.server.clones")}>
                   <SettingsSwitchRow
                     icon="folder"
-                    label="Clone into host folders"
-                    subtitle="Clones go to github.com/owner/repo under the Add project folder, like ghq."
+                    label={t("settings.server.hostFolders")}
+                    subtitle={t("settings.server.hostFoldersHelp")}
                     value={uniform("ghqCloneLayout")}
                     disabled={disabledFor("ghqCloneLayout")}
                     onValueChange={(value) => write({ ghqCloneLayout: value })}
@@ -447,13 +464,13 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
 
             {props.page === "worktrees" ? (
               <>
-                <SettingsSection title="New worktrees">
+                <SettingsSection title={t("settings.server.newWorktrees")}>
                   <SettingsSwitchRow
                     icon="arrow.triangle.branch"
-                    label="Start from remote"
+                    label={t("settings.server.remote")}
                     subtitle={managedSubtitle(
                       "newWorktreesStartFromOrigin",
-                      "Uses the latest commit of the base branch’s tracked remote branch, even if its name differs. Otherwise uses the same-named branch on origin. Uses your local branch if that remote branch is missing.",
+                      t("settings.server.remoteHelp"),
                     )}
                     value={uniform("newWorktreesStartFromOrigin")}
                     disabled={disabledFor("newWorktreesStartFromOrigin")}
@@ -461,7 +478,7 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                   />
                 </SettingsSection>
                 <SettingsSection
-                  title="Worktree submodules"
+                  title={t("settings.server.submodules")}
                   footer={managed("worktreeSubmodules")}
                   trailing={
                     pendingWrites === 0 && isMixed("worktreeSubmodules") ? (
@@ -512,13 +529,13 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                   />
                 ) : null}
                 {!projectSelected ? (
-                  <SettingsSection title="Manage environments">
+                  <SettingsSection title={t("settings.server.manageEnvironments")}>
                     {selectedTargets.map((target) => (
                       <SettingsRow
                         key={target.environmentId}
                         icon="server.rack"
                         label={target.label}
-                        value="Server and provider updates"
+                        value={t("settings.server.serverUpdates")}
                         onPress={() =>
                           navigation.navigate("SettingsEnvironmentDetail", {
                             environmentId: target.environmentId,
@@ -528,15 +545,15 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                     ))}
                   </SettingsSection>
                 ) : null}
-                <SettingsSection title="Updates">
+                <SettingsSection title={t("settings.server.updates")}>
                   <SettingsSwitchRow
                     icon="arrow.clockwise"
-                    label="Check provider updates"
+                    label={t("settings.server.checkUpdates")}
                     subtitle={managedSubtitle(
                       "enableProviderUpdateChecks",
                       projectSelected
-                        ? "Environment-wide setting. Select All projects to change it."
-                        : "Check installed provider CLIs for newer versions and fetch model catalog updates. When off, new models may not appear.",
+                        ? t("settings.server.environmentSetting")
+                        : t("settings.server.checkUpdatesHelp"),
                     )}
                     value={uniform("enableProviderUpdateChecks")}
                     disabled={disabledFor("enableProviderUpdateChecks")}
@@ -545,10 +562,10 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
                   <View className="border-t border-border-subtle">
                     <SettingsSwitchRow
                       icon="arrow.uturn.forward"
-                      label="Continue after restart"
+                      label={t("settings.server.continueRestart")}
                       subtitle={managedSubtitle(
                         "continueThreadsAfterServerUpdate",
-                        "Resume interrupted threads after an update or restart.",
+                        t("settings.server.continueRestartHelp"),
                       )}
                       value={uniform("continueThreadsAfterServerUpdate")}
                       disabled={disabledFor("continueThreadsAfterServerUpdate")}
@@ -566,22 +583,24 @@ function ServerSettingsDetail(props: { readonly page: SettingsPage }) {
 }
 
 function MixedValuesLabel(props: { readonly projectSelected: boolean }) {
+  const { t } = useLanguage();
   return (
     <Text
       accessibilityLabel={
         props.projectSelected
-          ? "Selected project checkouts use different values"
-          : "Selected environments use different values"
+          ? t("settings.server.mixedProjects")
+          : t("settings.server.mixedEnvironments")
       }
       className="px-2 text-sm text-foreground-muted android:px-4"
     >
-      Mixed
+      {t("settings.server.mixed")}
     </Text>
   );
 }
 
 /** Locked settings are refused when saved; say so before the user tries. */
 function ManagedPolicyNotice(props: { readonly targets: readonly ScopedMobileSettingsTarget[] }) {
+  const { t } = useLanguage();
   const organizations = [
     ...new Set(
       props.targets.flatMap((target) => {
@@ -595,7 +614,7 @@ function ManagedPolicyNotice(props: { readonly targets: readonly ScopedMobileSet
   if (organizations.length === 0) return null;
   return (
     <Text className="px-2 text-sm text-foreground-muted android:px-4">
-      Some settings are managed by {organizations.join(", ")} and cannot be changed here.
+      {t("settings.server.managed", { organizations: organizations.join(", ") })}
     </Text>
   );
 }

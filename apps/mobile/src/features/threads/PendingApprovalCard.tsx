@@ -4,15 +4,12 @@ import type {
   ProviderApprovalOption,
   RuntimeRequestId,
 } from "@t3tools/contracts";
-import {
-  FULL_ACCESS_OVERRIDE_QUESTION,
-  fullAccessOverrideExplanation,
-} from "@t3tools/client-runtime/state/thread-requests";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 
 import { AppText as Text } from "../../components/ui/AppText";
 import type { PendingApproval } from "../../lib/threadActivity";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export interface PendingApprovalCardProps {
   readonly canOperateThread: boolean;
@@ -24,15 +21,13 @@ export interface PendingApprovalCardProps {
   ) => Promise<unknown>;
 }
 
-const DEFAULT_APPROVAL_OPTIONS: ReadonlyArray<ProviderApprovalOption> = [
-  { decision: "accept", label: "Allow once" },
-  { decision: "acceptForSession", label: "Allow session" },
-  { decision: "decline", label: "Decline" },
-];
-
 export function PendingApprovalCard(props: PendingApprovalCardProps) {
-  const options: ReadonlyArray<ProviderApprovalOption> =
-    props.approval.options ?? DEFAULT_APPROVAL_OPTIONS;
+  const { t } = useLanguage();
+  const options: ReadonlyArray<ProviderApprovalOption> = props.approval.options ?? [
+    { decision: "accept", label: t("approval.allowOnce") },
+    { decision: "acceptForSession", label: t("approval.allowSession") },
+    { decision: "decline", label: t("approval.decline") },
+  ];
   const warning = options.find((option) => option.warning)?.warning;
   const canRespond = props.approval.responseCapability === "live";
   const disabled = !canRespond || props.respondingApprovalId === props.approval.requestId;
@@ -40,10 +35,21 @@ export function PendingApprovalCard(props: PendingApprovalCardProps) {
   return (
     <View className="gap-2.5 rounded-[20px] border border-border bg-card-alt p-4">
       <Text className="font-t3-bold text-2xs uppercase tracking-[1.1px] text-foreground-secondary">
-        Approval needed
+        {t("approval.needed")}
       </Text>
       <Text className="font-t3-bold text-lg text-foreground">
-        {props.approval.appName ?? props.approval.requestKind}
+        {props.approval.appName ??
+          t(
+            (
+              {
+                command: "approvalUi.command",
+                "file-read": "approvalUi.read",
+                "file-change": "approvalUi.change",
+                "mcp-elicitation": "approvalUi.elicitation",
+                permission: "approvalUi.permission",
+              } as const
+            )[props.approval.requestKind],
+          )}
       </Text>
       {props.approval.detail ? (
         <Text className="font-sans text-sm leading-normal text-foreground-secondary">
@@ -62,19 +68,22 @@ export function PendingApprovalCard(props: PendingApprovalCardProps) {
           onPress={() => setExplanationOpen((open) => !open)}
         >
           <Text className="font-t3-bold text-xs text-foreground-secondary underline">
-            {FULL_ACCESS_OVERRIDE_QUESTION}
+            {t("approvalUi.why")}
           </Text>
           {explanationOpen ? (
             <Text className="mt-1 font-sans text-xs leading-normal text-foreground-muted">
-              {fullAccessOverrideExplanation(props.approval.fullAccessOverride)}
+              {t(
+                props.approval.fullAccessOverride === "ask_rule"
+                  ? "approvalUi.askRule"
+                  : "approvalUi.safety",
+              )}
             </Text>
           ) : null}
         </Pressable>
       ) : null}
       {!canRespond ? (
         <Text className="font-sans text-sm leading-5 text-foreground-muted">
-          The provider process for this request is no longer available. Interrupt or restart the run
-          to continue.
+          {t("approval.processUnavailable")}
         </Text>
       ) : null}
       {warning ? (
@@ -100,7 +109,7 @@ export function PendingApprovalCard(props: PendingApprovalCardProps) {
       </View>
       {!props.canOperateThread ? (
         <Text className="font-sans text-xs text-foreground-muted">
-          This connection cannot respond to approvals.
+          {t("approval.connectionReadOnly")}
         </Text>
       ) : null}
     </View>

@@ -1,6 +1,6 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
-import type { SidebarProjectGroupingMode } from "@t3tools/contracts";
 import { AsyncResult } from "effect/reactivity";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -14,29 +14,26 @@ import { ListChoiceRow as SettingsChoiceRow } from "../../components/ui/ListChoi
 import { SettingsSection } from "./components/SettingsSection";
 import { NewThreadSettingsSection, WorkingSectionSettings } from "./ThreadSettingsSections";
 
-const GROUPING_OPTIONS: ReadonlyArray<{
-  readonly mode: SidebarProjectGroupingMode;
-  readonly label: string;
-  readonly description: string;
-}> = [
+const GROUPING_OPTIONS = [
   {
     mode: "repository",
-    label: "Group by repository",
-    description: "Matching repositories appear as one project.",
+    label: "settings.grouping.repository",
+    description: "settings.grouping.repositoryHelp",
   },
   {
     mode: "repository_path",
-    label: "Group by repository path",
-    description: "Keep monorepo paths separate.",
+    label: "settings.grouping.repositoryPath",
+    description: "settings.grouping.repositoryPathHelp",
   },
   {
     mode: "separate",
-    label: "Keep separate",
-    description: "Show every workspace as its own project.",
+    label: "settings.grouping.separate",
+    description: "settings.grouping.separateHelp",
   },
-];
+] as const;
 
 export function SettingsProjectGroupingRouteScreen() {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
@@ -46,7 +43,7 @@ export function SettingsProjectGroupingRouteScreen() {
     : null;
 
   return (
-    <SettingsScreen title="General">
+    <SettingsScreen title={t("settings.grouping.general")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -54,12 +51,12 @@ export function SettingsProjectGroupingRouteScreen() {
         contentContainerClassName="gap-3 px-5 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
-        <SettingsSection title="Project grouping">
+        <SettingsSection title={t("settings.grouping.grouping")}>
           {GROUPING_OPTIONS.map((option, index) => (
             <SettingsChoiceRow
               key={option.mode}
-              label={option.label}
-              description={option.description}
+              label={t(option.label)}
+              description={t(option.description)}
               selected={selectedMode === option.mode}
               separated={index > 0}
               disabled={!preferencesReady}

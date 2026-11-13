@@ -4,6 +4,11 @@ import { createRoot } from "react-dom/client";
 import { expect, it, onTestFinished, vi } from "vite-plus/test";
 import type { ServerConfig } from "@t3tools/contracts";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 import type { ZipTreeRow } from "./zipTree";
 
 const files = vi.hoisted(() => new Map<string, Uint8Array>());

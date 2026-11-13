@@ -18,12 +18,14 @@ import {
 import { SettingsRow } from "./components/SettingsRow";
 import { SettingsSection } from "./components/SettingsSection";
 import { SettingsScreen } from "./components/SettingsScreen";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export function SettingsAboutRouteScreen() {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
 
   return (
-    <SettingsScreen title="About">
+    <SettingsScreen title={t("settings.about.title")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -38,6 +40,7 @@ export function SettingsAboutRouteScreen() {
 }
 
 function AppSettingsSection() {
+  const { t } = useLanguage();
   const [checkState, setCheckState] = useState<{
     readonly state: AppUpdateCheckState;
     // "Up to date" is a confirmation that fades back to idle.
@@ -52,7 +55,14 @@ function AppSettingsSection() {
   const version = Constants.expoConfig?.version ?? "0.0.0";
   // Match app.config.ts's production fallback to avoid mislabeling builds as development.
   const variant = (Constants.expoConfig?.extra?.appVariant as string | undefined) ?? "production";
-  const variantLabel = variant === "production" ? "" : capitalize(variant);
+  const variantLabel =
+    variant === "production"
+      ? ""
+      : variant === "preview"
+        ? t("brandUi.preview")
+        : variant === "development"
+          ? t("brandUi.dev")
+          : capitalize(variant);
   const versionLabel = variantLabel ? `${version} · ${variantLabel}` : version;
   const updateCheckAvailable = isAppUpdateCheckAvailable();
   const busy =
@@ -66,7 +76,7 @@ function AppSettingsSection() {
     await settlePromise(() =>
       runAppUpdateCheck({
         applyMode: "immediate",
-        onFailure: (message) => Dialog.alert("Update failed", message),
+        onFailure: (message) => Dialog.alert(t("settings.about.updateFailed"), message),
         onStateChange: (state) =>
           setCheckState({
             state,
@@ -88,15 +98,15 @@ function AppSettingsSection() {
 
   const statusLabel =
     updateState === "checking"
-      ? "Checking…"
+      ? t("settings.about.checking")
       : updateState === "downloading"
-        ? "Downloading…"
+        ? t("settings.about.downloading")
         : updateState === "ready"
-          ? "Update ready"
+          ? t("settings.about.ready")
           : updateState === "restarting"
-            ? "Restarting…"
+            ? t("settings.about.restarting")
             : updateState === "current"
-              ? "Up to date"
+              ? t("settings.about.current")
               : null;
 
   const versionRow = (
@@ -108,7 +118,7 @@ function AppSettingsSection() {
         type="monochrome"
         weight="regular"
       />
-      <Text className="flex-1 text-lg text-foreground">Version</Text>
+      <Text className="flex-1 text-lg text-foreground">{t("settings.about.version")}</Text>
       <View className="items-end">
         <Text className="text-lg text-foreground-muted">{versionLabel}</Text>
         {statusLabel ? (
@@ -119,18 +129,30 @@ function AppSettingsSection() {
   );
 
   return (
-    <SettingsSection title="App">
-      <SettingsRow icon="internaldrive" label="Client Storage" target="SettingsClientStorage" />
-      <SettingsRow icon="stethoscope" label="Diagnostics" target="SettingsDiagnostics" />
+    <SettingsSection title={t("settings.about.app")}>
+      <SettingsRow
+        icon="internaldrive"
+        label={t("settings.about.storage")}
+        target="SettingsClientStorage"
+      />
+      <SettingsRow
+        icon="stethoscope"
+        label={t("settings.about.diagnostics")}
+        target="SettingsDiagnostics"
+      />
       <SettingsRow
         icon="doc.on.doc"
-        label="Open source licenses"
+        label={t("settings.about.licenses")}
         target="SettingsOpenSourceLicenses"
       />
-      <SettingsRow icon="doc.text" label="Legal" fullScreenTarget="SettingsLegal" />
+      <SettingsRow
+        icon="doc.text"
+        label={t("settings.about.legal")}
+        fullScreenTarget="SettingsLegal"
+      />
       {updateCheckAvailable ? (
         <Pressable
-          accessibilityLabel={`Version ${versionLabel}`}
+          accessibilityLabel={t("settings.about.versionLabel", { version: versionLabel })}
           accessibilityRole="text"
           disabled={busy}
           onPress={handleVersionPress}

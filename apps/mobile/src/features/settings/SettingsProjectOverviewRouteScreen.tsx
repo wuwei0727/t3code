@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { AppText as Text, AppTextInput } from "../../components/ui/AppText";
 import { Button } from "../../components/ui/Button";
@@ -46,6 +47,7 @@ import { DEFAULT_SETTINGS_PAGE } from "../layout/workspace/workspace-tab-navigat
 import { readUnloadedThreadCount } from "../../state/olderSettledShelf";
 
 export function SettingsProjectOverviewRouteScreen() {
+  const { t } = useLanguage();
   const environmentMenu = useSettingsEnvironmentMenu();
   const insets = useSafeAreaInsets();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -84,7 +86,7 @@ export function SettingsProjectOverviewRouteScreen() {
       .filter((project) => selectedEnvironmentIds.has(project.environmentId)) ?? [];
 
   return (
-    <SettingsScreen title="Projects" menus={[environmentMenu]}>
+    <SettingsScreen title={t("settings.projects.title")} menus={[environmentMenu]}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -94,12 +96,11 @@ export function SettingsProjectOverviewRouteScreen() {
       >
         {selectedProjectKey === null ? (
           <Text className="px-2 text-base text-foreground-muted">
-            Choose a project with the filter above to manage its name, checkouts and removal.
+            {t("settings.projects.chooseProject")}
           </Text>
         ) : !group || members.length === 0 ? (
           <Text className="px-2 text-base text-foreground-muted">
-            This project has no checkout on the selected connected environments. Change the filter
-            above.
+            {t("settings.projects.noCheckout")}
           </Text>
         ) : (
           <ProjectOverviewContent
@@ -136,6 +137,7 @@ function ProjectOverviewContent(props: {
   readonly projectKey: string | null;
   readonly onProjectRemoved: (projectKey: string | null) => void;
 }) {
+  const { t, locale } = useLanguage();
   const { isRemoving, setIsRemoving, startRemoval, finishRemoval } = props;
   const representative = props.members[0]!;
   const displayName = deriveProjectGroupLabel({ representative, members: props.members });
@@ -178,7 +180,7 @@ function ProjectOverviewContent(props: {
     setIsOrganizing(true);
     for (const member of allMembers) {
       if (!readEnvironmentScope(member.environmentId, AuthOrchestrationOperateScope)) {
-        Dialog.alert("Failed to update project", "This connection can no longer change it.");
+        Dialog.alert(t("settings.projects.updateFailed"), t("settings.projects.cannotChange"));
         break;
       }
       const result = await organizeProject({
@@ -189,8 +191,8 @@ function ProjectOverviewContent(props: {
         if (!isAtomCommandInterrupted(result)) {
           const error = squashAtomCommandFailure(result);
           Dialog.alert(
-            `Failed to update "${member.title}"`,
-            error instanceof Error ? error.message : "An error occurred.",
+            t("settings.projects.updateNameFailed", { project: member.title }),
+            error instanceof Error ? error.message : t("settings.projects.error"),
           );
         }
         break;
@@ -210,8 +212,10 @@ function ProjectOverviewContent(props: {
       (entry) => entry.environmentId === denied.environmentId,
     );
     Dialog.alert(
-      "Failed to remove project",
-      `This connection cannot change projects in ${environment?.label ?? "this environment"}.`,
+      t("settings.projects.removeFailed"),
+      t("settings.projects.cannotChangeEnvironment", {
+        environment: environment?.label ?? t("settings.projects.thisEnvironment"),
+      }),
     );
     return false;
   };
@@ -232,10 +236,62 @@ function ProjectOverviewContent(props: {
       threads,
       unloadedThreadCount: readUnloadedThreadCount(members, threads),
     });
+    const singleMember = members.length === 1 ? members[0] : undefined;
+    const environmentLabel = singleMember
+      ? props.environments.find((entry) => entry.environmentId === singleMember.environmentId)
+          ?.label
+      : undefined;
     Dialog.confirm({
-      title: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
-      message: plan.confirmationMessage,
-      confirmText: plan.targetKind === "checkout" ? "Remove checkout" : "Remove project",
+      title:
+        plan.targetKind === "checkout"
+          ? t("settings.projects.removeCheckout")
+          : t("settings.projects.removeProject"),
+      message:
+        locale === "en"
+          ? plan.confirmationMessage
+          : [
+              t(
+                plan.threadCount > 0
+                  ? "settings.projects.confirmRemoveThreads"
+                  : "settings.projects.confirmRemove",
+                {
+                  kind: t(
+                    plan.targetKind === "checkout"
+                      ? "settings.projects.kindCheckout"
+                      : "settings.projects.kindProject",
+                  ),
+                  project: plan.targetLabel,
+                  count: plan.threadCount,
+                },
+              ),
+              ...(singleMember
+                ? [
+                    t("settings.projects.pathLine", { path: singleMember.workspaceRoot }),
+                    ...(environmentLabel
+                      ? [
+                          t("settings.projects.environmentLine", {
+                            environment: environmentLabel,
+                          }),
+                        ]
+                      : []),
+                  ]
+                : [t("settings.projects.groupEntries", { count: members.length })]),
+              t(
+                plan.threadCount > 0
+                  ? "settings.projects.threadsDeleted"
+                  : "settings.projects.archivedDeleted",
+              ),
+              t(
+                plan.isWholeGroup && !props.hasOtherMembers
+                  ? "settings.projects.entriesOnly"
+                  : "settings.projects.otherEntries",
+              ),
+              t("settings.projects.irreversible"),
+            ].join("\n"),
+      confirmText:
+        plan.targetKind === "checkout"
+          ? t("settings.projects.removeCheckout")
+          : t("settings.projects.removeProject"),
       destructive: true,
       onCancel: finishRemoval,
       onConfirm: () => {
@@ -252,8 +308,8 @@ function ProjectOverviewContent(props: {
               if (!isAtomCommandInterrupted(result)) {
                 const error = squashAtomCommandFailure(result);
                 Dialog.alert(
-                  `Failed to remove "${member.title}"`,
-                  error instanceof Error ? error.message : "An error occurred.",
+                  t("settings.projects.removeNameFailed", { project: member.title }),
+                  error instanceof Error ? error.message : t("settings.projects.error"),
                 );
               }
               return;
@@ -314,17 +370,21 @@ function ProjectOverviewContent(props: {
             {displayName}
           </Text>
           <Text className="text-sm text-foreground-muted">
-            {props.members.length === 1 ? "1 checkout" : `${props.members.length} checkouts`}
+            {props.members.length === 1
+              ? t("settings.projects.oneCheckout")
+              : t("settings.projects.checkoutsCount", { count: props.members.length })}
           </Text>
         </View>
       </View>
 
-      <SettingsSection title="Project">
+      <SettingsSection title={t("settings.projects.project")}>
         <View className="gap-3 p-4">
-          <Text className="text-sm font-t3-medium text-foreground-muted">Name</Text>
+          <Text className="text-sm font-t3-medium text-foreground-muted">
+            {t("settings.projects.name")}
+          </Text>
           <View className="flex-row items-center gap-3">
             <AppTextInput
-              accessibilityLabel="Project name"
+              accessibilityLabel={t("settings.projects.projectName")}
               className="min-h-11 min-w-0 flex-1 rounded-xl border-continuous bg-card px-3 text-base text-foreground"
               value={draftName ?? displayName}
               onChangeText={setDraftName}
@@ -334,8 +394,8 @@ function ProjectOverviewContent(props: {
             />
             {canSave ? (
               <Button
-                label="Save"
-                accessibilityHint="Save project name"
+                label={t("settings.projects.save")}
+                accessibilityHint={t("settings.projects.saveName")}
                 tone="secondary"
                 onPress={saveName}
               />
@@ -345,26 +405,26 @@ function ProjectOverviewContent(props: {
       </SettingsSection>
 
       {canOrganize ? (
-        <SettingsSection title="Organize">
+        <SettingsSection title={t("settings.projects.organize")}>
           <SettingsSwitchRow
             icon="pin"
-            label="Pin"
-            subtitle={
-              offline
-                ? "Connect every machine with this project to change this."
-                : "Pinned projects come first in project pickers."
-            }
+            label={t("settings.projects.pin")}
+            subtitle={offline ? t("settings.projects.connectAll") : t("settings.projects.pinHelp")}
             value={props.group.pinned}
             disabled={isOrganizing || offline}
             onValueChange={(pinned) => void organize({ pinned })}
           />
           <SettingsActionRow
             icon="archivebox"
-            label={props.group.archived ? "Unarchive project" : "Archive project"}
+            label={
+              props.group.archived
+                ? t("settings.projects.unarchive")
+                : t("settings.projects.archive")
+            }
             description={
               props.group.archived
-                ? "Hidden from project pickers. Threads and files are kept."
-                : "Hides the project from project pickers. Threads and files are kept."
+                ? t("settings.projects.archivedHelp")
+                : t("settings.projects.archiveHelp")
             }
             disabled={isOrganizing || offline}
             onPress={() => void organize({ archived: !props.group.archived })}
@@ -372,7 +432,7 @@ function ProjectOverviewContent(props: {
         </SettingsSection>
       ) : null}
 
-      <SettingsSection title="Checkouts">
+      <SettingsSection title={t("settings.projects.checkouts")}>
         {props.members.map((member, index) => {
           const environment = props.environments.find(
             (entry) => entry.environmentId === member.environmentId,
@@ -389,7 +449,7 @@ function ProjectOverviewContent(props: {
                     : "text-lg text-foreground"
                 }
               >
-                {environment?.label ?? "Environment"}
+                {environment?.label ?? t("settings.projects.environment")}
               </Text>
               {environment?.displayUrl ? (
                 <Text className="text-sm leading-normal text-foreground-muted">
@@ -410,22 +470,22 @@ function ProjectOverviewContent(props: {
           );
         })}
       </SettingsSection>
-      <SettingsSection title="Danger">
+      <SettingsSection title={t("settings.projects.danger")}>
         <SettingsActionRow
           icon="trash"
           label={
             props.hasOtherMembers
-              ? "Remove checkout"
+              ? t("settings.projects.removeCheckout")
               : props.members.length > 1
-                ? "Remove this project everywhere"
-                : "Remove project"
+                ? t("settings.projects.removeEverywhere")
+                : t("settings.projects.removeProject")
           }
           description={
             props.hasOtherMembers
-              ? "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched."
+              ? t("settings.projects.removeSelectedHelp")
               : props.members.length > 1
-                ? `Deletes all ${props.members.length} checkout entries and their threads on every machine. Files on disk are not touched.`
-                : "Deletes the project entry and its threads. Files on disk are not touched."
+                ? t("settings.projects.removeAllHelp", { count: props.members.length })
+                : t("settings.projects.removeProjectHelp")
           }
           tone="danger"
           disabled={!canRemoveGroup || isRemoving}
@@ -442,16 +502,19 @@ function RemoveCheckoutAction(props: {
   readonly disabled: boolean;
   readonly onPress: () => void;
 }) {
+  const { t } = useLanguage();
   const canRemove = useEnvironmentScope(props.member.environmentId, AuthOrchestrationOperateScope);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Remove checkout ${props.member.workspaceRoot}`}
+      accessibilityLabel={t("settings.projects.removePath", { path: props.member.workspaceRoot })}
       disabled={props.disabled || !canRemove}
       onPress={props.onPress}
       className="self-start rounded-full border border-border bg-card px-3 py-1.5 disabled:opacity-40"
     >
-      <Text className="font-t3-medium text-xs text-danger-foreground">Remove checkout</Text>
+      <Text className="font-t3-medium text-xs text-danger-foreground">
+        {t("settings.projects.removeCheckout")}
+      </Text>
     </Pressable>
   );
 }

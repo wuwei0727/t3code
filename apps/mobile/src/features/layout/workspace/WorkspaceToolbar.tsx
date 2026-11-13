@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { useActiveNewTask } from "../../../state/active-new-task";
 import { Toolbar } from "../../../components/ui/Toolbar";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
@@ -21,16 +22,16 @@ import { shouldRestoreNativeSearch } from "./workspace-tabs-state";
 import { useFloatingWorkspaceTabs, useSidebarWorkspaceTabs } from "./useSystemWorkspaceTabBar";
 import { WorkspaceTabToolbarButtons } from "./WorkspaceSectionToolbar";
 
-const SEARCH_LABELS = {
-  threads: "Search threads",
-  pullRequests: "Search pull requests",
-  settings: "Search settings",
-} as const;
-
 export function WorkspaceToolbar(props: {
   readonly onNewTask: () => void;
   readonly sidebar?: boolean;
 }) {
+  const { t } = useLanguage();
+  const searchLabels = {
+    threads: t("navigation.searchThreads"),
+    pullRequests: t("navigation.searchPullRequests"),
+    settings: t("settings.search"),
+  };
   const workspace = useWorkspaceTabs()!;
   const activeNewTask = useActiveNewTask();
   const deviceType = useDeviceType();
@@ -53,7 +54,7 @@ export function WorkspaceToolbar(props: {
   // The Settings list takes the selected tab's place, so search follows it.
   const selectedTab = workspace.settingsOpen ? "settings" : workspace.state.selectedTab;
   const tab = workspace.state.tabs[selectedTab];
-  const searchLabel = SEARCH_LABELS[selectedTab === "usage" ? "threads" : selectedTab];
+  const searchLabel = searchLabels[selectedTab === "usage" ? "threads" : selectedTab];
   const { isTabActive: isListTabActive } = workspace;
   // A retained tab slot stays mounted while another is shown.
   const isTabActive = (tab: typeof selectedTab) =>
@@ -132,7 +133,7 @@ export function WorkspaceToolbar(props: {
   const searchButton = foldedSearch ? (
     <Toolbar.Button
       identifier="workspace-search"
-      accessibilityLabel={searchVisible ? "Close search" : searchLabel}
+      accessibilityLabel={searchVisible ? t("common.closeSearch") : searchLabel}
       icon={searchVisible ? "xmark" : "magnifyingglass"}
       onPress={searchVisible ? () => searchRef.current?.cancelSearch() : focusSearch}
       separateBackground

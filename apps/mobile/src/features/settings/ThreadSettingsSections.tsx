@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Button } from "../../components/ui/Button";
 import {
   AuthSettingsWriteScope,
@@ -32,10 +33,11 @@ import {
 } from "./settings-scoped-server";
 
 export function SettingsLabsRouteScreen() {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
 
   return (
-    <SettingsScreen title="Labs">
+    <SettingsScreen title={t("settings.threadSections.labs")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -44,18 +46,18 @@ export function SettingsLabsRouteScreen() {
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
         <MachineBetaSection
-          title="Linked environments"
+          title={t("settings.threadSections.linked")}
           icon="link"
           capability="peerLinks"
           setting="linkedEnvironmentsEnabled"
-          description="Let agents on a machine work on your other machines, and theirs on it. Turn it on for each machine. While off, nothing new starts over a link; running tasks finish."
+          description={t("settings.threadSections.linkedHelp")}
         />
         <MachineBetaSection
-          title="Fast worktree checkout"
+          title={t("settings.threadSections.fastCheckout")}
           icon="bolt.circle"
           capability="fastWorktreeCheckout"
           setting="fastWorktreeCheckout"
-          description="On a Mac, clone new worktrees from a checkout cached in the T3 home folder instead of writing every file. Uses Git’s normal checkout when it can’t. Turning it off deletes the cache."
+          description={t("settings.threadSections.fastCheckoutHelp")}
         />
       </ScrollView>
     </SettingsScreen>
@@ -72,6 +74,7 @@ export function AutoSettleSettingsRows(props: {
   readonly write: (patch: ServerSettingsPatch) => void;
   readonly pending: boolean;
 }) {
+  const { t } = useLanguage();
   const { selectedTargets, projectGroups, selectedProjectKey } = useSettingsEnvironmentFilter();
   const selectedProject = projectGroups.find((group) => group.key === selectedProjectKey);
   const writableEnvironments = useEnvironmentsWithScope(selectedTargets, AuthSettingsWriteScope);
@@ -126,36 +129,36 @@ export function AutoSettleSettingsRows(props: {
   return (
     <View className="gap-6">
       {!projectSelected ? (
-        <SettingsSection title="Usage limits">
+        <SettingsSection title={t("settings.threadSections.usage")}>
           <SettingsSwitchRow
             icon="clock"
-            label="Resume after usage limits"
-            subtitle="Automatically resume threads when their usage limits reset. You can cancel auto-resume in each thread."
+            label={t("settings.threadSections.resume")}
+            subtitle={t("settings.threadSections.resumeHelp")}
             value={uniformMobileSetting(displayTargets, "autoResumeLimitedThreads")}
             disabled={disabledFor("autoResumeLimitedThreads")}
             onValueChange={(value) => writeToAll({ autoResumeLimitedThreads: value })}
           />
           <SettingsSwitchRow
             icon="clock"
-            label="Snooze until limits reset"
-            subtitle="Snooze threads until their usage limits reset. Enable auto-resume to continue the agent after the reset."
+            label={t("settings.threadSections.snooze")}
+            subtitle={t("settings.threadSections.snoozeHelp")}
             value={uniformMobileSetting(displayTargets, "snoozeLimitedThreads")}
             disabled={disabledFor("snoozeLimitedThreads")}
             onValueChange={(value) => writeToAll({ snoozeLimitedThreads: value })}
           />
         </SettingsSection>
       ) : null}
-      <SettingsSection title="Auto-settle">
+      <SettingsSection title={t("settings.threadSections.autoSettle")}>
         <SettingsSwitchRow
           icon="arrow.triangle.branch"
-          label="Auto-settle merged threads"
+          label={t("settings.threadSections.settleMerged")}
           value={referenceSettings.sidebarAutoSettleOnMerge}
           disabled={disabledFor("sidebarAutoSettleOnMerge")}
           onValueChange={(value) => writeToAll({ sidebarAutoSettleOnMerge: value })}
         />
         <SettingsSwitchRow
           icon="clock"
-          label="Auto-settle inactive threads"
+          label={t("settings.threadSections.settleInactive")}
           value={afterDays !== null}
           disabled={disabledFor("sidebarAutoSettleAfterDays")}
           onValueChange={(value) =>
@@ -165,7 +168,9 @@ export function AutoSettleSettingsRows(props: {
         {afterDays !== null ? (
           <View className="flex-row items-center gap-4 px-4 py-4 android:min-h-14 android:py-3">
             <View className="w-[22px] android:w-6" />
-            <Text className="flex-1 text-foreground text-lg android:text-base">Inactive days</Text>
+            <Text className="flex-1 text-foreground text-lg android:text-base">
+              {t("settings.threadSections.inactiveDays")}
+            </Text>
             <AutoSettleDaysField
               value={afterDays}
               disabled={disabledFor("sidebarAutoSettleAfterDays")}
@@ -175,14 +180,14 @@ export function AutoSettleSettingsRows(props: {
         ) : null}
       </SettingsSection>
       {!props.pending && mismatches.length > 0 ? (
-        <SettingsSection title="Across environments">
+        <SettingsSection title={t("settings.threadSections.across")}>
           <View className="gap-3 p-4">
-            <Text className="text-base text-foreground">Auto-settle defaults differ</Text>
+            <Text className="text-base text-foreground">{t("settings.threadSections.differ")}</Text>
             <Text className="text-sm text-foreground-muted">
               {mismatches.map((mismatch) => mismatch.label).join(", ")}
             </Text>
             <Button
-              label="Apply auto-settle defaults"
+              label={t("settings.threadSections.apply")}
               tone="secondary"
               disabled={disabledFor("sidebarAutoSettleOnMerge", "sidebarAutoSettleAfterDays")}
               onPress={() => writeToAll(autoSettlePatch)}
@@ -195,6 +200,7 @@ export function AutoSettleSettingsRows(props: {
 }
 
 export function WorkingSectionSettings() {
+  const { t } = useLanguage();
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
   const preferences = useAtomValue(mobilePreferencesAtom);
   const workingShelfEnabled =
@@ -202,35 +208,34 @@ export function WorkingSectionSettings() {
 
   return (
     <View className="gap-3">
-      <SettingsSection title="Sidebar">
+      <SettingsSection title={t("settings.threadSections.sidebar")}>
         <SettingsSwitchRow
           icon="bolt.circle"
-          label="Working section"
+          label={t("settings.threadSections.working")}
           value={workingShelfEnabled}
           onValueChange={(value) => savePreferences({ workingShelfEnabled: value })}
         />
       </SettingsSection>
       <Text className="px-2 text-sm text-foreground-muted">
-        Fold working and monitoring threads into a Working section. They return to the top of the
-        list when they need you. While this is on, active threads are ordered by time and cannot be
-        moved.
+        {t("settings.threadSections.workingHelp")}
       </Text>
     </View>
   );
 }
 
 export function NewThreadSettingsSection() {
+  const { t } = useLanguage();
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
   const preferences = useAtomValue(mobilePreferencesAtom);
   const useLastProject =
     AsyncResult.isSuccess(preferences) && preferences.value.useLastProjectForNewThreads !== false;
 
   return (
-    <SettingsSection title="New threads">
+    <SettingsSection title={t("settings.threadSections.newThreads")}>
       <SettingsSwitchRow
         icon="square.and.pencil"
-        label="Use last project"
-        subtitle="Start new threads in the last project you used on this device."
+        label={t("settings.threadSections.lastProject")}
+        subtitle={t("settings.threadSections.lastProjectHelp")}
         value={useLastProject}
         onValueChange={(value) => savePreferences({ useLastProjectForNewThreads: value })}
       />
@@ -254,6 +259,7 @@ function MachineBetaSection({
   readonly setting: MachineBetaSetting;
   readonly description: string;
 }) {
+  const { t } = useLanguage();
   const { environments } = useEnvironments();
   const supported = environments.filter(
     (environment) =>
@@ -268,7 +274,7 @@ function MachineBetaSection({
   if (supported.length === 0) return null;
   return (
     <View className="gap-3">
-      <SettingsSection title={`Beta: ${title}`}>
+      <SettingsSection title={t("settings.threadSections.beta", { title })}>
         {supported.map((environment) => {
           const policy = environment.serverConfig?.managedPolicy;
           const managed = isManagedSettingPath(policy, setting);
@@ -277,7 +283,13 @@ function MachineBetaSection({
               key={environment.environmentId}
               icon={icon}
               label={environment.label}
-              {...(managed ? { subtitle: `Managed by ${policy?.organization}.` } : {})}
+              {...(managed
+                ? {
+                    subtitle: t("settings.threadSections.managed", {
+                      organization: policy?.organization ?? "",
+                    }),
+                  }
+                : {})}
               value={environment.serverConfig?.settings[setting] === true}
               disabled={managed || !writable.has(environment.environmentId)}
               onValueChange={(value) =>

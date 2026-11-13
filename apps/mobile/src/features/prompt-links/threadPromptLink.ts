@@ -1,3 +1,4 @@
+import { currentTranslator } from "../../i18n/currentLanguage";
 import * as Dialog from "../../components/ui/Dialog";
 import type { NavigationState, PartialState } from "@react-navigation/native";
 import { EnvironmentId, ThreadId, type ScopedThreadRef } from "@t3tools/contracts";
@@ -57,7 +58,7 @@ export function takeThreadPromptLink(
   if (environmentId === null || threadId === null) return nextState;
   const parsed = parseThreadLinkPrompt(search);
   if (!parsed.ok) {
-    Dialog.alert("Could not open link", parsed.error);
+    Dialog.alert(currentTranslator()("threadPromptLinkUi.failed"), parsed.error);
     return nextState;
   }
   if (parsed.value !== null) {
@@ -99,7 +100,10 @@ export function resolvePendingThreadPromptLink(state: NavigationState | undefine
     void applyLinkedPromptToThreadDraft(
       scopedThreadKey(ref.environmentId, ref.threadId),
       prompt,
-      promptLinkNotice({ hiddenCharacters: prompt.hiddenCharacters }),
+      promptLinkNotice({
+        translate: currentTranslator(),
+        hiddenCharacters: prompt.hiddenCharacters,
+      }),
     );
   } else if (step.pending !== null) {
     stopWaitingForShell ??= appAtomRegistry.subscribe(shellAtom, (shell) => {

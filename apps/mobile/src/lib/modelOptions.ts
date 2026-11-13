@@ -1,3 +1,5 @@
+import type { UiLocale } from "../i18n/locale";
+import { makeTranslator } from "../i18n/translator";
 import {
   normalizeProviderAccentColor,
   resolveProviderInstanceDisplayName,
@@ -193,7 +195,9 @@ export function describeUnavailableModelSelection(
   config: T3ServerConfig | null | undefined,
   selection: ModelSelection,
   projectId: ProjectId | null,
+  locale: UiLocale = "en",
 ): { readonly title: string; readonly detail: string } {
+  const t = makeTranslator(locale);
   const provider = config?.providers.find(
     (candidate) => candidate.instanceId === selection.instanceId,
   );
@@ -207,18 +211,26 @@ export function describeUnavailableModelSelection(
       instanceId: selection.instanceId,
     });
     return {
-      title: "Provider not allowed",
-      detail: `${disallowedProviderMessage(config?.managedPolicy?.organization, label)} Choose another model.`,
+      title: t("modelAvailability.providerDenied"),
+      detail:
+        locale === "en"
+          ? `${disallowedProviderMessage(config?.managedPolicy?.organization, label)} Choose another model.`
+          : config?.managedPolicy?.organization
+            ? t("modelAvailability.managedProvider", {
+                organization: config.managedPolicy.organization,
+                provider: label,
+              })
+            : t("modelAvailability.organizationProvider", { provider: label }),
     };
   }
   return isDisabledForProject(config, provider, selection.instanceId, projectId)
     ? {
-        title: "Model turned off for this project",
-        detail: "Turn it back on from web or desktop, or choose another model.",
+        title: t("modelAvailability.projectDisabled"),
+        detail: t("modelAvailability.enableHint"),
       }
     : {
-        title: "Antigravity model unavailable",
-        detail: "Set up Antigravity on web or desktop, or choose another model.",
+        title: t("modelAvailability.antigravityUnavailable"),
+        detail: t("modelAvailability.antigravityHint"),
       };
 }
 

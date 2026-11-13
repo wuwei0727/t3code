@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { NativeScrollView } from "../../native/NativeScrollViewMarker";
 import { Button } from "../../components/ui/Button";
 import type {
@@ -47,35 +48,36 @@ function ArchivedThreadsHeader(props: {
   readonly onSearchQueryChange: (query: string) => void;
   readonly onSortOrderChange: (sortOrder: ArchivedThreadSortOrder) => void;
 }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const hasCustomFilter = props.selectedEnvironmentId !== null || props.sortOrder !== "newest";
   return (
     <AppBar
-      title="Archived threads"
+      title={t("archive.title")}
       onBack={() => navigation.goBack()}
       search={{
         value: props.searchQuery,
         onChangeText: props.onSearchQueryChange,
-        placeholder: "Search archived threads",
-        compactPlaceholder: "Search",
+        placeholder: t("archive.search"),
+        compactPlaceholder: t("archive.compactSearch"),
         mode: "inline",
         compactToolbar: width < 700,
       }}
       menus={[
         {
-          title: "Archived thread options",
+          title: t("archive.options"),
           icon: hasCustomFilter
             ? "line.3.horizontal.decrease.circle.fill"
             : "line.3.horizontal.decrease.circle",
           items: [
             {
               id: "environment",
-              title: "Environment",
+              title: t("archive.environment"),
               items: [
                 {
                   id: "environment:all",
-                  title: "All environments",
+                  title: t("archive.allEnvironments"),
                   selected: props.selectedEnvironmentId === null,
                   onPress: () => props.onEnvironmentChange(null),
                 },
@@ -89,17 +91,17 @@ function ArchivedThreadsHeader(props: {
             },
             {
               id: "sort",
-              title: "Sort by archived date",
+              title: t("archive.sort"),
               items: [
                 {
                   id: "sort:newest",
-                  title: "Newest first",
+                  title: t("archive.newest"),
                   selected: props.sortOrder === "newest",
                   onPress: () => props.onSortOrderChange("newest"),
                 },
                 {
                   id: "sort:oldest",
-                  title: "Oldest first",
+                  title: t("archive.oldest"),
                   selected: props.sortOrder === "oldest",
                   onPress: () => props.onSortOrderChange("oldest"),
                 },
@@ -107,7 +109,7 @@ function ArchivedThreadsHeader(props: {
             },
             {
               id: "refresh",
-              title: "Refresh archived threads",
+              title: t("archive.refresh"),
               onPress: props.onRefresh,
             },
           ],
@@ -182,6 +184,7 @@ function ArchivedThreadRow(props: {
   readonly onUnarchive: () => void;
   readonly thread: EnvironmentThreadShell;
 }) {
+  const { t } = useLanguage();
   const { width: windowWidth } = useWindowDimensions();
   const cardColor = useUniwindTheme()["--color-grouped-card"];
   const canOperateThread = useEnvironmentScope(
@@ -255,9 +258,9 @@ function ArchivedThreadRow(props: {
       onSwipeableClose={props.onSwipeableClose}
       onSwipeableWillOpen={props.onSwipeableWillOpen}
       primaryAction={{
-        accessibilityLabel: `Unarchive ${props.thread.title}`,
+        accessibilityLabel: t("archive.unarchiveThread", { title: props.thread.title }),
         icon: "arrow.uturn.backward",
-        label: "Unarchive",
+        label: t("archive.unarchive"),
         onPress: props.onUnarchive,
       }}
       simultaneousWith={props.simultaneousSwipeGesture}
@@ -269,14 +272,15 @@ function ArchivedThreadRow(props: {
 }
 
 function ArchiveError(props: { readonly message: string; readonly onRetry: () => void }) {
+  const { t } = useLanguage();
   return (
     <View className="rounded-[20px] border border-danger-border bg-danger p-4">
       <Text className="text-base font-t3-bold text-danger-foreground">
-        Could not load every archive
+        {t("archive.loadFailed")}
       </Text>
       <Text className="mt-1 text-sm text-foreground-muted">{props.message}</Text>
       <View className="mt-3">
-        <Button label="Try again" tone="secondary" onPress={props.onRetry} />
+        <Button label={t("archive.retry")} tone="secondary" onPress={props.onRetry} />
       </View>
     </View>
   );
@@ -297,6 +301,7 @@ export function ArchivedThreadsScreen(props: {
   readonly onSortOrderChange: (sortOrder: ArchivedThreadSortOrder) => void;
   readonly onUnarchiveThread: (thread: EnvironmentThreadShell) => void;
 }) {
+  const { t } = useLanguage();
   const { onDeleteThread, onUnarchiveThread } = props;
   const openSwipeableRef = useRef<SwipeableMethods | null>(null);
   const archiveScrollGesture = useNativeGesture();
@@ -380,22 +385,18 @@ export function ArchivedThreadsScreen(props: {
       return (
         <View className="items-center py-16">
           <AppActivityIndicator colorClassName="accent-icon" />
-          <Text className="mt-3 text-sm text-foreground-muted">Loading archive...</Text>
+          <Text className="mt-3 text-sm text-foreground-muted">{t("archive.loading")}</Text>
         </View>
       );
     }
 
     return (
       <EmptyState
-        detail={
-          isFiltered
-            ? "Try another search or environment."
-            : "Threads you archive will appear here."
-        }
-        title={isFiltered ? "No matching threads" : "No archived threads"}
+        detail={isFiltered ? t("archive.trySearch") : t("archive.description")}
+        title={isFiltered ? t("archive.noMatch") : t("archive.empty")}
       />
     );
-  }, [isFiltered, isInitialLoad]);
+  }, [isFiltered, isInitialLoad, t]);
 
   return (
     // Without this native container, formSheet resizing mistakes the background for a header and collapses the list.

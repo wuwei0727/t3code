@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
 import { useNavigation } from "@react-navigation/native";
 import { useAtomValue } from "@effect/atom-react";
@@ -26,6 +27,7 @@ import {
 const SHOWCASE_ENABLED = process.env.EXPO_PUBLIC_SHOWCASE === "1";
 
 export function SettingsEnvironmentsRouteScreen() {
+  const { t } = useLanguage();
   const {
     connectedEnvironments,
     onReconnectEnvironment,
@@ -91,11 +93,11 @@ export function SettingsEnvironmentsRouteScreen() {
 
   return (
     <SettingsScreen
-      title="Environments"
+      title={t("connection.environments")}
       refresh={
         relaySession
           ? {
-              accessibilityLabel: "Refresh cloud environments",
+              accessibilityLabel: t("connection.refreshCloud"),
               disabled: isRefreshingCloud,
               onPress: () => void refreshCloudEnvironments(),
             }
@@ -103,7 +105,7 @@ export function SettingsEnvironmentsRouteScreen() {
       }
       actions={[
         {
-          accessibilityLabel: "Add environment",
+          accessibilityLabel: t("connection.add"),
           icon: "plus",
           tintColor: headerIconColor,
           onPress: () => navigation.navigate("SettingsEnvironmentNew"),

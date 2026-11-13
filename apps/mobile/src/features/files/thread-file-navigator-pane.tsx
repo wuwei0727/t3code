@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { resolveFilesystemReadAccess } from "@t3tools/client-runtime/state/filesystem";
 import { environmentSession } from "../../state/session";
 import type { EnvironmentId } from "@t3tools/contracts";
@@ -20,6 +21,7 @@ export function ThreadFileNavigatorPane(props: {
   readonly selectedPath: string | null;
   readonly onSelectFile: (path: string) => void;
 }) {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const { themeAppearance: highlightTheme } = useAppearancePreferences();
   const fileAccessSession = useEnvironmentQuery(
@@ -60,7 +62,7 @@ export function ThreadFileNavigatorPane(props: {
           ? entriesQuery.error
           : fileAccess.isPending
             ? null
-            : (fileAccess.error ?? "This connection cannot read host files.")
+            : (fileAccess.error ?? t("threadFilePane.denied"))
       }
       isPending={fileAccess.isPending || entriesQuery.isPending}
       isRefreshing={entriesQuery.isRefreshing}
@@ -82,14 +84,14 @@ export function ThreadFileNavigatorPane(props: {
     <View className="flex-1 ios:bg-sheet android:bg-header android:flex-col-reverse">
       <ScreenContent insetHorizontal>{fileTree}</ScreenContent>
       <AppBar
-        title="Files"
+        title={t("threadFilePane.title")}
         subtitle={props.projectName}
         search={{
           value: searchQuery,
           onChangeText: setSearchQuery,
-          placeholder: "Search files",
+          placeholder: t("threadFilePane.search"),
         }}
-        refresh={{ accessibilityLabel: "Refresh files", onPress: entriesQuery.refresh }}
+        refresh={{ accessibilityLabel: t("threadFilePane.refresh"), onPress: entriesQuery.refresh }}
       />
     </View>
   );

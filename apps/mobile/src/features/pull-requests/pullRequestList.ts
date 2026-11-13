@@ -1,3 +1,5 @@
+import type { UiLocale } from "../../i18n/locale";
+import { makeTranslator } from "../../i18n/translator";
 import { pullRequestFilterProjects } from "@t3tools/client-runtime/pull-request-project-filter";
 import { parsePullRequestQuery } from "@t3tools/client-runtime/pull-request-query";
 import {
@@ -464,32 +466,34 @@ export function filterPullRequestList<
 
 export function pullRequestListReviewStatus(
   entry: Pick<PullRequestListEntry, "reviewDecision" | "viewerReviewRequested">,
+  locale: UiLocale = "en",
 ) {
+  const t = makeTranslator(locale);
   if (entry.reviewDecision === "changes-requested")
     return {
-      label: "Changes",
-      accessibleLabel: "Changes requested",
+      label: t("prList.review.changes"),
+      accessibleLabel: t("prList.review.changesRequested"),
       icon: "person.fill.xmark",
       tint: "accent-danger-foreground",
     } as const;
   if (entry.reviewDecision === "approved")
     return {
-      label: "Approved",
-      accessibleLabel: "Reviews approved",
+      label: t("prList.review.approved"),
+      accessibleLabel: t("prList.review.reviewsApproved"),
       icon: "person.fill.checkmark",
       tint: "accent-adaptive-emerald-600-400",
     } as const;
   if (entry.viewerReviewRequested)
     return {
-      label: "Your review",
-      accessibleLabel: "Your review requested",
+      label: t("prList.review.yourReview"),
+      accessibleLabel: t("prList.review.yourReviewRequested"),
       icon: "person.badge.clock",
       tint: "accent-warning-foreground",
     } as const;
   if (entry.reviewDecision === "review-required")
     return {
-      label: "Review",
-      accessibleLabel: "Review required",
+      label: t("prList.review.review"),
+      accessibleLabel: t("prList.review.reviewRequired"),
       icon: "person.badge.clock",
       tint: "accent-icon-muted",
     } as const;

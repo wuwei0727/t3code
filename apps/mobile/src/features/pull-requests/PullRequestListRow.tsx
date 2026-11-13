@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeChangeRequestTerminology } from "./changeRequestTerminology";
 import {
   capitalizeTerm,
   sourceControlClients,
@@ -43,7 +45,12 @@ export const PullRequestListRow = memo(
     readonly getActions: (item: EnvironmentPullRequestListEntry) => MenuProps["actions"];
     readonly onAction: (item: EnvironmentPullRequestListEntry, action: string) => void;
   }) {
+    const { t, locale } = useLanguage();
     const { item } = props;
+    const term = localizeChangeRequestTerminology(
+      sourceControlClients.get(item.provider).changeRequest,
+      locale,
+    );
     const foreground = props.selected
       ? selectedThreadRowColors.foregroundClassName
       : props.sidebar
@@ -59,9 +66,9 @@ export const PullRequestListRow = memo(
       : props.sidebar
         ? "text-drawer-foreground-muted"
         : "text-foreground-tertiary";
-    const status = pullRequestStatus(item);
-    const conflict = pullRequestConflict(item);
-    const review = pullRequestListReviewStatus(item);
+    const status = pullRequestStatus(item, locale);
+    const conflict = pullRequestConflict(item, locale);
+    const review = pullRequestListReviewStatus(item, locale);
     const checks = item.checksState ? pullRequestChecksStatus(item.checksState) : null;
     return (
       <View style={props.sidebar ? THREAD_LIST_V2_SIDEBAR_ROW_CONTAINER_STYLE : undefined}>
@@ -74,8 +81,25 @@ export const PullRequestListRow = memo(
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ selected: props.selected, busy: props.busy }}
-            accessibilityLabel={`${capitalizeTerm(sourceControlClients.get(item.provider).changeRequest.singular)} ${item.number}, ${item.title}, ${status.label}${conflict ? `, ${conflict.label.toLowerCase()}` : ""}, by ${item.author?.login ?? "unknown author"}${review ? `, ${review.accessibleLabel}` : ""}${item.checksState ? `, checks ${item.checksState}` : ""}${item.stack ? `, stack ${item.stack.position} of ${item.stack.size}` : ""}${item.labels.length ? `, ${item.labels.map((label) => label.name).join(", ")}` : ""}, ${item.additions} additions, ${item.deletions} deletions`}
-            accessibilityHint="Double tap to open. Touch and hold for quick actions."
+            accessibilityLabel={t("prList.row", {
+              request: capitalizeTerm(term.singular),
+              number: item.number,
+              title: item.title,
+              status: status.label,
+              conflict: conflict ? `, ${conflict.label.toLowerCase()}` : "",
+              author: item.author?.login ?? t("prList.unknownAuthor"),
+              review: review ? `, ${review.accessibleLabel}` : "",
+              checks: item.checksState ? t(`prList.checks.${item.checksState}`) : "",
+              stack: item.stack
+                ? t("prList.stack", { position: item.stack.position, size: item.stack.size })
+                : "",
+              labels: item.labels.length
+                ? `, ${item.labels.map((label) => label.name).join(", ")}`
+                : "",
+              additions: item.additions,
+              deletions: item.deletions,
+            })}
+            accessibilityHint={t("prList.hint")}
             onPress={() => props.onSelect(item)}
             disabled={props.busy}
             style={props.sidebar ? THREAD_LIST_V2_SIDEBAR_ROW_STYLE : undefined}
@@ -176,7 +200,12 @@ export const PullRequestListRow = memo(
                   ) : null}
                 </View>
                 {checks ? (
-                  <View className="shrink-0" accessibilityLabel={`Checks ${item.checksState}`}>
+                  <View
+                    className="shrink-0"
+                    accessibilityLabel={
+                      item.checksState ? t(`prList.checksLabel.${item.checksState}`) : ""
+                    }
+                  >
                     <SymbolView name={checks.icon} size={13} tintColorClassName={checks.tint} />
                   </View>
                 ) : null}

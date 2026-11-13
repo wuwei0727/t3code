@@ -1,3 +1,5 @@
+import { makeTranslator, type UiTranslator } from "../i18n/translator";
+import { useLanguage } from "../i18n/LanguageProvider";
 import { useComposerAttachmentActions } from "./use-composer-attachment-actions";
 import * as Dialog from "../components/ui/Dialog";
 import { AuthOrchestrationOperateScope } from "@t3tools/contracts";
@@ -121,12 +123,15 @@ const EMPTY_QUEUE_WORKFLOW_ATOM = Atom.make<null>(null).pipe(
 const EMPTY_CHECKPOINT_SUMMARIES_ATOM = Atom.make<ReadonlyArray<ThreadCheckpointSummary>>([]);
 const EMPTY_THREAD_SEQUENCE_ATOM = Atom.make(0);
 
-export function appendReviewCommentToDraft(input: {
-  readonly environmentId: EnvironmentId;
-  readonly threadId: ThreadId;
-  readonly text: string;
-  readonly attachments?: ReadonlyArray<DraftComposerImageAttachment>;
-}): void {
+export function appendReviewCommentToDraft(
+  input: {
+    readonly environmentId: EnvironmentId;
+    readonly threadId: ThreadId;
+    readonly text: string;
+    readonly attachments?: ReadonlyArray<DraftComposerImageAttachment>;
+  },
+  t: UiTranslator = makeTranslator("en"),
+): void {
   const threadKey = scopedThreadKey(input.environmentId, input.threadId);
   const upgraded = upgradeLegacyContextMessage(input.text);
   if (
@@ -135,7 +140,7 @@ export function appendReviewCommentToDraft(input: {
       reidentifyComposerContext(upgraded.text, upgraded.records, uuidv4),
     )
   ) {
-    Dialog.alert("Too many context items", "Remove some context from the draft and try again.");
+    Dialog.alert(t("composerValidation.tooManyContext"), t("composerValidation.removeContext"));
     return;
   }
   if (input.attachments && input.attachments.length > 0) {
@@ -144,7 +149,12 @@ export function appendReviewCommentToDraft(input: {
     });
     if (rejectedCount > 0) {
       setPendingConnectionError(
-        `${rejectedCount} comment attachment${rejectedCount === 1 ? " was" : "s were"} not added. Messages can contain at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS} attachments.`,
+        t(
+          rejectedCount === 1
+            ? "composerValidation.rejectedOne"
+            : "composerValidation.rejectedMany",
+          { count: rejectedCount, limit: PROVIDER_SEND_TURN_MAX_ATTACHMENTS },
+        ),
       );
     }
   }
@@ -185,6 +195,7 @@ export function useThreadComposerState(input: {
     settings: { readonly runtimeMode: RuntimeMode; readonly modelSelection: ModelSelection },
   ) => Promise<boolean>;
 }) {
+  const { t, locale } = useLanguage();
   const {
     selectedThread: selectedThreadShell,
     selectedThreadCreation,
@@ -415,7 +426,7 @@ export function useThreadComposerState(input: {
       edit.existingAttachments.length === 0 &&
       draft.attachments.length === 0
     ) {
-      Dialog.alert("Add a message", "A queued message cannot be left empty.");
+      Dialog.alert(t("composerValidation.addMessage"), t("composerValidation.emptyQueued"));
       return;
     }
     if (
@@ -423,8 +434,8 @@ export function useThreadComposerState(input: {
       PROVIDER_SEND_TURN_MAX_ATTACHMENTS
     ) {
       Dialog.alert(
-        "Too many attachments",
-        `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
+        t("composerValidation.tooManyAttachments"),
+        t("composerValidation.attachmentLimit", { count: PROVIDER_SEND_TURN_MAX_ATTACHMENTS }),
       );
       return;
     }
@@ -446,8 +457,8 @@ export function useThreadComposerState(input: {
       finishSave(false);
       const error = squashAtomCommandFailure(prepared);
       Dialog.alert(
-        "Could not save the queued message",
-        error instanceof Error ? error.message : "Your edit is still in the composer.",
+        t("composerValidation.saveQueuedFailed"),
+        error instanceof Error ? error.message : t("composerValidation.editRetained"),
       );
       return;
     }
@@ -482,8 +493,8 @@ export function useThreadComposerState(input: {
       // The run left the queue during the save; its exit already told the composer what happened.
       if (!finishSave(false)) return;
       Dialog.alert(
-        "Could not save the queued message",
-        "It may have already started. Your edit is still in the composer.",
+        t("composerValidation.saveQueuedFailed"),
+        t("composerValidation.alreadyStarted"),
       );
       return;
     }
@@ -553,6 +564,7 @@ export function useThreadComposerState(input: {
         serverConfig,
         modelSelection,
         thread.projectId,
+        locale,
       );
       Dialog.alert(title, detail);
     };
@@ -560,14 +572,14 @@ export function useThreadComposerState(input: {
     const sideChatCommand = beforeDispatch === undefined ? parseSideChatCommand(text) : null;
     if (sideChatCommand) {
       if (sideChatUnavailableReason !== null) {
-        Dialog.alert("Side chat not started", sideChatUnavailableReason);
+        Dialog.alert(t("composerValidation.sideNotStarted"), sideChatUnavailableReason);
       } else if (attachments.length > 0 || (draft.context?.records.length ?? 0) > 0) {
         Dialog.alert(
-          "Side chats take text only",
-          "Remove the attachments and context, then send it again.",
+          t("composerValidation.sideTextOnly"),
+          t("composerValidation.removeAttachments"),
         );
       } else if (sideChatCommand.prompt.length === 0) {
-        Dialog.alert("Ask a side question", "Type the question after /side, then send it.");
+        Dialog.alert(t("composerValidation.sideQuestion"), t("composerValidation.sideCommand"));
       } else if (modelUnavailable) {
         alertModelUnavailable();
       } else if (!startingSideChatRef.current) {
@@ -613,15 +625,15 @@ export function useThreadComposerState(input: {
     // Recovery preserves over-cap attachments; require trimming or outbox delivery would reject indefinitely.
     if (attachments.length > PROVIDER_SEND_TURN_MAX_ATTACHMENTS) {
       Dialog.alert(
-        "Too many attachments",
-        `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
+        t("composerValidation.tooManyAttachments"),
+        t("composerValidation.attachmentLimit", { count: PROVIDER_SEND_TURN_MAX_ATTACHMENTS }),
       );
       return null;
     }
 
-    const contextBlockReason = composerContextSendBlockReason(draft.context);
+    const contextBlockReason = composerContextSendBlockReason(draft.context, locale);
     if (contextBlockReason) {
-      Dialog.alert("Too much context", contextBlockReason);
+      Dialog.alert(t("composerValidation.tooMuchContext"), contextBlockReason);
       return null;
     }
 
@@ -640,7 +652,10 @@ export function useThreadComposerState(input: {
       if (!readEnvironmentScope(selectedThreadShell.environmentId, AuthOrchestrationOperateScope))
         return null;
       if (thread.activeProviderThreadId === null) {
-        Dialog.alert("Start a Codex thread first", "Send a message before you submit feedback.");
+        Dialog.alert(
+          t("composerValidation.startCodex"),
+          t("composerValidation.sendBeforeFeedback"),
+        );
         return null;
       }
       const metadata = makeQueuedMessageMetadata();
@@ -789,25 +804,24 @@ export function useThreadComposerState(input: {
   // Side chats do not nest or start from subagents, and need a server that forks them.
   const sideChatUnavailableReason = (() => {
     const serverConfig = selectedEnvironmentRuntime?.serverConfig;
-    if (selectedThreadShell?.lineage.sideChat === true)
-      return "Side chats cannot start side chats.";
+    if (selectedThreadShell?.lineage.sideChat === true) return t("composerValidation.noNestedSide");
     if (selectedThreadShell?.lineage.relationshipToParent === "subagent") {
-      return "Subagent threads cannot start side chats.";
+      return t("composerValidation.noSubagentSide");
     }
     if (!selectedThreadShell || !serverConfig) {
-      return "Side chats are not ready yet. Try again in a moment.";
+      return t("composerValidation.sideNotReady");
     }
     if (serverConfig.environment.capabilities.sideChats !== true) {
-      return "Update this environment's T3 Code server to use side chats.";
+      return t("composerValidation.updateSide");
     }
-    if (selectedThreadCreation !== null) return "Side chats start after the first message.";
+    if (selectedThreadCreation !== null) return t("composerValidation.sideAfterFirst");
     if (
       orchestrationV2WorktreePending(
         selectedThreadShell.worktreePath ?? null,
         selectedThreadProjection?.projection.runs ?? [],
       )
     ) {
-      return "Available once the thread's worktree is set up.";
+      return t("composerValidation.worktreePending");
     }
     return null;
   })();

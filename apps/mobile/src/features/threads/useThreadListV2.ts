@@ -1,4 +1,5 @@
 import type { OlderSettledScope } from "@t3tools/client-runtime/state/threads";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import type { EnvironmentId } from "@t3tools/contracts";
 import { useMemo, useSyncExternalStore } from "react";
 
@@ -67,6 +68,7 @@ export function useThreadListV2(input: {
   readonly selectedThreadKey: string | null;
 }) {
   const { threads, workingShelfEnabled } = input;
+  const { locale } = useLanguage();
   const layoutTime = useMemo(
     () => threadListV2LayoutTime({ threads, now: input.now, searchQuery: input.searchQuery }),
     [threads, input.now, input.searchQuery],
@@ -212,6 +214,7 @@ export function useThreadListV2(input: {
   const items = useMemo(
     () =>
       buildThreadListV2ListItems({
+        locale,
         items: layout.items,
         pendingTasks,
         workingCount: layout.workingCount,
@@ -231,6 +234,7 @@ export function useThreadListV2(input: {
       }),
     [
       layout,
+      locale,
       pendingTasks,
       input.workingShelfExpanded,
       input.snoozedShelfExpanded,

@@ -1,3 +1,4 @@
+import { currentTranslator } from "../../i18n/currentLanguage";
 import * as Dialog from "../../components/ui/Dialog";
 import { sessionHasLegacyPermissions } from "@t3tools/contracts";
 import { Atom } from "effect/reactivity";
@@ -65,9 +66,9 @@ export function installPermissionUpdateNotice(): () => void {
       presentNext();
     };
     Dialog.alert(
-      `Permissions have changed for ${environment.label}`,
-      "This connection still uses the old permissions, so some actions may no longer be available. Pair again using a new link with the permissions you need.",
-      [{ text: "Got it", onPress: dismiss }],
+      currentTranslator()("permissionUpdateUi.title", { environment: environment.label }),
+      currentTranslator()("permissionUpdateUi.detail"),
+      [{ text: currentTranslator()("permissionUpdateUi.gotIt"), onPress: dismiss }],
       { cancelable: false },
     );
   };

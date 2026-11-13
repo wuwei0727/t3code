@@ -1,3 +1,5 @@
+import type { UiLocale } from "../../i18n/locale";
+import { makeTranslator } from "../../i18n/translator";
 import type { RelayEnvironmentStatusResponse } from "@t3tools/contracts/relay";
 import {
   orchestrationProtocolCompatibilityError,
@@ -12,12 +14,16 @@ export interface AvailableCloudEnvironmentPresentation {
   readonly statusText: string;
 }
 
-export function availableCloudEnvironmentPresentation(input: {
-  readonly isStatusPending: boolean;
-  readonly status: RelayEnvironmentStatusResponse | null;
-  readonly statusError: string | null;
-  readonly statusErrorTraceId: string | null;
-}): AvailableCloudEnvironmentPresentation {
+export function availableCloudEnvironmentPresentation(
+  input: {
+    readonly isStatusPending: boolean;
+    readonly status: RelayEnvironmentStatusResponse | null;
+    readonly statusError: string | null;
+    readonly statusErrorTraceId: string | null;
+  },
+  locale: UiLocale = "en",
+): AvailableCloudEnvironmentPresentation {
+  const t = makeTranslator(locale);
   const compatibilityError =
     input.status?.descriptor === undefined
       ? null
@@ -35,7 +41,7 @@ export function availableCloudEnvironmentPresentation(input: {
       connectionError: null,
       connectionErrorTraceId: null,
       connectionState: "available",
-      statusText: "Available · Relay online",
+      statusText: t("cloudEnvironments.online"),
     };
   }
 
@@ -46,7 +52,10 @@ export function availableCloudEnvironmentPresentation(input: {
       connectionError,
       connectionErrorTraceId: input.status.traceId ?? null,
       connectionState: "error",
-      statusText: connectionError,
+      statusText:
+        input.status.offlineReason === "tunnel_released"
+          ? t("cloudEnvironments.released")
+          : (input.status.error ?? t("cloudEnvironments.relayOffline")),
     };
   }
 
@@ -64,7 +73,7 @@ export function availableCloudEnvironmentPresentation(input: {
     connectionErrorTraceId: null,
     connectionState: "available",
     statusText: input.isStatusPending
-      ? "Available · Checking relay status..."
-      : "Available · Relay status unknown",
+      ? t("cloudEnvironments.checking")
+      : t("cloudEnvironments.unknown"),
   };
 }

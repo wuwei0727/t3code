@@ -1,3 +1,6 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
+import type { UiTranslator } from "../../i18n/translator";
 import { findErrorTraceId } from "@t3tools/client-runtime/errors";
 import {
   isAtomCommandInterrupted,
@@ -6,7 +9,7 @@ import {
 import type { MenuAction } from "@react-native-menu/menu";
 import type { EnvironmentId } from "@t3tools/contracts";
 import type { RelayClientEnvironmentRecord } from "@t3tools/contracts/relay";
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useMemo, useRef, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
@@ -21,28 +24,41 @@ import {
   useManagedRelayEnvironments,
 } from "./managedRelayState";
 
-const linkedAtFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
-
-function linkedAtLabel(value: string): string {
+function linkedAtLabel(value: string, formatter: Intl.DateTimeFormat, t: UiTranslator): string {
   const linkedAt = new Date(value);
   return Number.isNaN(linkedAt.getTime())
-    ? "Link date unavailable"
-    : `Linked ${linkedAtFormatter.format(linkedAt)}`;
+    ? t("connectProfile.dateUnavailable")
+    : t("connectProfile.linked", { date: formatter.format(linkedAt) });
 }
 
-function endpointLabel(environment: RelayClientEnvironmentRecord): string {
+function endpointLabel(environment: RelayClientEnvironmentRecord, t: UiTranslator): string {
   return environment.endpoint.providerKind === "cloudflare_tunnel"
-    ? "Managed tunnel"
-    : "Activity publishing only";
+    ? t("connectProfile.managedTunnel")
+    : t("connectProfile.activityOnly");
 }
 
-function confirmDeregister(environment: RelayClientEnvironmentRecord, onConfirm: () => void) {
-  const title = "Deregister server?";
-  const message = `“${environment.label}” will be removed from this account. T3 Connect access will be revoked, any managed tunnel will be removed, and a host space will become available. Local connections on your devices are not changed.`;
-  Dialog.confirm({ title, message, confirmText: "Deregister", destructive: true, onConfirm });
+function confirmDeregister(
+  environment: RelayClientEnvironmentRecord,
+  onConfirm: () => void,
+  t: UiTranslator,
+) {
+  const title = t("connectProfile.deregisterConfirm");
+  const message = t("connectProfile.deregisterHelp", { environment: environment.label });
+  Dialog.confirm({
+    title,
+    message,
+    confirmText: t("connectProfile.deregister"),
+    destructive: true,
+    onConfirm,
+  });
 }
 
 export function T3ConnectProfilePage() {
+  const { t, locale } = useLanguage();
+  const linkedAtFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }),
+    [locale],
+  );
   const environmentsState = useManagedRelayEnvironments();
   const deregisterEnvironment = useAtomCommand(deregisterManagedRelayEnvironmentCommand, {
     reportFailure: false,
@@ -93,16 +109,20 @@ export function T3ConnectProfilePage() {
       traceId,
       cause,
     });
+    const visibleMessage =
+      cause instanceof Error ? message : t("connectProfile.deregisterFailedHelp");
     Dialog.alert(
-      "Could not deregister server",
-      traceId ? `${message}\n\nTrace ID: ${traceId}` : message,
+      t("connectProfile.deregisterFailed"),
+      traceId
+        ? t("connectProfile.traceDetails", { message: visibleMessage, traceId })
+        : visibleMessage,
       traceId
         ? [
             {
-              text: "Copy trace ID",
+              text: t("connectProfile.copyTrace"),
               onPress: () => copyTextWithHaptic(traceId, { target: "connection-trace-id" }),
             },
-            { text: "OK", style: "cancel" },
+            { text: t("common.ok"), style: "cancel" },
           ]
         : undefined,
     );
@@ -132,17 +152,17 @@ export function T3ConnectProfilePage() {
         />
       }
     >
-      <ClerkSectionHeader>Registered servers</ClerkSectionHeader>
+      <ClerkSectionHeader>{t("connectProfile.servers")}</ClerkSectionHeader>
 
       {environmentsState.error ? (
         <>
           <ClerkRow
-            title="Could not load T3 Connect environments"
-            subtitle={environmentsState.error}
+            title={t("connectProfile.loadFailed")}
+            subtitle={appErrorText(environmentsState.error, t)}
           />
           {errorTraceId ? (
             <ClerkButtonRow
-              label="Copy trace ID"
+              label={t("connectProfile.copyTrace")}
               onPress={() => {
                 copyTextWithHaptic(errorTraceId, { target: "connection-trace-id" });
               }}
@@ -152,14 +172,16 @@ export function T3ConnectProfilePage() {
       ) : isInitialLoad ? (
         <View className="flex-row items-center gap-3 px-6 py-4">
           <AppActivityIndicator colorClassName={"accent-clerk-foreground-muted"} size="small" />
-          <Text className="text-base text-clerk-foreground-muted">Loading environments</Text>
+          <Text className="text-base text-clerk-foreground-muted">
+            {t("connectProfile.loading")}
+          </Text>
         </View>
       ) : environments.length > 0 ? (
         environments.map((environment) => (
           <ClerkRow
             key={environment.environmentId}
             title={environment.label}
-            subtitle={`${linkedAtLabel(environment.linkedAt)} · ${endpointLabel(environment)}`}
+            subtitle={`${linkedAtLabel(environment.linkedAt, linkedAtFormatter, t)} · ${endpointLabel(environment, t)}`}
             accessory={
               deregisteringEnvironmentId === environment.environmentId ? (
                 <AppActivityIndicator
@@ -168,14 +190,19 @@ export function T3ConnectProfilePage() {
                 />
               ) : (
                 <Menu
-                  actions={ENVIRONMENT_MENU_ACTIONS}
+                  actions={ENVIRONMENT_MENU_ACTIONS.map((action) => ({
+                    ...action,
+                    title: t("connectProfile.deregister"),
+                  }))}
                   isAnchoredToRight
                   onPressAction={() =>
-                    confirmDeregister(environment, () => void handleDeregister(environment))
+                    confirmDeregister(environment, () => void handleDeregister(environment), t)
                   }
                 >
                   <Pressable
-                    accessibilityLabel={`Actions for ${environment.label}`}
+                    accessibilityLabel={t("connectProfile.actions", {
+                      environment: environment.label,
+                    })}
                     accessibilityRole="button"
                     disabled={deregisteringEnvironmentId !== null}
                     className="size-[30px] items-center justify-center active:opacity-60 disabled:opacity-50"
@@ -195,14 +222,11 @@ export function T3ConnectProfilePage() {
           />
         ))
       ) : (
-        <ClerkRow
-          title="No servers registered"
-          subtitle="Link a server from its local Settings to reach it through T3 Connect."
-        />
+        <ClerkRow title={t("connectProfile.none")} subtitle={t("connectProfile.linkHelp")} />
       )}
 
       <Text className="px-6 pt-6 text-xs leading-normal text-clerk-foreground-muted">
-        Connections on this device are managed in Settings.
+        {t("connectProfile.deviceConnections")}
       </Text>
     </ScrollView>
   );

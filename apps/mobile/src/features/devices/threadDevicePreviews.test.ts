@@ -2,6 +2,7 @@ import { ThreadId, type DeviceServiceState } from "@t3tools/contracts";
 import { describe, expect, it } from "vite-plus/test";
 
 import { selectedThreadDevicePreview, threadDevicePreviews } from "./threadDevicePreviews";
+import { makeTranslator } from "../../i18n/translator";
 
 const threadId = ThreadId.make("thread");
 const state: DeviceServiceState = {
@@ -82,6 +83,16 @@ describe("thread device previews", () => {
     expect(selectedThreadDevicePreview(previews, previews[1]!.key)?.description).toBe(
       "Android 15 · Mac mini",
     );
+    const localized = threadDevicePreviews(
+      { ...state, hosts: state.hosts.map((host) => ({ ...host, label: "This machine" })) },
+      threadId,
+      makeTranslator("zh-CN"),
+    );
+    expect(localized.map((preview) => preview.name)).toEqual(["Pixel 9", "Pixel 8"]);
+    expect(localized.map((preview) => preview.description)).toEqual([
+      "Android 16 · 本机",
+      "Android 15 · This machine",
+    ]);
   });
 
   it("selects another open device when the agent closes the selected session", () => {

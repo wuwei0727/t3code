@@ -6,12 +6,53 @@ import assetLinks from "../web/public/.well-known/assetlinks.json";
 
 // Keep config parsing independent of local env files and build credentials.
 vi.mock("../../scripts/lib/public-config.ts", () => ({
-  loadRepoEnv: () => ({ APP_VARIANT: process.env.APP_VARIANT }),
+  loadRepoEnv: () => ({
+    APP_VARIANT: process.env.APP_VARIANT,
+    T3CODE_COMMUNITY_ANDROID: process.env.T3CODE_COMMUNITY_ANDROID,
+    T3CODE_COMMUNITY_VERSION_CODE: process.env.T3CODE_COMMUNITY_VERSION_CODE,
+    T3CODE_MOBILE_UPDATES_ENABLED: process.env.T3CODE_MOBILE_UPDATES_ENABLED,
+  }),
 }));
 
 afterEach(() => {
   vi.unstubAllEnvs();
 });
+
+it("isolates community Android identity and never inherits official OTA or verified links", async () => {
+  vi.stubEnv("T3CODE_COMMUNITY_ANDROID", "1");
+  vi.stubEnv("T3CODE_COMMUNITY_VERSION_CODE", "2");
+  vi.stubEnv("T3CODE_MOBILE_UPDATES_ENABLED", "1");
+  const config = await loadConfig("preview");
+  expect(config.platforms).toEqual(["android"]);
+  expect(config.android?.package).toBe("io.github.wuwei0727.t3code.zh");
+  expect(config.scheme).toBe("t3code-zh");
+  expect(config.android?.versionCode).toBe(2);
+  expect(config.version).toBe("2.3.0-zh.2");
+  expect(config.updates).toEqual({ enabled: false });
+  expect(config.runtimeVersion).toEqual({ policy: "appVersion" });
+  expect(config.android?.intentFilters).toEqual([
+    {
+      action: "VIEW",
+      autoVerify: false,
+      data: [
+        { scheme: "https", host: new URL(DEFAULT_HOSTED_APP_URL).host, pathPrefix: "/threads/" },
+      ],
+      category: ["BROWSABLE", "DEFAULT"],
+    },
+  ]);
+  expect(config.extra?.eas.projectId).toBeUndefined();
+  expect(config.owner).toBeUndefined();
+  expect(config.plugins).toContain("./plugins/withoutCommunityObserve.cjs");
+});
+
+it.each(["0", "-1", "NaN", "1.5", "2100000001"])(
+  "rejects invalid community version code %s",
+  async (value) => {
+    vi.stubEnv("T3CODE_COMMUNITY_ANDROID", "1");
+    vi.stubEnv("T3CODE_COMMUNITY_VERSION_CODE", value);
+    await expect(loadConfig("preview")).rejects.toThrow("T3CODE_COMMUNITY_VERSION_CODE");
+  },
+);
 
 async function loadConfig(variant: string | undefined) {
   vi.resetModules();
@@ -34,6 +75,7 @@ it.each([
   const config = await loadConfig(value);
   expect(config.ios?.bundleIdentifier).toBe(identifier);
   expect(config.android?.package).toBe(identifier);
+  expect(config.plugins).not.toContain("./plugins/withoutCommunityObserve.cjs");
   // Copied thread links open this app only while app.t3.codes lists it.
   const host = new URL(DEFAULT_HOSTED_APP_URL).host;
   expect(config.ios?.associatedDomains).toContain(`applinks:${host}`);

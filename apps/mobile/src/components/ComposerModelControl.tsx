@@ -1,4 +1,6 @@
 import type { ModelSelection, ProviderDriverKind } from "@t3tools/contracts";
+import { useLanguage } from "../i18n/LanguageProvider";
+import { localizeProviderOptionText } from "../lib/providerOptionUi";
 import {
   buildTraitsTriggerDisplay,
   getPromptControlledTraits,
@@ -21,12 +23,13 @@ export function ComposerModelControl(props: {
   readonly iconOnly?: boolean;
   readonly onPress: () => void;
 }) {
+  const { t } = useLanguage();
   const descriptors = resolveProviderOptionDescriptors({
     capabilities: props.modelOption?.capabilities,
     selections: props.selection?.options,
   });
   const promptTraits = getPromptControlledTraits(descriptors, props.prompt);
-  const summary = props.provider
+  const rawSummary = props.provider
     ? buildTraitsTriggerDisplay({
         descriptors,
         primarySelectDescriptorId: promptTraits.primarySelectDescriptor?.id ?? null,
@@ -35,8 +38,9 @@ export function ComposerModelControl(props: {
         reportedModelSelection: props.reportedSelection,
       }).label
     : "";
+  const summary = localizeProviderOptionText(rawSummary, t);
   const badge = props.modelOption?.providerBadge;
-  const label = props.modelOption?.label ?? props.selection?.model ?? "Choose model";
+  const label = props.modelOption?.label ?? props.selection?.model ?? t("composerModelUi.choose");
   const providerNameLabel = badge
     ? providerInstanceNameLabel({
         provider: props.modelOption?.providerDriver,
@@ -49,7 +53,7 @@ export function ComposerModelControl(props: {
   return (
     <ComposerInlineControl
       accessibilityLabel={[
-        "Model and reasoning settings",
+        t("composerModelUi.settings"),
         label,
         badge?.showBadge ? badge.displayName : null,
         summary,

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Chip } from "../../components/ui/Chip";
 import { PullRequestSectionHeading } from "./PullRequestSectionHeading";
 import type { PullRequestListEntry, PullRequestSummary } from "@t3tools/contracts";
@@ -18,6 +19,7 @@ export function PullRequestOverviewLoading({
   readonly params: PullRequestParams;
   readonly stack: PullRequestStackState;
 }) {
+  const { t } = useLanguage();
   const review = pullRequestListReviewStatus({
     reviewDecision: summary.reviewDecision ?? undefined,
     viewerReviewRequested: "viewerReviewRequested" in summary && summary.viewerReviewRequested,
@@ -27,7 +29,7 @@ export function PullRequestOverviewLoading({
   return (
     <View
       className="gap-5"
-      accessibilityLabel="Loading pull request details"
+      accessibilityLabel={t("prLoading.label")}
       accessibilityState={{ busy: true }}
     >
       <PullRequestStackCard params={params} state={stack} />
@@ -62,7 +64,7 @@ export function PullRequestOverviewLoading({
         </PullRequestCardRow>
         <PullRequestCardRow
           compact
-          title={review?.accessibleLabel ?? "Reviews"}
+          title={review?.accessibleLabel ?? t("prStatus.reviews")}
           icon={review?.icon ?? "bubble.left"}
           tint={review?.tint}
         >
@@ -100,7 +102,7 @@ export function PullRequestOverviewLoading({
         </View>
       ) : null}
       <View className="gap-3">
-        <PullRequestSectionHeading>Description</PullRequestSectionHeading>
+        <PullRequestSectionHeading>{t("prLoading.description")}</PullRequestSectionHeading>
         <View className="gap-3 py-1">
           <View className="h-4 w-full rounded bg-subtle-strong" />
           <View className="h-4 w-full rounded bg-subtle-strong" />

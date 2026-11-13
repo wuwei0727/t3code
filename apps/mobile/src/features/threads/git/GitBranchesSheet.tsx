@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { sanitizeFeatureBranchName } from "@t3tools/shared/git";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { useState } from "react";
@@ -22,6 +23,7 @@ type GitBranchesSheetProps = StaticScreenProps<{
 }>;
 
 export function GitBranchesSheet(_props: GitBranchesSheetProps) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -84,18 +86,18 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
         >
           <View className="bg-card android:gap-3 android:rounded-[20px] android:p-4 ios:gap-2 ios:rounded-[18px] ios:border ios:border-border ios:px-4 ios:py-4">
             <Text className="android:text-foreground android:text-base android:font-t3-medium ios:text-foreground-secondary ios:text-2xs ios:font-t3-bold ios:tracking-[1px] ios:uppercase">
-              New branch
+              {t("git.newBranch")}
             </Text>
             <TextInput
               value={newBranchName}
               onChangeText={setNewBranchName}
               placeholder="feature/mobile-polish"
-              accessibilityLabel="New branch name"
+              accessibilityLabel={t("git.newBranchName")}
               className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
             />
             <SheetActionButton
               icon="plus"
-              label="Create & checkout"
+              label={t("git.createCheckout")}
               tone="primary"
               disabled={!canChangeThreadBranch || busy || newBranchName.trim().length === 0}
               onPress={() => {
@@ -112,31 +114,31 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
 
           <View className="bg-card android:gap-3 android:rounded-[20px] android:p-4 ios:gap-2 ios:rounded-[18px] ios:border ios:border-border ios:px-4 ios:py-4">
             <Text className="android:text-foreground android:text-base android:font-t3-medium ios:text-foreground-secondary ios:text-2xs ios:font-t3-bold ios:tracking-[1px] ios:uppercase">
-              New worktree
+              {t("git.newWorktree")}
             </Text>
             {Platform.OS === "android" ? (
-              <Text className="text-foreground-secondary text-sm">Base branch</Text>
+              <Text className="text-foreground-secondary text-sm">{t("git.baseBranch")}</Text>
             ) : null}
             <TextInput
               value={worktreeBaseBranch}
               onChangeText={setWorktreeBaseBranchOverride}
               placeholder="main"
-              accessibilityLabel="Worktree base branch"
+              accessibilityLabel={t("git.worktreeBase")}
               className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
             />
             {Platform.OS === "android" ? (
-              <Text className="text-foreground-secondary text-sm">New branch</Text>
+              <Text className="text-foreground-secondary text-sm">{t("git.newBranch")}</Text>
             ) : null}
             <TextInput
               value={worktreeBranchName}
               onChangeText={setWorktreeBranchName}
               placeholder="feature/mobile-thread"
-              accessibilityLabel="Worktree branch name"
+              accessibilityLabel={t("git.worktreeBranch")}
               className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
             />
             <SheetActionButton
               icon="square.split.2x1"
-              label="Create worktree"
+              label={t("git.createWorktree")}
               tone="primary"
               disabled={
                 !canChangeThreadBranch ||
@@ -161,27 +163,27 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
 
           <View className="gap-2">
             <Text className="text-foreground-secondary android:px-4 android:pb-1 android:pt-3 android:text-sm android:font-t3-medium ios:text-2xs ios:font-t3-bold ios:tracking-[1px] ios:uppercase">
-              Existing branches
+              {t("git.existing")}
             </Text>
             {branchesLoading ? (
               <Text className="text-foreground-secondary text-sm font-medium android:px-4">
-                Loading branches...
+                {t("git.loadingBranches")}
               </Text>
             ) : null}
             {!branchesLoading && availableBranches.length === 0 ? (
               <Text className="text-foreground-secondary text-sm font-medium android:px-4">
-                No local branches found.
+                {t("git.noBranches")}
               </Text>
             ) : null}
             {availableBranches.map((branch) => {
               const disabled = disabledExistingBranches.has(branch.name);
               const subtitle = branch.worktreePath
                 ? branch.worktreePath === currentWorktreePath
-                  ? "Checked out in this thread"
-                  : "Checked out in another worktree"
+                  ? t("git.checkoutHere")
+                  : t("git.checkoutElsewhere")
                 : branch.isDefault
-                  ? "Default branch"
-                  : "Local branch";
+                  ? t("git.defaultBranch")
+                  : t("git.localBranch");
 
               return (
                 <Pressable
@@ -215,7 +217,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
           </View>
         </ScrollView>
       </ScreenContent>
-      <SheetHeader title="Branches & worktrees" onClose={() => navigation.goBack()} />
+      <SheetHeader title={t("git.branchesWorktrees")} onClose={() => navigation.goBack()} />
     </View>
   );
 }

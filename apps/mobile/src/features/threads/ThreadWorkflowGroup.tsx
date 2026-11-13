@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeProviderOptionText } from "../../lib/providerOptionUi";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import {
   isActiveSubagentStatus,
@@ -48,15 +50,16 @@ export function ThreadWorkflowGroup(props: {
   readonly group: SubagentWorkflowGroup;
   readonly onOpen: (threadId: ThreadId) => void;
 }) {
+  const { t } = useLanguage();
   const { group } = props;
   const provider = useEnvironmentServerConfig(props.environmentId)?.providers.find(
     (candidate) => candidate.instanceId === props.subagent.providerInstanceId,
   );
   const [selected, setSelected] = useState<string | null>(null);
-  const rail = workflowRail(group);
+  const rail = workflowRail(group, t);
   const open = rail.find((item) => item.key === selected);
   const label = group.workflow.workflowName ?? group.workflow.title;
-  const statusLabel = resolveSubagentRowPresentation(props.subagent).statusLabel;
+  const statusLabel = resolveSubagentRowPresentation(props.subagent, false, t).statusLabel;
 
   return (
     <View className="my-2">
@@ -64,8 +67,8 @@ export function ThreadWorkflowGroup(props: {
         <View className="flex-row items-center">
           <RowPressable
             accessibilityRole="button"
-            accessibilityLabel={`${label} workflow, ${statusLabel}`}
-            accessibilityHint={open ? "Collapses the workflow" : "Opens the current phase"}
+            accessibilityLabel={t("workflowGroup.accessibility", { label, status: statusLabel })}
+            accessibilityHint={t(open ? "workflowGroup.collapseHint" : "workflowGroup.openHint")}
             accessibilityState={{ expanded: open !== undefined }}
             disabled={rail.length === 0}
             onPress={() => setSelected(nextWorkflowSelection(rail, selected))}
@@ -109,7 +112,14 @@ export function ThreadWorkflowGroup(props: {
                   icon={RAIL_ICON[item.tone]}
                   label={count ? `${count} ${item.title}` : item.title}
                   selected={item.key === selected}
-                  accessibilityLabel={`${item.title} phase, ${item.tone}${count ? `, ${count} completed` : ""}`}
+                  accessibilityLabel={t(
+                    count ? "workflowGroup.phaseCount" : "workflowGroup.phase",
+                    {
+                      title: item.title,
+                      tone: t(`workflowGroup.tone.${item.tone}`),
+                      count: count ?? "",
+                    },
+                  )}
                   onPress={() => setSelected(nextWorkflowSelection(rail, selected, item.key))}
                 />
               );
@@ -121,7 +131,7 @@ export function ThreadWorkflowGroup(props: {
             textRole="footnote"
             className="border-t border-border-subtle px-4 py-3 text-foreground-muted"
           >
-            No agents yet
+            {t("workflowGroup.empty")}
           </Text>
         ) : (
           open.members.map((member) => (
@@ -145,21 +155,31 @@ function WorkflowMemberRow(props: {
   readonly provider: ServerProvider | undefined;
   readonly onOpen: (threadId: ThreadId) => void;
 }) {
+  const { t } = useLanguage();
   const { member } = props;
   const threadId = member.childThreadId === null ? null : ThreadId.make(member.childThreadId);
   const shell = useThreadShell(
     threadId === null ? null : scopeThreadRef(props.environmentId, threadId),
   );
   const canOpen = threadId !== null && shell !== null;
-  const presentation = resolveSubagentRowPresentation({
-    title: member.title,
-    prompt: "",
-    status: member.status,
-    result: null,
-    childThreadId: threadId,
-  });
+  const presentation = resolveSubagentRowPresentation(
+    {
+      title: member.title,
+      prompt: "",
+      status: member.status,
+      result: null,
+      childThreadId: threadId,
+    },
+    false,
+    t,
+  );
   const { detail, error } = workflowMemberDetail(member);
-  const metadata = workflowMemberMetadata(member, props.provider);
+  const rawMetadata = workflowMemberMetadata(member, props.provider);
+  const metadata = {
+    ...rawMetadata,
+    effort: rawMetadata.effort === null ? null : localizeProviderOptionText(rawMetadata.effort, t),
+    speed: rawMetadata.speed === null ? null : localizeProviderOptionText(rawMetadata.speed, t),
+  };
   const labels = [metadata.model, metadata.effort].filter((value) => value !== null);
   return (
     <RowPressable
@@ -171,7 +191,7 @@ function WorkflowMemberRow(props: {
         ...(metadata.speed === null ? [] : [metadata.speed]),
         ...(error === null ? [] : [error]),
       ].join(", ")}
-      accessibilityHint={canOpen ? "Opens this agent's thread" : "Its thread is not available yet"}
+      accessibilityHint={t(canOpen ? "agentsSheet.open" : "workflowGroup.unavailableHint")}
       disabled={!canOpen}
       onPress={() => threadId !== null && props.onOpen(threadId)}
       className="min-h-11 flex-row gap-3 border-t border-border-subtle px-4 py-3 active:opacity-70"

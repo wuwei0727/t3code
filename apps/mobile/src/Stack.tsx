@@ -1,3 +1,4 @@
+import { useLanguage } from "./i18n/LanguageProvider";
 import { isDraftThreadRoute } from "./features/threads/thread-route-state";
 import { ComponentCatalogScreen } from "./features/development/ComponentCatalogScreen";
 import { PullRequestGuideStopScreen } from "./features/pull-requests/guide/PullRequestGuideScreen";
@@ -428,6 +429,7 @@ function RootStackLayout(props: {
 }
 
 function NotFoundScreen() {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const screenBgStyle = StyleSheet.flatten(useResolveClassNames("bg-screen"));
   const primaryBgStyle = StyleSheet.flatten(useResolveClassNames("bg-primary"));
@@ -454,13 +456,15 @@ function NotFoundScreen() {
       style={[{ flex: 1 }, screenBgStyle]}
     >
       <Text className="text-3xl font-t3-bold text-foreground" selectable>
-        Route not found
+        {t("navigationFallback.notFound")}
       </Text>
       <Pressable
         style={returnHomeButtonStyle}
         onPress={() => navigation.dispatch(StackActions.replace("Home"))}
       >
-        <Text className="text-base font-t3-bold text-primary-foreground">Return home</Text>
+        <Text className="text-base font-t3-bold text-primary-foreground">
+          {t("navigationFallback.home")}
+        </Text>
       </Pressable>
     </ScrollView>
   );
@@ -752,16 +756,20 @@ function GuardedScreenLayout(props: {
 }
 
 function ScreenRenderFallback(props: RenderFailureProps & { readonly routeName: string }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const exit = navigation.canGoBack()
-    ? { label: "Go back", onPress: () => navigation.goBack() }
+    ? { label: t("navigationFallback.back"), onPress: () => navigation.goBack() }
     : props.routeName === "Home"
       ? // Home itself failed, and the Settings list renders inside it; open a Settings page.
         {
-          label: "Open settings",
+          label: t("navigationFallback.settings"),
           onPress: () => openSettings(navigation, DEFAULT_SETTINGS_PAGE),
         }
-      : { label: "Return home", onPress: () => navigation.dispatch(StackActions.replace("Home")) };
+      : {
+          label: t("navigationFallback.home"),
+          onPress: () => navigation.dispatch(StackActions.replace("Home")),
+        };
 
   return <RenderFailureView {...props} exit={exit} />;
 }

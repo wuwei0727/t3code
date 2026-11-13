@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomValue } from "@effect/atom-react";
 import type { StaticScreenProps } from "@react-navigation/native";
 import type { EnvironmentId } from "@t3tools/contracts";
@@ -17,10 +18,11 @@ import { useVoiceModels, VoiceModelRow } from "./VoiceModelSection";
 export function SettingsVoiceModelsRouteScreen({
   route,
 }: StaticScreenProps<{ readonly environmentId: EnvironmentId }>) {
+  const { t } = useLanguage();
   const { environments } = useEnvironments();
   const label =
     environments.find((environment) => environment.environmentId === route.params.environmentId)
-      ?.label ?? "This environment";
+      ?.label ?? t("voiceModels.picker.environment");
   const voice = useVoiceModels(route.params.environmentId, label);
   const benchmarks = new Map(
     (
@@ -46,10 +48,10 @@ export function SettingsVoiceModelsRouteScreen({
     );
   return (
     <PullRequestSearchSheet
-      title="Transcription models"
-      placeholder="Search models or languages"
-      closeAccessibilityLabel="Close transcription models"
-      clearAccessibilityLabel="Clear model search"
+      title={t("voiceModels.picker.title")}
+      placeholder={t("voiceModels.picker.search")}
+      closeAccessibilityLabel={t("voiceModels.picker.close")}
+      clearAccessibilityLabel={t("voiceModels.picker.clear")}
       query={query}
       onQueryChange={setQuery}
     >
@@ -67,7 +69,7 @@ export function SettingsVoiceModelsRouteScreen({
           ListHeaderComponent={
             voice.canManage ? undefined : (
               <Text className="pb-3 text-xs text-foreground-muted">
-                This connection can’t change settings on {label}.
+                {t("voiceModels.picker.permission", { environment: label })}
               </Text>
             )
           }
@@ -87,9 +89,13 @@ export function SettingsVoiceModelsRouteScreen({
               <AppActivityIndicator className="my-8" />
             ) : (
               <EmptyState
-                title={needle ? "No models match" : "No transcription models"}
+                title={
+                  needle ? t("voiceModels.picker.noMatches") : t("voiceModels.picker.noModels")
+                }
                 detail={
-                  needle ? "Try another name or language." : `${label} has no models to list.`
+                  needle
+                    ? t("voiceModels.picker.tryAnother")
+                    : t("voiceModels.picker.empty", { environment: label })
                 }
                 variant="plain"
               />

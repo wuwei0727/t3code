@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="t3_review_comment_on">Comment on %1$s</string>
+    <string name="t3_review_line">line</string>
+    <string name="t3_review_comment">Comment</string>
+</resources>

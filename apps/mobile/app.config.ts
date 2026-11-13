@@ -11,6 +11,16 @@ Object.assign(process.env, repoEnv);
 process.env.EXPO_NO_TYPESCRIPT_SETUP = "1";
 
 const APP_VARIANT = resolveAppVariant(repoEnv.APP_VARIANT);
+const isCommunityAndroid = repoEnv.T3CODE_COMMUNITY_ANDROID === "1";
+const communityVersionCode = Number(repoEnv.T3CODE_COMMUNITY_VERSION_CODE ?? "1");
+if (
+  isCommunityAndroid &&
+  (!Number.isInteger(communityVersionCode) ||
+    communityVersionCode < 1 ||
+    communityVersionCode > 2_100_000_000)
+) {
+  throw new Error("T3CODE_COMMUNITY_VERSION_CODE must be an integer between 1 and 2100000000.");
+}
 const isIosPersonalTeamBuild = repoEnv.T3CODE_IOS_PERSONAL_TEAM === "1";
 const runtimeVersionPolicy =
   process.env.MOBILE_VERSION_POLICY ??
@@ -233,24 +243,26 @@ const sharingPlugin: NonNullable<ExpoConfig["plugins"]>[number] = [
 // Match iOS PostScript names on Android so RN and the native composer share fonts before runtime loading.
 
 const config: ExpoConfig = {
-  name: variant.appName,
+  name: isCommunityAndroid ? "T3 Code 中文社区版" : variant.appName,
   slug: "t3-code",
-  platforms: ["ios", "android"],
-  scheme: variant.scheme,
-  version: repoEnv.T3CODE_MOBILE_VERSION ?? "2.3.0",
+  platforms: isCommunityAndroid ? ["android"] : ["ios", "android"],
+  scheme: isCommunityAndroid ? "t3code-zh" : variant.scheme,
+  version: `${repoEnv.T3CODE_MOBILE_VERSION ?? "2.3.0"}${isCommunityAndroid ? `-zh.${communityVersionCode}` : ""}`,
   runtimeVersion: {
     // Skip costly fingerprinting on dev launches; preview and production OTAs require matching native projects.
-    policy: runtimeVersionPolicy,
+    policy: isCommunityAndroid ? "appVersion" : runtimeVersionPolicy,
   },
   orientation: "portrait",
   icon: variant.assets.appIcon,
   userInterfaceStyle: "automatic",
-  updates: {
-    enabled: repoEnv.T3CODE_MOBILE_UPDATES_ENABLED !== "0",
-    url: "https://u.expo.dev/d763fcb8-d37c-41ea-a773-b54a0ab4a454",
-    checkAutomatically: "ON_LOAD",
-    fallbackToCacheTimeout: 0,
-  },
+  updates: isCommunityAndroid
+    ? { enabled: false }
+    : {
+        enabled: repoEnv.T3CODE_MOBILE_UPDATES_ENABLED !== "0",
+        url: "https://u.expo.dev/d763fcb8-d37c-41ea-a773-b54a0ab4a454",
+        checkAutomatically: "ON_LOAD",
+        fallbackToCacheTimeout: 0,
+      },
   ios: {
     icon: variant.assets.iosIcon,
     supportsTablet: true,
@@ -296,7 +308,8 @@ const config: ExpoConfig = {
   },
   android: {
     icon: variant.assets.appIcon,
-    package: variant.androidPackage,
+    package: isCommunityAndroid ? "io.github.wuwei0727.t3code.zh" : variant.androidPackage,
+    ...(isCommunityAndroid ? { versionCode: communityVersionCode } : {}),
     ...(repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE
       ? { googleServicesFile: repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE }
       : {}),
@@ -315,7 +328,7 @@ const config: ExpoConfig = {
     intentFilters: [
       {
         action: "VIEW",
-        autoVerify: true,
+        autoVerify: !isCommunityAndroid,
         data: [{ scheme: "https", host: HOSTED_APP_HOST, pathPrefix: "/threads/" }],
         category: ["BROWSABLE", "DEFAULT"],
       },
@@ -365,6 +378,7 @@ const config: ExpoConfig = {
     ],
     // Gate Clerk here: withoutIosPersonalTeamCapabilities runs too early to strip its entitlement.
     ["@clerk/expo", { theme: "./clerk-theme.json", appleSignIn: !isIosPersonalTeamBuild }],
+    ...(isCommunityAndroid ? ["./plugins/withCommunityClerkOAuth.cjs"] : []),
     "expo-web-browser",
     [
       "expo-quick-actions",
@@ -453,6 +467,7 @@ const config: ExpoConfig = {
     ...(!isIosPersonalTeamBuild ? ["./plugins/withWidgetLogoAsset.cjs", widgetsPlugin] : []),
     "./plugins/withAndroidNetworkSecurityConfig.cjs",
     "./plugins/withAndroidGradleHeap.cjs",
+    ...(isCommunityAndroid ? ["./plugins/withoutCommunityObserve.cjs"] : []),
     "./plugins/withAndroidInputBackground.cjs",
     "./plugins/withAndroidModernPopupMenu.cjs",
     "./plugins/withAndroidModernAlertDialog.cjs",
@@ -486,11 +501,11 @@ const config: ExpoConfig = {
       tracesToken: repoEnv.EXPO_PUBLIC_OTLP_TRACES_TOKEN ?? null,
     },
     eas: {
-      projectId: "d763fcb8-d37c-41ea-a773-b54a0ab4a454",
+      ...(isCommunityAndroid ? {} : { projectId: "d763fcb8-d37c-41ea-a773-b54a0ab4a454" }),
       observe: { endpointUrl: observeEndpointUrl },
     },
   },
-  owner: "pingdotgg",
+  owner: isCommunityAndroid ? undefined : "pingdotgg",
   experiments: {
     // Metro only runs babel-plugin-react-compiler when this is set; see src/reactCompilerCoverage.test.ts.
     reactCompiler: true,

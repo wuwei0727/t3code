@@ -530,6 +530,41 @@ describe("shared device stream readiness and recovery", () => {
     client.stop();
   });
 
+  it("lets queued Android frames finish before seeking a fresh keyframe under backpressure", async () => {
+    const { client, sockets, decoders, sps, decodedFrame, events } = recoveryFixture(
+      "android",
+      false,
+    );
+    try {
+      client.start();
+      await vi.advanceTimersByTimeAsync(0);
+      const socket = sockets[0]!;
+      socket.onopen?.();
+      socket.onmessage?.({ data: sps });
+      await vi.advanceTimersByTimeAsync(0);
+      socket.onmessage?.({ data: sps });
+      const decoder = decoders[0]!;
+      expect(decoder.decode).toHaveBeenCalledOnce();
+      decoder.decodeQueueSize = 9;
+      const delta = new Uint8Array([0, 0, 1, 0x41]).buffer;
+      socket.onmessage?.({ data: delta });
+      expect(decoder.state).toBe("configured");
+      expect(socket.send).toHaveBeenLastCalledWith(
+        JSON.stringify({ type: "reset-video", ack: false }),
+      );
+      decoder.decodeQueueSize = 0;
+      events.onStatus.mockClear();
+      expect(decodedFrame()).toHaveBeenCalledOnce();
+      expect(events.onStatus).toHaveBeenCalledWith("streaming", undefined);
+      socket.onmessage?.({ data: delta });
+      expect(decoder.decode).toHaveBeenCalledOnce();
+      socket.onmessage?.({ data: sps });
+      expect(decoder.decode).toHaveBeenCalledTimes(2);
+    } finally {
+      client.stop();
+    }
+  });
+
   it("ignores an old AVCC response rejected after a new attempt is connected", async () => {
     const { client, fetch, events } = recoveryFixture("ios", false);
     let resolveResponse!: (response: Response) => void;

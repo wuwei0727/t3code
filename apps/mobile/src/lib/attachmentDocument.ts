@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageProvider";
+import { appErrorText } from "../i18n/appErrorPresentation";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { Atom, AsyncResult } from "effect/reactivity";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -94,6 +96,7 @@ export function useAttachmentDocument(input: {
   readonly environmentId: EnvironmentId | null;
   readonly attachment: FileBackedComposerAttachment | null;
 }) {
+  const { t } = useLanguage();
   const kind = filePreviewKind(input, { richDocuments: false });
   const delimiter = filePreviewDelimiter(input);
   const shareController = useRef<AbortController | null>(null);
@@ -166,8 +169,8 @@ export function useAttachmentDocument(input: {
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not share file",
-        cause instanceof Error ? cause.message : "Please try again.",
+        t("documentShareUi.title"),
+        cause instanceof Error ? cause.message : t("documentShareUi.retry"),
       );
     }
   };
@@ -179,7 +182,7 @@ export function useAttachmentDocument(input: {
     resource,
     content,
     table,
-    error: error ?? contentError,
+    error: error || contentError ? appErrorText(error ?? contentError ?? "", t) : null,
     needsText,
     rendered,
     setRendered,

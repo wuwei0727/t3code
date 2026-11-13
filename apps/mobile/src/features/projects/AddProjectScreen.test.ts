@@ -13,6 +13,11 @@ import { act, createElement, isValidElement, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 const state = vi.hoisted(() => ({
   scopes: new Set<string>(),
   baseDirectory: "",

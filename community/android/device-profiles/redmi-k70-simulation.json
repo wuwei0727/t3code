@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "reportedDevice": "Redmi K70",
+  "reportedAndroidVersion": "16",
+  "avdName": "T3_ZH_K70_API36_1440x3200",
+  "systemImage": "system-images;android-36;google_apis;x86_64",
+  "imageRevisionUsed": 7,
+  "widthPixels": 1440,
+  "heightPixels": 3200,
+  "densityDpi": 560,
+  "densityAssumed": true,
+  "emulatorRamMB": 4096,
+  "created": true,
+  "booted": true,
+  "visualAcceptanceExecuted": true,
+  "limitations": [
+    "Logical Android density was not supplied; 560 DPI is a test assumption, not a verified Redmi default.",
+    "Google APIs x86_64 image does not reproduce HyperOS, ARM hardware, vendor battery policy, cellular transitions or real push delivery."
+  ],
+  "currentlyBooted": false,
+  "acceptanceRecord": "community/android/acceptance-v10.json",
+  "executedFontSettings": [
+    "large (normal/restored)",
+    "extra-extra-extra-large",
+    "accessibility-medium"
+  ],
+  "latestInstalledVersionCode": 10,
+  "executedFontScales": [1.0, 1.5],
+  "systemLanguage": "zh-CN"
+}

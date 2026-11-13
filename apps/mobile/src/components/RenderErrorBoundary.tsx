@@ -1,4 +1,6 @@
-import { Observe } from "expo-observe";
+import { useLanguage } from "../i18n/LanguageProvider";
+import { makeTranslator } from "../i18n/translator";
+import { reportCrashError } from "../features/observability/observe";
 import { Component, type ReactNode } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -63,7 +65,7 @@ export class RenderErrorBoundary extends Component<
 
   override componentDidCatch(error: unknown, info: { componentStack?: string }) {
     // A caught render error never reaches Observe's global handler.
-    Observe.reportError(error);
+    void reportCrashError(error);
     this.setState({ componentStack: info.componentStack });
   }
 
@@ -90,7 +92,11 @@ export function RenderFailureView(
     readonly exit?: { readonly label: string; readonly onPress: () => void };
   },
 ) {
-  const title = props.title ?? "This screen couldn't be displayed";
+  const { t } = useLanguage();
+  const title =
+    props.title === makeTranslator("en")("renderFailure.sidebar")
+      ? t("renderFailure.sidebar")
+      : (props.title ?? t("renderFailure.title"));
   return (
     <ScrollView
       className="flex-1 bg-screen"
@@ -102,16 +108,14 @@ export function RenderFailureView(
       <Text accessibilityRole="header" className="text-center text-xl font-t3-bold">
         {title}
       </Text>
-      <Text className="text-center text-sm text-foreground-muted">
-        Try again. If it keeps happening, copy the details for a bug report.
-      </Text>
+      <Text className="text-center text-sm text-foreground-muted">{t("renderFailure.hint")}</Text>
       <Text selectable className="text-center font-mono text-xs text-danger-foreground">
         {props.details.split("\n", 1)[0]?.slice(0, 300)}
       </Text>
       <View className="w-full max-w-xs gap-2">
-        <Button label="Try again" onPress={props.retry} tone="primary" fullWidth />
+        <Button label={t("renderFailure.retry")} onPress={props.retry} tone="primary" fullWidth />
         <Button
-          label="Copy details"
+          label={t("renderFailure.copy")}
           onPress={() => copyTextWithHaptic(props.details, { target: "error details" })}
           fullWidth
         />

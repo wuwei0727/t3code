@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import type { PromptLinkRepository } from "@t3tools/shared/promptLinks";
 
 const PROMPT_LINK_PARAM_KEYS = ["prompt", "repo", "pr", "provider", "model"] as const;
@@ -26,19 +27,17 @@ export function withoutPromptLinkParams(params: object | undefined): Record<stri
 }
 
 export function promptLinkNotice(input: {
+  readonly translate?: UiTranslator;
   readonly hiddenCharacters: number;
   readonly modelUnavailable?: boolean;
   readonly pullRequestUnavailable?: number | null;
 }): string {
+  const t = input.translate ?? makeTranslator("en");
   return [
-    input.hiddenCharacters > 0
-      ? "This prompt had hidden characters, it may be malicious. They were removed. Read it before you send."
-      : "This prompt came from a link. Read it before you send.",
-    input.modelUnavailable
-      ? "The requested model is not available, so your default is used."
-      : null,
+    input.hiddenCharacters > 0 ? t("promptLinkNoticeUi.hidden") : t("promptLinkNoticeUi.notice"),
+    input.modelUnavailable ? t("promptLinkNoticeUi.model") : null,
     input.pullRequestUnavailable != null
-      ? `Pull request #${input.pullRequestUnavailable} could not be loaded, so this task starts from your default branch.`
+      ? t("promptLinkNoticeUi.pr", { number: input.pullRequestUnavailable })
       : null,
   ]
     .filter((line) => line !== null)

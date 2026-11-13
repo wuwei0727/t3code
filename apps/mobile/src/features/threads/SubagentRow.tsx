@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeProviderOptionText } from "../../lib/providerOptionUi";
 import { scopeProjectRef, scopeThreadRef } from "@t3tools/client-runtime/environment";
 import {
   normalizeProviderAccentColor,
@@ -42,7 +44,8 @@ export function SubagentRow(props: {
   /** The task runs in a linked environment this app is connected to. */
   readonly canOpenRemote?: boolean;
 }) {
-  const presentation = resolveSubagentRowPresentation(props.subagent, props.canOpenRemote);
+  const { t } = useLanguage();
+  const presentation = resolveSubagentRowPresentation(props.subagent, props.canOpenRemote, t);
   const detail = subagentCardDetail(presentation.detail);
   return (
     <View className="flex-row gap-3">
@@ -75,7 +78,7 @@ export function SubagentRow(props: {
             </Text>
             {presentation.runsOn !== null ? (
               <Text numberOfLines={1} className="shrink text-xs text-foreground-muted">
-                on {presentation.runsOn}
+                {t("subagentRowUi.on", { environment: presentation.runsOn })}
               </Text>
             ) : null}
           </View>
@@ -105,6 +108,7 @@ function SubagentMetadata(props: {
   readonly environmentId: EnvironmentId;
   readonly subagent: SubagentRowSubagent;
 }) {
+  const { t } = useLanguage();
   const { environmentId, subagent } = props;
   // A task in a linked environment runs a provider instance of that environment.
   const config = useEnvironmentServerConfig(subagent.remoteChild?.environmentId ?? environmentId);
@@ -144,7 +148,8 @@ function SubagentMetadata(props: {
     parentProject,
     childProject,
   });
-  const effort = formatSubagentEffort({ modelSlug, modelSelection: selection, provider });
+  const rawEffort = formatSubagentEffort({ modelSlug, modelSelection: selection, provider });
+  const effort = rawEffort === null ? null : localizeProviderOptionText(rawEffort, t);
   return (
     <View className="min-w-0 flex-row items-center gap-1.5">
       {showBadge ? (

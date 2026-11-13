@@ -1,3 +1,5 @@
+import type { UiLocale } from "../i18n/locale";
+import { makeTranslator } from "../i18n/translator";
 import {
   collectComposerModelMentions,
   type ComposerModelMentionOccurrence,
@@ -38,13 +40,15 @@ const decodeMessageContext = Schema.decodeUnknownOption(OrchestrationMessageCont
 
 export function composerContextSendBlockReason(
   context?: OrchestrationMessageContext,
+  locale: UiLocale = "en",
 ): string | null {
+  const t = makeTranslator(locale);
   if (!context) return null;
   if (context.records.length > COMPOSER_CONTEXT_MAX_RECORDS) {
-    return `Remove context items until there are at most ${COMPOSER_CONTEXT_MAX_RECORDS}.`;
+    return t("composerContext.limit", { count: COMPOSER_CONTEXT_MAX_RECORDS });
   }
   return !isMessageContext(context) || decodeMessageContext(context)._tag === "None"
-    ? "This draft has too much context to send. Remove some context items and try again."
+    ? t("composerContext.tooMuch")
     : null;
 }
 

@@ -22,6 +22,8 @@ import { summarizeToolGroup } from "@t3tools/client-runtime/work-log/presentatio
 import { getReviewSectionIdForCheckpoint } from "../features/review/reviewModel";
 import * as DateTime from "effect/DateTime";
 import { describe, expect, it } from "vite-plus/test";
+import { makeTranslator } from "../i18n/translator";
+import { workSummaryDisplay } from "../features/threads/workSummaryPresentation";
 
 import {
   buildThreadFeed,
@@ -581,12 +583,17 @@ describe("buildThreadFeed", () => {
         oldStr: rawOutput,
         newStr: rawOutput,
       },
+      {
+        ...base("file-search", "2026-06-20T00:00:05.000Z", 4),
+        type: "file_search",
+        pattern: "Read in src/文件.ts",
+      },
     ];
     const activities = buildThreadFeed(items.map((item, index) => projected(item, index))).flatMap(
       (entry) => (entry.type === "activity-group" ? entry.activities : []),
     );
-    expect(activities).toHaveLength(3);
-    for (const activity of activities) {
+    expect(activities).toHaveLength(4);
+    for (const activity of activities.slice(0, 3)) {
       expect(activity.workEntry.detail).toBeUndefined();
       expect(activity.getFullDetail()).not.toContain(rawOutput);
       expect(activity.getCopyText()).not.toContain(rawOutput);
@@ -595,6 +602,11 @@ describe("buildThreadFeed", () => {
     expect(activities[1]?.getFullDetail()).toContain("keep input");
     expect(activities[2]?.detail).toBe("src/example.ts");
     expect(items[0]).toMatchObject({ output: rawOutput });
+    const search = activities[3]!;
+    expect(workEntryRowLabel(search.workEntry, false, makeTranslator("zh-CN"))).toBe(
+      "已搜索 Read in src/文件.ts",
+    );
+    expect(search.getCopyText()).toContain("Read in src/文件.ts");
   });
 
   it("counts every file of a multi-file patch", () => {
@@ -613,6 +625,19 @@ describe("buildThreadFeed", () => {
     )[0]!;
     expect(workEntryRowLabel(activity.workEntry)).toBe("src/a.ts +2 more");
     expect(summarizeToolGroup([activity.workEntry]).summary).toBe("Changed 3 files");
+    const beforeCopy = activity.getCopyText();
+    const beforeItem = JSON.stringify(item);
+    expect(
+      summarizeToolGroup([activity.workEntry], workSummaryDisplay(makeTranslator("zh-CN"))).summary,
+    ).toBe("已修改3 文件");
+    expect(workEntryRowLabel(activity.workEntry, false, makeTranslator("zh-CN"))).toBe(
+      "src/a.ts +2 more",
+    );
+    expect(
+      summarizeToolGroup([activity.workEntry], workSummaryDisplay(makeTranslator("en"))).summary,
+    ).toBe("Changed 3 files");
+    expect(activity.getCopyText()).toBe(beforeCopy);
+    expect(JSON.stringify(item)).toBe(beforeItem);
   });
 
   it("anchors feedback before later committed turns", () => {

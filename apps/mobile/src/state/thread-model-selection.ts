@@ -1,3 +1,4 @@
+import { currentTranslator } from "../i18n/currentLanguage";
 import { runAtomCommand, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import {
   AuthOrchestrationOperateScope,
@@ -46,8 +47,11 @@ export function selectThreadModel(
     } else {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not apply model selection",
-        `This model pick was not saved. ${error instanceof Error ? error.message : "Try again."}`,
+        currentTranslator()("modelSelectionUi.failed"),
+        currentTranslator()("modelSelectionUi.unsaved", {
+          error:
+            error instanceof Error ? error.message : currentTranslator()("modelSelectionUi.retry"),
+        }),
       );
     }
   });

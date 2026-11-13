@@ -1,5 +1,21 @@
 import type { UsageProviderKind, UsageSummary } from "@t3tools/contracts";
 
+export interface UsageProgressMessages {
+  readonly updating: string;
+  readonly provider: (label: string) => string;
+  readonly providers: (count: number) => string;
+  readonly environment: (label: string) => string;
+  readonly environments: (count: number) => string;
+}
+
+const DEFAULT_MESSAGES: UsageProgressMessages = {
+  updating: "Updating…",
+  provider: (label) => `Updating ${label}…`,
+  providers: (count) => `Updating ${count} providers…`,
+  environment: (label) => `Updating ${label}…`,
+  environments: (count) => `Updating ${count} environments…`,
+};
+
 interface UsageProgressEnvironment {
   readonly label: string;
   readonly isConnected: boolean;
@@ -30,10 +46,11 @@ export function usageEnvironmentProgress(
 export function updatingProvidersLabel(
   providers: readonly UsageProviderKind[],
   providerLabel: (provider: UsageProviderKind) => string,
+  messages: UsageProgressMessages = DEFAULT_MESSAGES,
 ) {
   return providers.length === 1
-    ? `Updating ${providerLabel(providers[0]!)}…`
-    : `Updating ${providers.length} providers…`;
+    ? messages.provider(providerLabel(providers[0]!))
+    : messages.providers(providers.length);
 }
 
 export function usageProgress(
@@ -41,9 +58,11 @@ export function usageProgress(
   {
     refreshing = false,
     providerLabel,
+    messages = DEFAULT_MESSAGES,
   }: {
     readonly refreshing?: boolean;
     readonly providerLabel: (provider: UsageProviderKind) => string;
+    readonly messages?: UsageProgressMessages;
   },
 ) {
   const progress = environments.map((environment) => ({
@@ -61,12 +80,12 @@ export function usageProgress(
       waiting.length === 0
         ? providers.length === 0
           ? null
-          : updatingProvidersLabel(providers, providerLabel)
+          : updatingProvidersLabel(providers, providerLabel, messages)
         : environments.length === 1
-          ? "Updating…"
+          ? messages.updating
           : waiting.length === 1
-            ? `Updating ${waiting[0]!.label}…`
-            : `Updating ${waiting.length} environments…`,
+            ? messages.environment(waiting[0]!.label)
+            : messages.environments(waiting.length),
   };
 }
 

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomValue } from "@effect/atom-react";
 import {
   AVAILABLE_CONNECTION_STATE,
@@ -20,36 +21,50 @@ import { cn } from "../../lib/cn";
 import { copyTextWithHaptic } from "../../lib/copyTextWithHaptic";
 
 const HOP_MARK = { ok: "✓", failed: "✕", unchecked: "–" } as const;
-const HOP_NOTE = { ok: "", failed: " · Failed", unchecked: " · Not checked" } as const;
 
 /** Same model as the web Settings row; null while connected, off, or not failed. */
 export function useConnectionDiagnosis(
   environmentId: EnvironmentId,
   presentation: EnvironmentPresentation | null,
 ) {
+  const { t } = useLanguage();
   const state = AsyncResult.getOrElse(
     useAtomValue(environmentCatalog.stateAtom(environmentId)),
     () => AVAILABLE_CONNECTION_STATE,
   );
-  if (presentation === null || !presentation.entry.enabled) return { diagnosis: null, state };
+  if (presentation === null || !presentation.entry.enabled)
+    return { diagnosis: null, rawDiagnosis: null, state };
   const phase = presentation.connection.phase;
-  if (phase === "connected" || phase === "unsupported") return { diagnosis: null, state };
+  if (phase === "connected" || phase === "unsupported")
+    return { diagnosis: null, rawDiagnosis: null, state };
   const relayOnly =
     connectionRoutes(presentation.entry).length === 1 && hasRelayRoute(presentation.entry);
-  const diagnosis = presentConnectionDiagnosis({
+  const input = {
     hostLabel: presentation.entry.target.label,
     state,
-    via: relayOnly ? "relay" : "direct",
+    via: relayOnly ? ("relay" as const) : ("direct" as const),
     clientVersion: Constants.expoConfig?.version,
     serverVersion: presentation.serverConfig?.environment.serverVersion,
+  };
+  const rawDiagnosis = presentConnectionDiagnosis(input);
+  const diagnosis = presentConnectionDiagnosis({
+    ...input,
+    translate: (key, _fallback, host) => t(`connection.diagnosis.${key}`, { host }),
   });
-  return { diagnosis, state };
+  return { diagnosis, rawDiagnosis, state };
 }
 
 export function ConnectionDiagnosisDetails(props: {
   readonly hostLabel: string;
   readonly diagnosis: ConnectionDiagnosis;
+  readonly rawDiagnosis: ConnectionDiagnosis | null;
 }) {
+  const { t } = useLanguage();
+  const HOP_NOTE = {
+    ok: "",
+    failed: t("connection.diagnosis.failed"),
+    unchecked: t("connection.diagnosis.unchecked"),
+  };
   const { diagnosis } = props;
   const { moreInfoUrl } = diagnosis;
   return (
@@ -68,7 +83,9 @@ export function ConnectionDiagnosisDetails(props: {
         ))}
       </View>
       <View className="gap-0.5">
-        <Text className="text-sm font-t3-bold text-foreground">What to try</Text>
+        <Text className="text-sm font-t3-bold text-foreground">
+          {t("connection.diagnosis.try")}
+        </Text>
         {diagnosis.steps.map((step, index) => (
           <Text key={step} className="text-sm text-foreground-muted">
             {`${index + 1}. ${step}`}
@@ -79,17 +96,20 @@ export function ConnectionDiagnosisDetails(props: {
         {diagnosis.facts.map(([label, value]) => `${label}: ${value}`).join("\n")}
       </Text>
       <Button
-        label="Copy diagnostics"
+        label={t("connection.diagnosis.copy")}
         icon="doc.on.doc"
         onPress={() => {
-          copyTextWithHaptic(connectionDiagnosisText(props.hostLabel, diagnosis), {
-            target: "connection-diagnostics",
-          });
+          copyTextWithHaptic(
+            connectionDiagnosisText(props.hostLabel, props.rawDiagnosis ?? diagnosis),
+            {
+              target: "connection-diagnostics",
+            },
+          );
         }}
       />
       {moreInfoUrl ? (
         <Button
-          label="More info"
+          label={t("connection.diagnosis.more")}
           icon="safari"
           tone="secondary"
           onPress={() => void Linking.openURL(moreInfoUrl).catch(() => undefined)}

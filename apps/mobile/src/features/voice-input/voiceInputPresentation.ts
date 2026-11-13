@@ -1,4 +1,7 @@
+import type { UiLocale } from "../../i18n/locale";
+import { makeTranslator } from "../../i18n/translator";
 import type { VoiceInputState } from "@t3tools/client-runtime/voice-input";
+import { voiceErrorKeys } from "./voiceErrorCatalog";
 
 export type VoiceComposerPresentation = {
   readonly leadingAction: "cancel" | null;
@@ -12,7 +15,9 @@ export type VoiceComposerPresentation = {
 export function resolveVoiceComposerPresentation(
   state: VoiceInputState,
   elapsedSeconds: number,
+  locale: UiLocale = "en",
 ): VoiceComposerPresentation {
+  const t = makeTranslator(locale);
   switch (state.phase) {
     case "idle":
       return {
@@ -29,7 +34,10 @@ export function resolveVoiceComposerPresentation(
         trailingAction: "mic",
         showsSend: true,
         statusKind: "error",
-        statusLabel: state.error,
+        statusLabel:
+          state.error && Object.hasOwn(voiceErrorKeys, state.error)
+            ? t(voiceErrorKeys[state.error as keyof typeof voiceErrorKeys])
+            : state.error,
         confirmationEnabled: false,
       };
     case "preparing":
@@ -38,7 +46,7 @@ export function resolveVoiceComposerPresentation(
         trailingAction: "confirm",
         showsSend: false,
         statusKind: "active",
-        statusLabel: "Preparing",
+        statusLabel: t("dictation.preparing"),
         confirmationEnabled: false,
       };
     case "recording": {
@@ -48,7 +56,9 @@ export function resolveVoiceComposerPresentation(
         trailingAction: "confirm",
         showsSend: false,
         statusKind: "active",
-        statusLabel: `Recording ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
+        statusLabel: t("dictation.recording", {
+          time: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
+        }),
         confirmationEnabled: true,
       };
     }
@@ -59,7 +69,7 @@ export function resolveVoiceComposerPresentation(
         trailingAction: "confirm",
         showsSend: false,
         statusKind: "active",
-        statusLabel: "Transcribing",
+        statusLabel: t("dictation.transcribing"),
         confirmationEnabled: false,
       };
   }

@@ -16,6 +16,11 @@ const state = vi.hoisted(() => ({
   worktrees: [] as Array<{ baseBranch: string; newBranch: string }>,
 }));
 
+vi.mock("../../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("@react-navigation/native", () => ({ useNavigation: () => ({ goBack() {} }) }));
 vi.mock("react-native", () => ({
   Platform: { OS: "android" },

@@ -1,5 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
-import { cloudSpeechDisclosure } from "@t3tools/shared/speech";
 import { setCloudSpeechKey } from "@t3tools/client-runtime/voice-input";
 import {
   configuredSecretSources,
@@ -55,17 +55,18 @@ export function CloudVoiceChoice({
   open,
   onOpenChange,
 }: Props & { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { t } = useLanguage();
   const usable = useAtomValue(cloudVoiceConnectionAtom(environment.environmentId)) !== null;
   return (
     <>
       <ListChoiceRow
-        label="Cloud provider"
+        label={t("cloudVoice.provider")}
         description={
           active
             ? `${CLOUD_SPEECH_LABELS[active.provider]}${active.provider === "openrouter" ? ` · ${active.model}` : ""}`
             : usable
-              ? "Use your own API key"
-              : "Not connected"
+              ? t("cloudVoice.ownKey")
+              : t("cloudVoice.notConnected")
         }
         selected={active !== null}
         disabled={!usable}
@@ -97,6 +98,7 @@ function ModelPicker({
   disabled: boolean;
   onChange: (model: CloudSpeechModelId) => void;
 }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
   const needle = query.trim().toLowerCase();
@@ -108,17 +110,13 @@ function ModelPicker({
   const delisted = current !== undefined && !models.some((model) => model.id === current);
   return (
     <ListSection
-      title="Model"
-      footer={
-        delisted
-          ? `OpenRouter no longer lists ${current}. Dictation stays off until you choose another model.`
-          : undefined
-      }
+      title={t("cloudVoice.model")}
+      footer={delisted ? t("cloudVoice.delisted", { model: current ?? "" }) : undefined}
     >
       <View className="px-4 py-3">
         <TextInput
-          accessibilityLabel="Search OpenRouter models"
-          placeholder="Search transcription models"
+          accessibilityLabel={t("cloudVoice.searchLabel")}
+          placeholder={t("cloudVoice.search")}
           autoCapitalize="none"
           autoCorrect={false}
           editable={!disabled}
@@ -151,13 +149,13 @@ function ModelPicker({
       {matches.length === 0 ? (
         <Separated>
           <Text className="px-4 py-3 text-sm text-foreground-muted">
-            No transcription model matches.
+            {t("cloudVoice.noModels")}
           </Text>
         </Separated>
       ) : matches.length > shown.length ? (
         <Separated>
           <ListActionRow
-            label={`Show all ${matches.length} models`}
+            label={t("cloudVoice.showAll", { count: matches.length })}
             onPress={() => setShowAll(true)}
           />
         </Separated>
@@ -172,6 +170,14 @@ function Separated({ children }: { children: ReactNode }) {
 }
 
 function CloudChoices({ environment, active, onClose }: Props & { onClose: () => void }) {
+  const { t } = useLanguage();
+  const cloudSpeechDisclosure = (provider: CloudSpeechProvider, environment: string) =>
+    provider === "openrouter"
+      ? t("cloudVoice.openrouterDisclosure", { environment })
+      : t("cloudVoice.providerDisclosure", {
+          environment,
+          provider: CLOUD_SPEECH_PROVIDER_NAMES[provider],
+        });
   const id = environment.environmentId;
   const connection = useAtomValue(cloudVoiceConnectionAtom(id));
   const keys = useAtomValue(cloudVoiceKeysAtom(id));
@@ -205,10 +211,7 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
     try {
       commit();
     } catch {
-      Dialog.alert(
-        "Could not enable cloud dictation",
-        "Check device storage and choose the provider again.",
-      );
+      Dialog.alert(t("cloudVoice.enableFailed"), t("cloudVoice.enableFailedHelp"));
     }
   };
   const edit = (provider: CloudSpeechProvider, enable: boolean) => {
@@ -242,10 +245,7 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
       await runSpeech(setCloudSpeechKey(connection, provider, value));
     } catch {
       setSaving(false);
-      Dialog.alert(
-        "Could not update the API key",
-        "Check the environment connection and your settings permissions.",
-      );
+      Dialog.alert(t("cloudVoice.keyFailed"), t("cloudVoice.keyFailedHelp"));
       return;
     }
     setSaving(false);
@@ -261,10 +261,10 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
           <ListActionRow
             label={
               !connection
-                ? "Environment not connected"
+                ? t("cloudVoice.environmentDisconnected")
                 : keys._tag === "Failure"
-                  ? "Could not load keys · Retry"
-                  : "Checking API keys…"
+                  ? t("cloudVoice.loadKeysFailed")
+                  : t("cloudVoice.checkingKeys")
             }
             disabled={!connection || keys._tag !== "Failure"}
             onPress={reload}
@@ -274,7 +274,7 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
     const saved = keys.value;
     if (!editing)
       return (
-        <ListSection footer={`Audio is sent through ${environment.label} using its API key.`}>
+        <ListSection footer={t("cloudVoice.audioRoute", { environment: environment.label })}>
           {CloudSpeechProvider.literals.map((provider, index) => {
             const label = CLOUD_SPEECH_LABELS[provider];
             const routed = provider === "openrouter";
@@ -297,18 +297,20 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
                 disabled={key === undefined || (!key && !canManage) || saving}
                 description={
                   key === undefined
-                    ? "Update the environment to use this provider"
+                    ? t("cloudVoice.updateEnvironment")
                     : isActive && routed
-                      ? `${activeModel} · Tap to change model${canManage ? " or key" : ""}`
+                      ? t(canManage ? "cloudVoice.changeModelOrKey" : "cloudVoice.changeModel", {
+                          model: activeModel ?? "",
+                        })
                       : isActive && key && canManage
-                        ? "Tap to manage key"
+                        ? t("cloudVoice.manageKey")
                         : key
                           ? routed
-                            ? "API key saved · choose a model to use it"
-                            : "API key saved"
+                            ? t("cloudVoice.keyChooseModel")
+                            : t("cloudVoice.keySaved")
                           : canManage
-                            ? "Add an API key to use this provider"
-                            : "Ask an environment administrator to add an API key"
+                            ? t("cloudVoice.addKey")
+                            : t("cloudVoice.askAdmin")
                 }
                 onPress={() => {
                   if (routed) return edit(provider, !isActive);
@@ -318,9 +320,11 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
                     return;
                   }
                   Dialog.confirm({
-                    title: `Use ${label} for dictation?`,
-                    message: `${cloudSpeechDisclosure(provider, environment.label)} Select This device to stop sharing.`,
-                    confirmText: `Use ${label}`,
+                    title: t("cloudVoice.useConfirm", { provider: label }),
+                    message: t("cloudVoice.disclosure", {
+                      disclosure: cloudSpeechDisclosure(provider, environment.label),
+                    }),
+                    confirmText: t("cloudVoice.use", { provider: label }),
                     onConfirm: () => enable(pendingCloudVoiceChoice(id, provider)),
                   });
                 }}
@@ -367,14 +371,14 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
     };
     const keyFooter =
       draft && !credential
-        ? (source?.invalidReferenceMessage ?? "Enter a valid API key.")
+        ? (source?.invalidReferenceMessage ?? t("cloudVoice.invalidKey"))
         : routed
           ? key && !credential
-            ? "Uses the API key saved on this environment. The model choice applies only to this device."
-            : `Anyone with dictation access to ${environment.label} can bill this key.`
+            ? t("cloudVoice.savedEnvironmentKey")
+            : t("cloudVoice.billing", { environment: environment.label })
           : editing.enable
-            ? `Anyone with dictation access to ${environment.label} can bill this key.`
-            : `Updates the ${company} key on ${environment.label}. Your dictation destination stays the same.`;
+            ? t("cloudVoice.billing", { environment: environment.label })
+            : t("cloudVoice.updateKey", { provider: company, environment: environment.label });
     return (
       <>
         <Text className="px-2 text-sm text-foreground-muted">{disclosure}</Text>
@@ -388,12 +392,12 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
               onChange={setModel}
             />
           ) : (
-            <ListSection title="Model">
+            <ListSection title={t("cloudVoice.model")}>
               <ListActionRow
                 label={
                   AsyncResult.isFailure(models)
-                    ? "Could not load models · Retry"
-                    : "Loading transcription models…"
+                    ? t("cloudVoice.loadModelsFailed")
+                    : t("cloudVoice.loadingModels")
                 }
                 disabled={!AsyncResult.isFailure(models)}
                 onPress={reloadModels}
@@ -402,12 +406,12 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
           )
         ) : null}
         {canManage ? (
-          <ListSection title="API key" footer={keyFooter}>
+          <ListSection title={t("cloudVoice.apiKey")} footer={keyFooter}>
             <View className="gap-3 px-4 py-3">
               {sources.length > 0 && (
                 <View className="flex-row flex-wrap gap-2">
                   <Chip
-                    label="Value"
+                    label={t("cloudVoice.value")}
                     size="small"
                     selected={sourceId === null}
                     disabled={saving}
@@ -433,10 +437,14 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
               )}
               <TextInput
                 key={sourceId ?? "literal"}
-                accessibilityLabel={sourceId ? `${label} API key reference` : `${label} API key`}
+                accessibilityLabel={
+                  sourceId
+                    ? t("cloudVoice.keyReference", { provider: label })
+                    : t("cloudVoice.providerKey", { provider: label })
+                }
                 placeholder={
                   source?.referencePlaceholder ??
-                  (key ? "Saved key · enter a new one to replace" : "API key")
+                  (key ? t("cloudVoice.replaceKey") : t("cloudVoice.apiKey"))
                 }
                 secureTextEntry={sourceId === null}
                 autoCapitalize="none"
@@ -457,21 +465,17 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
         {canManage || routed ? (
           <ListSection>
             {routed && !key && !canManage ? (
-              <ListActionRow
-                label="Ask an administrator to add an OpenRouter key"
-                disabled
-                onPress={() => {}}
-              />
+              <ListActionRow label={t("cloudVoice.askOpenRouter")} disabled onPress={() => {}} />
             ) : (
               <ListActionRow
                 label={
                   routed
                     ? isActive
-                      ? "Save"
-                      : "Save and enable"
+                      ? t("cloudVoice.save")
+                      : t("cloudVoice.saveEnable")
                     : editing.enable
-                      ? "Save and enable"
-                      : "Save key"
+                      ? t("cloudVoice.saveEnable")
+                      : t("cloudVoice.saveKey")
                 }
                 loading={saving}
                 disabled={routed ? !routedReady : !credential}
@@ -482,13 +486,16 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
               <Separated>
                 <ListActionRow
                   tone="danger"
-                  label="Remove key from environment"
+                  label={t("cloudVoice.removeKey")}
                   disabled={saving}
                   onPress={() =>
                     Dialog.confirm({
-                      title: `Remove the ${label} key from ${environment.label}?`,
-                      message: "Everyone using it for dictation will lose access.",
-                      confirmText: "Remove key",
+                      title: t("cloudVoice.removeConfirm", {
+                        provider: label,
+                        environment: environment.label,
+                      }),
+                      message: t("cloudVoice.removeHelp"),
+                      confirmText: t("cloudVoice.remove"),
                       destructive: true,
                       onConfirm: () => void changeKey(provider, null),
                     })
@@ -499,14 +506,14 @@ function CloudChoices({ environment, active, onClose }: Props & { onClose: () =>
           </ListSection>
         ) : null}
         <ListSection>
-          <ListActionRow label="Back to providers" disabled={saving} onPress={reset} />
+          <ListActionRow label={t("cloudVoice.back")} disabled={saving} onPress={reset} />
         </ListSection>
       </>
     );
   })();
   return (
     <Sheet
-      title={editing ? CLOUD_SPEECH_LABELS[editing.provider] : "Cloud providers"}
+      title={editing ? CLOUD_SPEECH_LABELS[editing.provider] : t("cloudVoice.title")}
       onClose={onClose}
       dismissDisabled={saving}
     >

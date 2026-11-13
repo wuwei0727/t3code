@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useState } from "react";
 import type { NativeSyntheticEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +29,7 @@ export function useReviewCommentSelectionController(input: {
   readonly selectedSection: ReviewSectionItem | null;
   readonly nativeReviewDiffData: NativeReviewDiffData;
 }) {
+  const { t } = useLanguage();
   const { environmentId, nativeReviewDiffData, selectedSection, threadId } = input;
   const navigation = useNavigation();
   const [sheetId] = useState(nextReviewSheetId);
@@ -72,11 +74,13 @@ export function useReviewCommentSelectionController(input: {
 
   const selectionAction = hasRangeTarget
     ? {
-        title: `Comment on ${formatReviewSelectedRangeLabel(activeCommentTarget)}`,
+        title: t("reviewSelection.comment", {
+          range: formatReviewSelectedRangeLabel(activeCommentTarget),
+        }),
         onOpenComment: openReviewCommentSheet,
       }
     : pendingRange
-      ? { title: "Select range end", onOpenComment: null }
+      ? { title: t("reviewSelection.end"), onOpenComment: null }
       : null;
 
   const onPressLine = (

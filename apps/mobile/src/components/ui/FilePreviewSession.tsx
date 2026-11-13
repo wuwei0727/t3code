@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
 import { AssetWorkspaceAssetNotFoundError } from "@t3tools/contracts";
 import * as Schema from "effect/Schema";
 import * as Dialog from "./Dialog";
@@ -99,6 +101,7 @@ function ResolvedFilePreview(
     readonly onOpenError?: (error: unknown) => void;
   },
 ) {
+  const { t } = useLanguage();
   const { progressiveGallery, Viewer } = props;
   // Freeze the group at opening; streaming messages and URL refreshes must not reopen the viewer.
   const [items] = useState(() => filePreviewGallery(props.source, []));
@@ -110,7 +113,7 @@ function ResolvedFilePreview(
   );
   const onResolutionError = useEffectEvent((error: PreviewResolutionError) => {
     if (props.onOpenError) props.onOpenError(error.cause);
-    else Dialog.alert("Could not open preview", error.fallbackMessage);
+    else Dialog.alert(t("previewSession.failed"), appErrorText(error.fallbackMessage, t));
     props.onRequestClose();
   });
   // Resolves once per presentation and holds local file leases until it closes.
@@ -169,12 +172,12 @@ function ResolvedFilePreview(
   if (!uri) return null;
   const onOpenError = (error: unknown) => {
     if (props.onOpenError) return props.onOpenError(error);
-    Dialog.alert("Could not open preview", nativeViewerErrorMessage(error), [
-      { text: "Cancel", style: "cancel" },
+    Dialog.alert(t("previewSession.failed"), nativeViewerErrorMessage(error), [
+      { text: t("previewSession.cancel"), style: "cancel" },
       ...(selected.kind === "document"
         ? [
             {
-              text: "Save or share",
+              text: t("previewSession.share"),
               onPress: () => {
                 const input = {
                   attachment: {
@@ -186,7 +189,9 @@ function ResolvedFilePreview(
                 const sharing = /^(file|content):/.test(uri)
                   ? shareLocalAttachment({ ...input, uri })
                   : downloadAndShareAttachment({ ...input, url: uri });
-                void sharing.catch(() => Dialog.alert("Could not share file", "Please try again."));
+                void sharing.catch(() =>
+                  Dialog.alert(t("previewSession.shareFailed"), t("previewSession.retry")),
+                );
               },
             },
           ]

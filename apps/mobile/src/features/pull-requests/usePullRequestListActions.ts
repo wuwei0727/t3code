@@ -1,3 +1,5 @@
+import { localizeChangeRequestTerminology } from "./changeRequestTerminology";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import * as Dialog from "../../components/ui/Dialog";
 import { RegistryContext, useAtomValue } from "@effect/atom-react";
 import {
@@ -31,6 +33,7 @@ export function usePullRequestListActions(
     patch: Partial<EnvironmentPullRequestListEntry>,
   ) => void,
 ) {
+  const { t, locale } = useLanguage();
   const registry = use(RegistryContext);
   const selectDetail = useSelectWorkspaceDetail();
   const openDetail = useOpenWorkspaceDetail();
@@ -107,8 +110,10 @@ export function usePullRequestListActions(
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
       Dialog.alert(
-        `Couldn't update this ${terminology.singular}`,
-        cause instanceof Error ? cause.message : "Try again.",
+        t("prListActions.failed", {
+          request: localizeChangeRequestTerminology(terminology, locale).singular,
+        }),
+        cause instanceof Error ? cause.message : t("prListActions.retry"),
       );
     }
   };
@@ -140,9 +145,10 @@ export function usePullRequestListActions(
     const label = pullRequestActionLabel(
       supported,
       sourceControlClients.get(entry.provider).changeRequest,
+      locale,
     );
     Dialog.alert(`${label}?`, `#${entry.number} · ${entry.title}`, [
-      { text: "Cancel", style: "cancel" },
+      { text: t("prListActions.cancel"), style: "cancel" },
       {
         text: label,
         style: supported === "close" ? "destructive" : "default",
@@ -155,24 +161,26 @@ export function usePullRequestListActions(
     return [
       {
         id: "open",
-        title: `Open ${terminology.singular}`,
+        title: t("prListActions.open", {
+          request: localizeChangeRequestTerminology(terminology, locale).singular,
+        }),
         image: "arrow.up.right",
       },
       ...(writableEnvironments.has(entry.environmentId) && entry.state === "open"
         ? [
             {
               id: "request-review",
-              title: "Request review",
+              title: t("prListActions.request"),
               image: "person.badge.plus",
             },
             {
               id: entry.isDraft ? "ready" : "draft",
-              title: entry.isDraft ? "Mark ready for review" : "Convert to draft",
+              title: entry.isDraft ? t("prListActions.ready") : t("prListActions.draft"),
               image: "pencil",
             },
             {
               id: "close",
-              title: pullRequestActionLabel("close", terminology),
+              title: pullRequestActionLabel("close", terminology, locale),
               image: "xmark",
               attributes: { destructive: true },
             },
@@ -181,20 +189,20 @@ export function usePullRequestListActions(
           ? [
               {
                 id: "reopen",
-                title: pullRequestActionLabel("reopen", terminology),
+                title: pullRequestActionLabel("reopen", terminology, locale),
                 image: "arrow.clockwise",
               },
             ]
           : []),
       {
         id: "share",
-        title: "Share…",
+        title: t("prListActions.share"),
         image: "square.and.arrow.up",
       },
-      { id: "copy", title: "Copy link", image: "link" },
+      { id: "copy", title: t("prListActions.copy"), image: "link" },
       {
         id: "provider",
-        title: openOnProviderLabel(entry.provider),
+        title: openOnProviderLabel(entry.provider, locale),
         image: "safari",
       },
     ];

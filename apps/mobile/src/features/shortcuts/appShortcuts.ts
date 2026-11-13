@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import type { Action } from "expo-quick-actions";
 import type { NavigationState } from "@react-navigation/native";
 import { EnvironmentId, ThreadId, type ScopedThreadRef } from "@t3tools/contracts";
@@ -54,9 +55,9 @@ export function activeThreadRef(state: NavigationState): ScopedThreadRef | null 
   }
 }
 
-function threadShortcutLabel(thread: RecentThreadShortcut): string {
+function threadShortcutLabel(thread: RecentThreadShortcut, t: UiTranslator): string {
   const title = thread.title.trim();
-  return title.length > 0 ? title : "Thread";
+  return title.length > 0 ? title : t("launcherShortcut.thread");
 }
 
 /** Launcher shortcuts survive updates; allowlist destinations so malformed or stale paths cannot navigate. */
@@ -88,18 +89,21 @@ export function withRecentThreadShortcut(
   ].slice(0, MAX_RECENT_THREAD_SHORTCUTS);
 }
 
-export function buildShortcutActions(recents: ReadonlyArray<RecentThreadShortcut>): Action[] {
+export function buildShortcutActions(
+  recents: ReadonlyArray<RecentThreadShortcut>,
+  t: UiTranslator = makeTranslator("en"),
+): Action[] {
   return [
     {
       id: NEW_TASK_SHORTCUT_ID,
-      title: "New task",
+      title: t("launcherShortcut.new"),
       icon: SHORTCUT_ICON,
       params: { href: NEW_TASK_SHORTCUT_HREF },
     },
     ...recents.slice(0, MAX_RECENT_THREAD_SHORTCUTS).map((thread): Action => ({
       // URI-encoded hrefs avoid env/thread id collisions that plain hyphen joins allow.
       id: `thread:${threadShortcutHref(thread)}`,
-      title: threadShortcutLabel(thread),
+      title: threadShortcutLabel(thread, t),
       icon: SHORTCUT_ICON,
       params: { href: threadShortcutHref(thread) },
     })),

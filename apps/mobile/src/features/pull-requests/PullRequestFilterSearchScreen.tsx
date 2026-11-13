@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomValue } from "@effect/atom-react";
 import { useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import {
@@ -51,6 +52,7 @@ const optionsFamily = Atom.family((key: string) => {
 export function PullRequestFilterSearchScreen({
   route,
 }: StaticScreenProps<PullRequestFilterSearchParams>) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const { kind, environmentId, environmentIds, suggestions, labelColors } = route.params;
   const listControls = usePullRequestListControls();
@@ -110,13 +112,17 @@ export function PullRequestFilterSearchScreen({
       },
     });
   };
-  const placeholder = kind === "labels" ? "Search labels" : "Search authors";
+  const placeholder = kind === "labels" ? t("pr.search.labels") : t("pr.search.authors");
   return (
     <PullRequestSearchSheet
-      title={kind === "labels" ? "Filter by label" : "Filter by author"}
+      title={kind === "labels" ? t("pr.search.byLabel") : t("pr.search.byAuthor")}
       placeholder={placeholder}
-      closeAccessibilityLabel={kind === "labels" ? "Close label filter" : "Close author filter"}
-      clearAccessibilityLabel={kind === "labels" ? "Clear label search" : "Clear author search"}
+      closeAccessibilityLabel={
+        kind === "labels" ? t("pr.search.closeLabels") : t("pr.search.closeAuthors")
+      }
+      clearAccessibilityLabel={
+        kind === "labels" ? t("pr.search.clearLabels") : t("pr.search.clearAuthors")
+      }
       query={query}
       onQueryChange={setQuery}
     >
@@ -153,17 +159,17 @@ export function PullRequestFilterSearchScreen({
               <EmptyState
                 title={
                   hosted.failed
-                    ? "Couldn't search the host"
+                    ? t("pr.search.failed")
                     : kind === "labels"
-                      ? "No matching labels"
-                      : "No matching authors"
+                      ? t("pr.search.noLabels")
+                      : t("pr.search.noAuthors")
                 }
                 detail={
                   hosted.failed
-                    ? "The host didn't answer. Try again in a moment."
+                    ? t("pr.search.retryDetail")
                     : kind === "labels"
-                      ? "Search the labels of the repositories this list covers."
-                      : "Search people by name or handle on the repositories' hosts."
+                      ? t("pr.search.labelsDetail")
+                      : t("pr.search.authorsDetail")
                 }
                 variant="plain"
               />

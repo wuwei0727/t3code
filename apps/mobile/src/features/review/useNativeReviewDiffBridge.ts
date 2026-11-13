@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeNativeReviewRows } from "./reviewPresentation";
 import { useMemo, useRef, useState } from "react";
 import type { NativeSyntheticEvent } from "react-native";
 
@@ -18,6 +20,7 @@ export function useNativeReviewDiffBridge(input: {
   readonly selectedRowIds: ReadonlyArray<string>;
   readonly canHighlight: boolean;
 }) {
+  const { t } = useLanguage();
   const {
     canHighlight,
     collapsedFileIds,
@@ -42,7 +45,10 @@ export function useNativeReviewDiffBridge(input: {
     [appTheme, scheme, themeId],
   );
   const collapsedFileIdsSet = useMemo(() => new Set(collapsedFileIds), [collapsedFileIds]);
-  const rowsJson = useMemo(() => JSON.stringify(data.rows), [data.rows]);
+  const rowsJson = useMemo(
+    () => JSON.stringify(localizeNativeReviewRows(data.rows, t)),
+    [data.rows, t],
+  );
   const collapsedFileIdsJson = useMemo(() => JSON.stringify(collapsedFileIds), [collapsedFileIds]);
   const viewedFileIdsJson = useMemo(() => JSON.stringify(viewedFileIds), [viewedFileIds]);
   const selectedRowIdsJson = useMemo(() => JSON.stringify(selectedRowIds), [selectedRowIds]);

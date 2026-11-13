@@ -1,7 +1,11 @@
 import { ThreadId, type WorktreeSetupSnapshot } from "@t3tools/contracts";
 import { resolveVisibleWorktreeSetup } from "@t3tools/client-runtime/worktree-setup";
 import { describe, expect, it } from "vite-plus/test";
-import { resolveWorktreeSetupSnapshot } from "./worktree-setup-state";
+import {
+  resolveWorktreeSetupSnapshot,
+  worktreeSetupStagePresentation,
+} from "./worktree-setup-state";
+import { makeTranslator } from "../../i18n/translator";
 
 const threadId = ThreadId.make("setup-thread");
 const running: WorktreeSetupSnapshot = {
@@ -19,6 +23,33 @@ const running: WorktreeSetupSnapshot = {
 };
 
 describe("mobile worktree setup handoff", () => {
+  it("keeps protocol stage decisions stable when presentation is Chinese", () => {
+    const t = makeTranslator("zh-CN");
+    const stage = {
+      id: "checkout" as const,
+      status: "skipped" as const,
+      detail: null,
+      tail: [],
+      percent: null,
+      startedAt: "2026-09-17T00:00:00.000Z",
+      endedAt: "2026-09-17T00:00:01.000Z",
+    };
+    expect(worktreeSetupStagePresentation(stage, t)).toEqual({
+      detail: t("worktreeSetupUi.skipped"),
+      showElapsed: false,
+    });
+    expect(worktreeSetupStagePresentation({ ...stage, detail: "raw diagnostic" }, t)).toEqual({
+      detail: "raw diagnostic",
+      showElapsed: false,
+    });
+    expect(worktreeSetupStagePresentation({ ...stage, status: "pending" }, t)).toEqual({
+      detail: null,
+      showElapsed: false,
+    });
+    expect(worktreeSetupStagePresentation({ ...stage, status: "running", percent: 50 }, t)).toEqual(
+      { detail: "50%", showElapsed: true },
+    );
+  });
   it("keeps the setup identity after its card retires so the working header can take over", () => {
     const done = { ...running, phase: "done" as const, sequence: 2 };
     const held = resolveWorktreeSetupSnapshot(threadId, done, running);

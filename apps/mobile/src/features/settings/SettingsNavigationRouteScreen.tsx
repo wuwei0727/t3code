@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { AsyncResult } from "effect/reactivity";
 import { useAdaptiveWorkspaceLayout } from "../layout/adaptive-workspace-context";
@@ -16,7 +17,7 @@ import { SymbolView } from "../../components/ui/AppSymbol";
 import { mobilePreferencesAtom, updateMobilePreferencesAtom } from "../../state/preferences";
 import {
   NAVIGATION_TAB_ICONS,
-  WORKSPACE_TAB_LABELS,
+  useWorkspaceTabLabels,
   useNavigationTabOrder,
   useHiddenNavigationTabs,
   useEnabledNavigationTabs,
@@ -26,6 +27,8 @@ import { SettingsSection } from "./components/SettingsSection";
 import { resolveWorkspaceTabOrder } from "../layout/workspace/workspace-tabs-state";
 
 export function SettingsNavigationRouteScreen() {
+  const { t } = useLanguage();
+  const labels = useWorkspaceTabLabels();
   const insets = useSafeAreaInsets();
   const order = useNavigationTabOrder();
   const { layout } = useAdaptiveWorkspaceLayout();
@@ -37,18 +40,16 @@ export function SettingsNavigationRouteScreen() {
   const ready = customizable && AsyncResult.isSuccess(preferences) && !preferences.waiting;
   const save = useAtomSet(updateMobilePreferencesAtom);
   return (
-    <SettingsScreen title="Navigation tabs">
+    <SettingsScreen title={t("navigationTabs.title")}>
       <ScreenScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="gap-4 px-5 pt-4"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       >
         <Text className="px-2 text-sm text-foreground-muted">
-          {customizable
-            ? "Phones show the first four enabled sections; Android tablet rails show all enabled sections. Remaining sections appear at the top of Settings. Hidden sections appear only here. Settings always stays last. Saved on this device."
-            : "Tab customization becomes available when there are six sections, including Settings."}
+          {customizable ? t("navigationTabs.hint") : t("navigationTabs.unavailable")}
         </Text>
-        <SettingsSection title="Tab order">
+        <SettingsSection title={t("navigationTabs.order")}>
           {order.map((tab, index) => (
             <View key={tab} className="flex-row items-center gap-3 px-4 py-3">
               <SymbolView
@@ -57,18 +58,21 @@ export function SettingsNavigationRouteScreen() {
                 tintColorClassName="accent-icon"
               />
               <View className="flex-1">
-                <Text>{WORKSPACE_TAB_LABELS[tab]}</Text>
+                <Text>{labels[tab]}</Text>
                 <Text className="text-xs text-foreground-muted">
                   {hidden.includes(tab)
-                    ? "Hidden"
+                    ? t("navigationTabs.hidden")
                     : enabled.indexOf(tab) < capacity
-                      ? `Tab ${enabled.indexOf(tab) + 1}`
-                      : "In Settings"}
+                      ? t("navigationTabs.tab", { position: enabled.indexOf(tab) + 1 })
+                      : t("navigationTabs.inSettings")}
                 </Text>
               </View>
               <IconButton
                 icon={hidden.includes(tab) ? "eye.slash" : "eye"}
-                accessibilityLabel={`${hidden.includes(tab) ? "Show" : "Hide"} ${WORKSPACE_TAB_LABELS[tab]}`}
+                accessibilityLabel={t(
+                  hidden.includes(tab) ? "navigationTabs.show" : "navigationTabs.hide",
+                  { tab: labels[tab] },
+                )}
                 disabled={!ready}
                 onPress={() =>
                   save({
@@ -83,7 +87,7 @@ export function SettingsNavigationRouteScreen() {
               />
               <IconButton
                 icon="arrow.up"
-                accessibilityLabel={`Move ${WORKSPACE_TAB_LABELS[tab]} up`}
+                accessibilityLabel={t("navigationTabs.up", { tab: labels[tab] })}
                 disabled={!ready || index === 0}
                 onPress={() =>
                   save({
@@ -99,7 +103,7 @@ export function SettingsNavigationRouteScreen() {
               />
               <IconButton
                 icon="arrow.down"
-                accessibilityLabel={`Move ${WORKSPACE_TAB_LABELS[tab]} down`}
+                accessibilityLabel={t("navigationTabs.down", { tab: labels[tab] })}
                 disabled={!ready || index === order.length - 1}
                 onPress={() =>
                   save({
@@ -117,7 +121,7 @@ export function SettingsNavigationRouteScreen() {
           ))}
         </SettingsSection>
         <Button
-          label="Reset tabs"
+          label={t("navigationTabs.reset")}
           tone="text"
           disabled={!ready}
           onPress={() => save({ navigationTabOrder: [], hiddenNavigationTabs: [] })}

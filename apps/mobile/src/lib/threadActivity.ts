@@ -1,3 +1,7 @@
+import type { UiTranslator } from "../i18n/translator";
+import { localizeBuiltinToolLabel } from "../features/threads/toolDisplayCatalog";
+import { workSummaryDisplay } from "../features/threads/workSummaryPresentation";
+import { localizeWorkHistoryLabel } from "../features/threads/workHistoryPresentation";
 import type {
   ThreadPendingApproval,
   ThreadPendingUserInput,
@@ -123,7 +127,11 @@ export interface ThreadFeedActivity {
   readonly groupedToolDetail?: boolean;
   readonly live?: boolean;
   /** Lone calls carry the group header's label and id until a second call joins. */
-  readonly groupStandIn?: { readonly groupId: string; readonly label: string };
+  readonly groupStandIn?: {
+    readonly groupId: string;
+    readonly label: string;
+    readonly displayLabel?: (t: UiTranslator) => string;
+  };
   readonly projectedItem: OrchestrationV2ProjectedTurnItem;
 }
 
@@ -216,6 +224,7 @@ type ThreadFeedEntryContent =
       readonly hiddenCount: number;
       readonly expanded: boolean;
       readonly summary: string;
+      readonly displaySummary?: (t: UiTranslator) => string;
       readonly summaryKind: ToolGroupSummaryKind;
       readonly toolSurface?: WorkLogPresentationEntry["toolSurface"];
       readonly toolIcon?: WorkLogPresentationEntry["toolIcon"];
@@ -265,12 +274,25 @@ function compactWorkEntryText(value: string): string {
   return truncate(value.replace(/\s+/gu, " "), WORK_LOG_LABEL_MAX_LENGTH);
 }
 
-export function workEntryRowLabel(entry: WorkLogPresentationEntry, expanded = false): string {
+export function workEntryRowLabel(
+  entry: WorkLogPresentationEntry,
+  expanded = false,
+  t?: UiTranslator,
+): string {
   if (entry.itemType === "fork") return entry.label;
   if (expanded && entry.itemType === "reasoning")
-    return entry.toolLifecycleStatus === "inProgress" ? "Thinking" : "Thought";
+    return t
+      ? t(
+          entry.toolLifecycleStatus === "inProgress"
+            ? "workLogExtra.thinking"
+            : "workLogExtra.thought",
+        )
+      : entry.toolLifecycleStatus === "inProgress"
+        ? "Thinking"
+        : "Thought";
   const presentation = resolveWorkEntryToolPresentation(entry);
-  if (presentation) return presentation.displayName;
+  if (presentation)
+    return t ? localizeBuiltinToolLabel(presentation.displayName, t) : presentation.displayName;
   if (entry.command?.trim()) return compactWorkEntryText(commandDisplayText(entry.command));
   const action = toolGroupAction(entry);
   const isToolRead = action === "read" && entry.itemType === "dynamic_tool";
@@ -282,15 +304,43 @@ export function workEntryRowLabel(entry: WorkLogPresentationEntry, expanded = fa
         ? (entry.toolData as Record<string, unknown>)
         : undefined;
     const searchLabel =
-      entry.itemType === "file_search" ? entry.label : formatSearchToolLabel(toolData);
+      entry.itemType === "file_search" &&
+      (!t || (typeof toolData?.title === "string" && toolData.title.trim()))
+        ? entry.label
+        : formatSearchToolLabel(
+            toolData,
+            t
+              ? (template, params) =>
+                  t(
+                    (
+                      {
+                        "Searched {{query}} in {{target}}": "workHistoryUi.searchTarget",
+                        "Searched files {{glob}} in {{target}}": "workHistoryUi.globTarget",
+                        "Searched files {{glob}}": "workHistoryUi.glob",
+                        "Searched {{query}}": "workHistoryUi.query",
+                        "Searched in {{target}}": "workHistoryUi.target",
+                      } as const
+                    )[template],
+                    params,
+                  )
+              : undefined,
+          );
     if (searchLabel) return searchLabel;
   }
   if (isToolRead) {
     const [firstPath] = entry.changedFiles ?? collectToolFilePaths(entry.toolData);
     if (firstPath) {
+      if (t)
+        return t("workHistoryUi.read", {
+          path: firstPath.trim(),
+          suffix:
+            (entry.changedFiles?.length ?? 1) > 1
+              ? t("workHistoryUi.more", { count: entry.changedFiles!.length - 1 })
+              : "",
+        });
       return formatReadToolLabel(firstPath, Math.max(0, (entry.changedFiles?.length ?? 1) - 1));
     }
-    if (!expanded) return "Read file";
+    if (!expanded) return t ? t("workLogExtra.readFile") : "Read file";
   }
   const preview =
     entry.command ??
@@ -590,47 +640,62 @@ function itemToolPresentation(item: OrchestrationV2TurnItem): T3McpToolPresentat
 function itemSummary(
   item: OrchestrationV2TurnItem,
   toolPresentation: T3McpToolPresentation | null = null,
+  t?: UiTranslator,
 ): string {
   if (item.type === "notification") return item.summary;
   if (item.type === "system_notice") return item.message;
-  if (item.type === "compaction") return contextCompactionLabel(item);
+  if (item.type === "compaction")
+    return t
+      ? localizeWorkHistoryLabel(contextCompactionLabel(item), t)
+      : contextCompactionLabel(item);
   const title =
     (item.type === "dynamic_tool"
       ? dynamicToolTitle(item.toolName, item.input, item.title)
       : undefined) ?? item.title?.trim();
-  if (item.type === "subagent") return formatSubagentDisplayTitle(title || "Subagent");
+  if (item.type === "subagent")
+    return formatSubagentDisplayTitle(title || t?.("workItemUi.subagent") || "Subagent");
   if (title) return toolPresentation?.displayName ?? capitalizePhrase(title);
   switch (item.type) {
     case "reasoning":
-      return "Thinking";
+      return t?.("workLogExtra.thinking") ?? "Thinking";
     case "command_execution":
-      return "Command";
+      return t?.("workItemUi.command") ?? "Command";
     case "file_change":
       return item.changes !== undefined && item.changes.length > 1
-        ? `Changed ${item.changes.length} files`
-        : `Changed ${item.fileName}`;
+        ? t
+          ? t("workItemUi.files", { count: item.changes.length })
+          : `Changed ${item.changes.length} files`
+        : t
+          ? t("workItemUi.file", { path: item.fileName })
+          : `Changed ${item.fileName}`;
     case "file_search":
-      return item.title?.trim() || formatSearchToolLabel(item) || "Searched files";
+      return (
+        item.title?.trim() ||
+        formatSearchToolLabel(item) ||
+        (t?.("workItemUi.searched") ?? "Searched files")
+      );
     case "web_search":
-      return "Searched the web";
+      return t?.("workItemUi.web") ?? "Searched the web";
     case "approval_request":
-      return "Approval requested";
+      return t?.("workItemUi.approval") ?? "Approval requested";
     case "user_input_request":
-      return "Input requested";
+      return t?.("workItemUi.input") ?? "Input requested";
     case "checkpoint":
-      return "Checkpoint captured";
+      return t?.("workItemUi.checkpoint") ?? "Checkpoint captured";
     case "run_interrupt_request":
-      return "Interrupt requested";
+      return t?.("workItemUi.interrupt") ?? "Interrupt requested";
     case "run_interrupt_result":
-      return "Run interrupted";
+      return t?.("workItemUi.interrupted") ?? "Run interrupted";
     case "error":
-      return item.failure.class === "usage_limit" ? "Usage limit reached" : "Provider error";
+      return item.failure.class === "usage_limit"
+        ? (t?.("workItemUi.limit") ?? "Usage limit reached")
+        : (t?.("workItemUi.providerError") ?? "Provider error");
     case "handoff":
-      return "Context handed off";
+      return t?.("workItemUi.handoff") ?? "Context handed off";
     case "fork":
-      return "Thread forked";
+      return t?.("workItemUi.fork") ?? "Thread forked";
     case "thread_created":
-      return "Thread created";
+      return t?.("workItemUi.created") ?? "Thread created";
     case "secret_request":
       return item.label;
     case "link_request":
@@ -642,17 +707,28 @@ function itemSummary(
       });
       if (classified === "read") {
         const [path] = collectToolFilePaths({ input: item.input });
-        return formatReadToolLabel(path ?? "");
+        return t
+          ? path
+            ? t("workHistoryUi.read", { path: path.trim(), suffix: "" })
+            : t("workLogExtra.readFile")
+          : formatReadToolLabel(path ?? "");
       }
       if (classified === "search") {
-        return formatSearchToolLabel({ input: item.input }) ?? item.toolName ?? "Tool call";
+        return (
+          formatSearchToolLabel({ input: item.input }) ??
+          item.toolName ??
+          t?.("workItemUi.tool") ??
+          "Tool call"
+        );
       }
-      return toolPresentation?.displayName ?? item.toolName ?? "Tool call";
+      return (
+        toolPresentation?.displayName ?? item.toolName ?? t?.("workItemUi.tool") ?? "Tool call"
+      );
     }
     case "proposed_plan":
-      return "Proposed plan";
+      return t?.("workItemUi.plan") ?? "Proposed plan";
     case "todo_list":
-      return "Plan updated";
+      return t?.("workItemUi.updatedPlan") ?? "Plan updated";
     case "user_message":
       return "User message";
     case "assistant_message":
@@ -864,15 +940,32 @@ function toFeedActivity(
   };
 }
 
-function singleToolCallLabel(activity: ThreadFeedActivity, expanded: boolean): string {
+function singleToolCallLabel(
+  activity: ThreadFeedActivity,
+  expanded: boolean,
+  t?: UiTranslator,
+): string {
   if (activity.workEntry.itemType === "reasoning")
     return expanded
       ? "Thought"
       : compactWorkEntryText(activity.workEntry.detail ?? "") || "Thought";
   const presentation = resolveWorkEntryToolPresentation(activity.workEntry, "completed");
-  if (presentation) return presentation.displayName;
+  if (presentation)
+    return t ? localizeBuiltinToolLabel(presentation.displayName, t) : presentation.displayName;
   const command = activity.workEntry.command?.trim();
-  return command ? truncate(command, WORK_LOG_LABEL_MAX_LENGTH) : activity.summary;
+  const action = toolGroupAction(activity.workEntry);
+  if (
+    t &&
+    !command &&
+    !activity.projectedItem.item.title?.trim() &&
+    (action === "read" || action === "code-search" || action === "search")
+  )
+    return workEntryRowLabel(activity.workEntry, false, t);
+  return command
+    ? truncate(command, WORK_LOG_LABEL_MAX_LENGTH)
+    : t
+      ? itemSummary(activity.projectedItem.item, null, t)
+      : activity.summary;
 }
 
 function isEmptyMessage(entry: RawThreadFeedEntry): boolean {
@@ -1985,19 +2078,28 @@ function appendToolGroupRows(
         )?.workEntry.detail
       : undefined;
   const thought = latestThought ? compactWorkEntryText(liveThoughtLine(latestThought)) : "";
-  const summary = live
-    ? (expanded || thought) && latestActivity.workEntry.itemType === "reasoning"
-      ? latestActivity.lifecycleStatus === "inProgress"
-        ? "Thinking"
-        : "Thought"
-      : liveToolActivitySummary(latestActivity, live)
-    : singleActivity !== null &&
-        singleActivity.toolLike &&
-        toolGroupAction(singleActivity.workEntry) !== "edit"
-      ? singleToolCallLabel(singleActivity, expanded)
-      : singleActivity !== null && !singleActivity.toolLike
-        ? singleActivity.workEntry.label
-        : groupSummary.summary;
+  const displaySummary = (t?: UiTranslator): string =>
+    live
+      ? (expanded || thought) && latestActivity.workEntry.itemType === "reasoning"
+        ? latestActivity.lifecycleStatus === "inProgress"
+          ? (t?.("workLogExtra.thinking") ?? "Thinking")
+          : (t?.("workLogExtra.thought") ?? "Thought")
+        : liveToolActivitySummary(latestActivity, live, t)
+      : singleActivity !== null &&
+          singleActivity.toolLike &&
+          toolGroupAction(singleActivity.workEntry) !== "edit"
+        ? singleToolCallLabel(singleActivity, expanded, t)
+        : singleActivity !== null && !singleActivity.toolLike
+          ? t
+            ? itemSummary(singleActivity.projectedItem.item, null, t)
+            : singleActivity.workEntry.label
+          : t
+            ? summarizeToolGroup(
+                activities.map((activity) => activity.workEntry),
+                workSummaryDisplay(t),
+              ).summary
+            : groupSummary.summary;
+  const summary = displaySummary();
   const id = shimmer ? LIVE_ACTIVITY_ROW_ID : `${live ? "work-live" : "work-toggle"}:${groupId}`;
   // Lone calls replace the header and disclose directly; lone thoughts retain the header to show text on expansion.
   if (singleActivity !== null && singleActivity.workEntry.itemType !== "reasoning") {
@@ -2006,7 +2108,13 @@ function appendToolGroupRows(
       id,
       createdAt: singleActivity.createdAt,
       runId: singleActivity.runId,
-      activities: [{ ...singleActivity, live: shimmer, groupStandIn: { groupId, label: summary } }],
+      activities: [
+        {
+          ...singleActivity,
+          live: shimmer,
+          groupStandIn: { groupId, label: summary, displayLabel: displaySummary },
+        },
+      ],
       // No trailing margin lets Thinking or a growing group replace the row without shifting the feed.
       continuesWorkLog: true,
     });
@@ -2045,6 +2153,7 @@ function appendToolGroupRows(
     hiddenCount: activities.length,
     expanded,
     summary,
+    displaySummary,
     summaryKind: toolGroupSummaryKind(
       (live ? [latestActivity] : activities).map((activity) => activity.workEntry),
     ),
@@ -2079,18 +2188,28 @@ function appendToolGroupRows(
   });
 }
 
-function liveToolActivitySummary(activity: ThreadFeedActivity, presentTense: boolean): string {
+function liveToolActivitySummary(
+  activity: ThreadFeedActivity,
+  presentTense: boolean,
+  t?: UiTranslator,
+): string {
   const status = liveActivityToolStatus(activity.lifecycleStatus, presentTense);
   if (activity.workEntry.itemType === "reasoning") {
     return compactWorkEntryText(
-      activity.workEntry.detail?.trim() || (status === "inProgress" ? "Thinking" : "Thought"),
+      activity.workEntry.detail?.trim() ||
+        (t
+          ? t(status === "inProgress" ? "workLogExtra.thinking" : "workLogExtra.thought")
+          : status === "inProgress"
+            ? "Thinking"
+            : "Thought"),
     );
   }
   const presentation = resolveWorkEntryToolPresentation({
     ...activity.workEntry,
     toolLifecycleStatus: status,
   });
-  if (presentation) return presentation.displayName;
+  if (presentation)
+    return t ? localizeBuiltinToolLabel(presentation.displayName, t) : presentation.displayName;
   const command = activity.workEntry.command?.trim();
   if (command) {
     const program = commandProgramName(command);
@@ -2104,9 +2223,16 @@ function liveToolActivitySummary(activity: ThreadFeedActivity, presentTense: boo
             : status === "stopped"
               ? "Stopped"
               : "Ran";
-    return `${verb} ${program ?? "command"}`;
+    return t
+      ? t(
+          `workLiveUi.${status === "inProgress" ? "running" : status === "failed" ? "failed" : status === "declined" ? "declined" : status === "stopped" ? "stopped" : "ran"}`,
+          { command: program ?? t("workLiveUi.command") },
+        )
+      : `${verb} ${program ?? "command"}`;
   }
-  return compactWorkEntryText(activity.detail ?? activity.summary);
+  return compactWorkEntryText(
+    activity.detail ?? (t ? itemSummary(activity.projectedItem.item, null, t) : activity.summary),
+  );
 }
 
 interface ThreadFeedBuild {

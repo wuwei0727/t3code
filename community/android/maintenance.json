@@ -1,0 +1,1447 @@
+{
+  "schemaVersion": 1,
+  "upstreamRepository": "pingdotgg/t3code",
+  "channel": "android-beta",
+  "inspectedAt": "2026-11-11",
+  "inspectedSourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "latestObserved": {
+    "tag": "android-beta-784",
+    "tagCommit": "6c9adfb2739205244b84e607736f6fd8b4611e69",
+    "versionName": "2.3.0",
+    "versionCode": 784,
+    "channel": "Google Play closed testing / GitHub prerelease mirror",
+    "releaseUrl": "https://github.com/pingdotgg/t3code/releases/tag/android-beta-784",
+    "sourceCommit": null,
+    "sourceProvenanceVerified": false
+  },
+  "selectedBaseline": {
+    "tag": null,
+    "commit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+    "channel": "personal source snapshot; not verified against Google Play production",
+    "versionName": "2.3.0",
+    "versionCode": 1
+  },
+  "baselineBuild": {
+    "status": "passed",
+    "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+    "variant": "preview",
+    "architecture": "x86_64",
+    "expoConfig": "passed; official OTA disabled",
+    "prebuild": "passed",
+    "gradleLog": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-final-gradle.log",
+    "runUrl": null,
+    "applicationId": "com.t3tools.t3code.preview",
+    "versionName": "2.3.0",
+    "versionCode": 1,
+    "signing": "upstream test signing only",
+    "shortPath": "temporary T: subst mapping removed after failed retry",
+    "firstAttempt": {
+      "status": "failed-native-cmake-then-cancelled",
+      "reason": "CMake object directories exceeded 250 characters; Ninja mkdir failed. Task-local Gradle daemon stopped normally before retry.",
+      "log": ".t3/android-upstream-gradle-longpath.log",
+      "generatedProjectPreservedAt": ".t3/android-longpath-generated"
+    },
+    "secondAttempt": {
+      "status": "failed",
+      "exitCode": 1,
+      "reason": "React Native Codegen: this and base files have different roots (T: codegen CLI versus C: native dependency paths). fs.realpathSync preserves subst; fs.realpathSync.native resolves it to the original long C: path.",
+      "log": ".t3/android-shortpath-gradle.log",
+      "duration": "3m 4s"
+    },
+    "next": "Unmodified source baseline verified historically; current version5 builds and acceptance recorded separately",
+    "thirdAttempt": {
+      "status": "failed",
+      "worktree": "C:/Users/Admin/.t3/worktrees/t3code/cn",
+      "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "dependencies": "passed; frozen and all packages reused",
+      "prebuild": "passed",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-gradle.log",
+      "duration": "2m 13s",
+      "reason": "Ninja says build.ninja still dirty after 100 tries; -d explain identifies existing Prefab cmake file (271 characters) as missing."
+    },
+    "fourthAttempt": {
+      "status": "failed",
+      "worktree": "C:/Users/Admin/.t3/worktrees/t3code/cn",
+      "virtualStoreDir": "node_modules/v",
+      "virtualStoreDirMaxLength": 40,
+      "dependencies": "passed; frozen lockfile unchanged; 28.3s",
+      "prebuild": "passed",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-compact-gradle.log",
+      "duration": "1m 37s",
+      "reason": "Windows CMake object path overflow and Ninja treating a long existing ReactAndroidConfigVersion.cmake path as missing."
+    },
+    "fifthAttempt": {
+      "status": "failed",
+      "worktree": "C:/Users/Admin/.t3/worktrees/t3code/cn",
+      "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "virtualStoreDir": "build/p",
+      "virtualStoreDirMaxLength": 32,
+      "dependencies": "passed; frozen lockfile unchanged; 1m 22.2s",
+      "prebuild": "passed",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-store32-gradle.log",
+      "duration": "5m 34s",
+      "reason": "expo-updates Ninja mkdir path failure; react-native-nitro-modules Ninja build.ninja still dirty after 100 tries."
+    },
+    "sixthAttempt": {
+      "status": "failed",
+      "worktree": "C:/Users/Admin/.t3/worktrees/t3code/cn",
+      "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "cmake": "3.22.1 unchanged SDK version; private build/cmake copy selected with gitignored local.properties",
+      "ninja": "1.13.2; SDK global Ninja 1.10.2 unchanged",
+      "ninjaArchiveSha256": "07fc8261b42b20e71d1720b39068c2e14ffcee6396b76fb7a795fb460b78dc65",
+      "ninjaSource": "https://github.com/ninja-build/ninja/releases/tag/v1.13.2",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-ninja113-gradle.log",
+      "trackedSourceChanges": false,
+      "duration": "1m 43s",
+      "reason": "Ninja long-path support also requires Windows LongPathsEnabled; it was absent."
+    },
+    "seventhAttempt": {
+      "status": "stopped-to-limit-memory",
+      "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-longpaths-gradle.log",
+      "trackedSourceChanges": false,
+      "reason": "All previously failed native modules progressed; free host memory fell to about300MiB during concurrent C++ compilation. Stopped only this task-local Gradle daemon via --stop; no process-pattern killing."
+    },
+    "eighthAttempt": {
+      "status": "interrupted-by-server-restart; JVM heap exhaustion warning",
+      "sourceCommit": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-bounded-gradle.log",
+      "trackedSourceChanges": false,
+      "gradleMaxWorkers": 1,
+      "gradleMaxHeapMiB": 2048,
+      "nativeCompilePool": 2,
+      "nativeLinkPool": 1,
+      "initScript": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/limit-native-build.gradle",
+      "kotlinDaemonRecovery": {
+        "daemonConnectionLost": true,
+        "fallback": "separate Java process; compiler thread dump confirmed active bytecode generation",
+        "screensModule": "recovered; build advanced to react-native-webview",
+        "threadDump": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/baseline-kotlin-fallback-thread-dump.txt"
+      },
+      "lastObservedStage": ":app:minifyReleaseWithR8",
+      "cpp": "passed",
+      "mainJavascriptBundle": "passed; 4812 modules and 118 assets",
+      "mainKotlin": "passed",
+      "completion": "pending; no APK or successful exit yet"
+    },
+    "exitCode": 0,
+    "apkSha256": "db53fe5d234753d12aecc86f3e5814ac0359aca48c2393c3648470c75ffb49f9",
+    "apk": ".t3/artifacts/upstream-9ef52de-x86_64.apk",
+    "trackedSourceClean": true,
+    "duration": "3m 18s; incremental retry after recorded failures",
+    "recovery": {
+      "heapMiB": 4096,
+      "gradleWorkers": 2,
+      "updatesResources": "initial Windows access violation 0xC0000005; isolated retry passed; root cause unconfirmed",
+      "sourceChanges": false
+    }
+  },
+  "community": {
+    "applicationId": "io.github.wuwei0727.t3code.zh",
+    "scheme": "t3code-zh",
+    "applicationIdentityApplied": true,
+    "versionName": "2.3.0-zh.13",
+    "versionCode": 13,
+    "maintenanceBranchPrefix": "community/android/",
+    "lastReleased": null,
+    "otaEnabled": false,
+    "signingConfigured": true,
+    "signing": {
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "scope": "local personal tests only; not formal release",
+      "password": "Windows current-user DPAPI; portable backup not yet confirmed",
+      "storage": "%LOCALAPPDATA%/T3CodeCommunity/AndroidSigning/io.github.wuwei0727.t3code.zh"
+    },
+    "runtimeVersionPolicy": "appVersion; OTA disabled"
+  },
+  "implementation": {
+    "maintenanceTools": "implemented-offline-tests-passed",
+    "resourceIntegration": "4125 source/packaged entries; both signed final10 APKs verified; API35/36 scoped acceptance passed; overall external acceptance incomplete",
+    "automaticSourceMerge": "blocked-unverified-Android-source-provenance",
+    "automaticApkBuild": "implemented-explicit-reusable-workflow; GitHub-not-run",
+    "formalRelease": "not-enabled",
+    "officialFeatureParity": "Upstream 88 screens retained; real native login/cloud/current-conversation send observed; see acceptance-v7 for scope and gaps"
+  },
+  "blockers": [
+    "Play production version/source mapping is not publicly verified.",
+    "The APK mirror creates a tag at publication time, without recording the APK build SHA; the mirror tag is not proof of source provenance.",
+    "No authenticated GitHub CLI or workflow dispatch was available during inspection.",
+    "Specific third-party SSO callback authorization and community Firebase/relay push configuration remain unverified; native email login and T3 Connect passed scoped acceptance."
+  ],
+  "verification": {
+    "date": "2026-11-12",
+    "maintenanceTests": {
+      "command": "node --test scripts/android-community/maintenance.test.mjs",
+      "passed": 12,
+      "failed": 0,
+      "log": ".t3/artifacts/community-v5/evidence/maintenance-tests.log"
+    },
+    "catalogCheck": "passed",
+    "translationDryRun": {
+      "status": "passed",
+      "actualApiCalls": 0,
+      "actualApiTokens": 0,
+      "cost": null
+    },
+    "workflowSyntax": {
+      "yaml": "passed",
+      "actionlint": "1.7.12 passed; shellcheck and pyflakes integrations not run",
+      "githubExecution": "not-run",
+      "baselineResourceLimits": "actionlint passed; Gradle workers2, heap4096MiB, CMake compile2/link1, Metro2; CI not executed",
+      "files": 4,
+      "buildCache": "Gradle cache enabled; fixed action SHA; not executed on GitHub"
+    },
+    "repositoryChangedChecks": "failed with partial dependency installation; focused checks passed",
+    "mobileTypecheckAndNativeTests": {
+      "typecheck": "passed; mobile package only; exit0, upstream suggestions only",
+      "command": "vp run typecheck (from apps/mobile)",
+      "log": ".t3/artifacts/community-v5/evidence/mobile-typecheck.log",
+      "nativeTests": "not-run"
+    },
+    "hardcodedInventory": {
+      "filesScanned": 1056,
+      "candidates": 1731,
+      "complete": false,
+      "report": ".t3/artifacts/community-v5/evidence/android-ui-inventory.json"
+    },
+    "appCodeChanged": true,
+    "apkProduced": true,
+    "deviceTestsRun": true,
+    "deviceBootstrap": {
+      "hostId": "local",
+      "deviceId": "emulator-5554",
+      "physical": false,
+      "status": "partial runtime acceptance completed; remaining cases explicitly unverified",
+      "apkInstalled": true,
+      "appLaunched": true,
+      "previousSplash": "not reproduced after Device boot on 2026-11-12; original root cause remains unconfirmed",
+      "dataWiped": false,
+      "computerRestartRequired": false,
+      "versionCode": 5
+    },
+    "localToolchain": {
+      "node": "26.12.1",
+      "vitePlus": "1.4.0",
+      "installationRoot": ".t3/toolchain",
+      "globalNodeAndJavaUnchanged": true,
+      "dependencyInstall": "passed; frozen lockfile unchanged; iOS-only RaTeX asset warning",
+      "installLog": ".t3/android-upstream-install.log",
+      "ndk": "27.1.12297006 installed by Gradle",
+      "cmake": "3.22.1 installed by Gradle",
+      "windowsLongPaths": {
+        "enabled": true,
+        "at": "2026-11-11T12:59:38.5026299Z",
+        "originalValuePresent": false,
+        "restoreRecord": ".t3/android-long-paths-original.json",
+        "statusRecord": ".t3/android-long-paths-status.json",
+        "rebootPerformed": false,
+        "diagnostic": "New Ninja1.13.2 dry-run now recognizes previously missing Prefab files and lists actual C++ tasks."
+      }
+    },
+    "preflight": "passed with portable Node and installed local vp entry; not build proof",
+    "focusedMobileTests": {
+      "command": "cd apps/mobile; vp test run --project unit app.config.test.ts src/lib/appLinking.test.ts src/features/connection/pairing.test.ts src/i18n/locale.test.ts src/persistence/mobile-database.test.ts src/state/preferences.test.ts src/features/observability/observe.test.ts",
+      "passed": 73,
+      "failed": 0,
+      "files": 7,
+      "log": ".t3/screenshot-pages-tests.log"
+    },
+    "communityApkProduced": true,
+    "review": {
+      "status": "screenshot localization batch reviewed; no blockers found",
+      "scope": "seven screenshot-flow UI components, canonical English/Chinese/state and generated runtime catalog",
+      "method": "separate read-only reviewer agent; did not repeat primary device tests",
+      "findings": [],
+      "checks": "hooks unconditional, labels recompute, action values and user data unchanged,191 fingerprints and placeholder call sites match"
+    },
+    "focusedLint": "passed; exit 0 after frozen installation of existing lint plugin",
+    "communityBuild": {
+      "status": "both ABIs built, fixed certificate signed and packaged configuration checked; runtime scope recorded separately",
+      "versionName": "2.3.0-zh.5",
+      "versionCode": 5,
+      "applicationId": "io.github.wuwei0727.t3code.zh",
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "x86_64": {
+        "apk": ".t3/artifacts/community-v5/t3code-zh-2.3.0-zh.5-x86_64.apk",
+        "sha256": "eb8faf9b171cd2e53ca565d6b3f9a048f385761a6f5672bc085c9f0fbc63f947",
+        "duration": "18m 55s",
+        "exitCode": 0,
+        "publicConfiguration": "present",
+        "log": ".t3/artifacts/community-v5/evidence/x86_64-gradle.log",
+        "signingLog": ".t3/artifacts/community-v5/evidence/x86_64-sign.log",
+        "catalog": {
+          "checked": 192,
+          "found": 192,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "physicalDevice": "unverified"
+      },
+      "arm64": {
+        "apk": ".t3/artifacts/community-v5/t3code-zh-2.3.0-zh.5-arm64-v8a.apk",
+        "sha256": "f4bafb6e49f5435b002b33fe4cdce331c0993929ec8ac9a93eecddaf83e5b241",
+        "duration": "5m 12s",
+        "exitCode": 0,
+        "publicConfiguration": "present",
+        "log": ".t3/artifacts/community-v5/evidence/arm64-v8a-gradle.log",
+        "signingLog": ".t3/artifacts/community-v5/evidence/arm64-v8a-sign.log",
+        "catalog": {
+          "checked": 192,
+          "found": 192,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "physicalDevice": "unverified"
+      },
+      "publicRelease": false
+    },
+    "nativeStaticAnalysis": "not run: existing script reports ktlint/detekt unavailable; Kotlin compilation is separate evidence",
+    "buildSourceComparison": {
+      "files": 46,
+      "status": "passed",
+      "method": "SHA-256 of all changed and added mobile sources; native init script used from main worktree directly",
+      "manifest": ".t3/artifacts/community-v5/evidence/source-comparison.json",
+      "postSyncRebuildRequired": false
+    },
+    "isolatedBackend": {
+      "home": ".t3/community-test-server",
+      "liveUserdataUsed": false,
+      "seededPrivateData": false,
+      "provider": "devReplay",
+      "paidTurns": 0,
+      "fixture": "isolated project, existing conversation and free Replay verification threads; no live DB copy",
+      "mobilePaired": true,
+      "stopped": true,
+      "teardown": "Stopped only retained shell session; fixture preserved"
+    },
+    "sourceSnapshot": {
+      "path": ".t3/artifacts/community-v5/t3code-zh-source-2.3.0-zh.5.zip",
+      "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "restoration": "baseline + tracked.patch + new-files",
+      "patchAppliesToBaseline": "passed; git apply --cached --check against a disposable index at selected baseline; real index unchanged",
+      "licenseIncluded": true,
+      "credentialsIncluded": false
+    },
+    "screenshotFollowup": {
+      "status": "both-apks-produced; screenshot-flows-verified-on-x86_64",
+      "addedResources": 81,
+      "changedUiComponents": 7,
+      "mobileTests": 73,
+      "maintenanceTests": 11,
+      "typecheck": "passed",
+      "lint": "passed",
+      "screenshots": "User provided four screenshots; reproduced English pull request screen and native filter menu by actual Device taps on installed version1",
+      "deviceAvailable": true,
+      "previousStartupBlocker": "Not reproduced after Device boot on 2026-11-12; actual main UI and navigation now available",
+      "beforeEvidence": [
+        ".t3/pr-before-v2.png",
+        ".t3/pr-filters-before-v2.png",
+        ".t3/environments-before-v2.png"
+      ],
+      "testLogs": [
+        ".t3/screenshot-pages-tests.log",
+        ".t3/screenshot-pages-maintenance-tests.log",
+        ".t3/screenshot-pages-typecheck.log",
+        ".t3/screenshot-pages-lint.log"
+      ],
+      "languageBeforeUpgrade": {
+        "versionCode": 1,
+        "selection": "en",
+        "changedThroughUi": true,
+        "persistedAcrossRelaunch": true,
+        "evidence": ".t3/english-persisted-v1.png"
+      },
+      "actualUiChecks": [
+        "Version1 English selection persisted after relaunch and version1-to-version2 install -r upgrade",
+        "Version2 English pull request screen retained English resources",
+        "Changed English to Simplified Chinese in Settings > Appearance",
+        "Environment settings title and empty hint displayed Chinese",
+        "Pull request chips, empty title and description displayed Chinese",
+        "Search placeholder displayed Chinese; fix/test-query stayed unchanged; clear and close worked",
+        "Full native filter menu displayed Chinese",
+        "State submenu displayed Chinese; selecting Closed changed chip; Reset restored Open",
+        "Label and author search menus, sheets, placeholders and empty hints displayed Chinese",
+        "Chinese persisted across actual app relaunch",
+        "Follow system selected on Chinese Android showed Chinese; restored explicit Simplified Chinese",
+        "Pull request page and native menu inspected at extra-extra-large font; restored original large size"
+      ],
+      "afterEvidence": [
+        ".t3/artifacts/community-v2/evidence/upgrade-language-persisted-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-english-v2.png",
+        ".t3/artifacts/community-v2/evidence/environments-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-search-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-filters-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-label-search-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-author-search-after-v2.png",
+        ".t3/artifacts/community-v2/evidence/chinese-persisted-v2.png",
+        ".t3/artifacts/community-v2/evidence/follow-system-chinese-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-large-font-v2.png",
+        ".t3/artifacts/community-v2/evidence/pr-filters-large-font-v2.png"
+      ],
+      "limitations": "No connected environment or physical ARM phone in this UI pass. Data-backed PR results, all settings subpages, small screens and screen-reader localization not accepted. Some accessibility strings remain English."
+    },
+    "previousCommunityBuildV1": {
+      "status": "both-architectures-built-and-signed; startup-acceptance-failed",
+      "testApkDelivered": true,
+      "startupError": "Missing EAS project ID native crash fixed and runtime reaches navigation ready; visible splash remains, root cause unconfirmed.",
+      "architecture": "x86_64 and arm64-v8a",
+      "symbolicatedLog": ".t3/community-startup-symbolicated.txt",
+      "firstDuration": "13m54s",
+      "retryDuration": "1m43s",
+      "next": "Reproduce baseline versus community startup after Device helper recovery; resolve persistent splash before language/pairing acceptance. No destructive data reset or credential workaround.",
+      "resourcesCrash": {
+        "task": ":app:createReleaseUpdatesResources",
+        "exitCode": "0xC0000005",
+        "previousNativeCompilation": "completed; full build failed",
+        "log": "C:/Users/Admin/.t3/worktrees/t3code/cn/.t3/community-native-exclusion-resources-crash.log",
+        "mitigation": "Use appVersion for a community APK without OTA; retain resource generation task",
+        "rootCause": "unconfirmed Windows Node crash while fingerprint policy active"
+      },
+      "duration": "13m55s; full x86_64 native rebuild",
+      "log": ".t3/community-x86_64-final-gradle.log",
+      "apk": ".t3/artifacts/community-v1/t3code-zh-2.3.0-zh.1-x86_64.apk",
+      "apkSha256": "f9005827658054670ca7c2d23d14650d054e19e1c86baba9f763a1cc31c51c6a",
+      "startupDiagnostics": {
+        "temporaryCodeRemoved": true,
+        "temporaryFilesRestored": 4,
+        "runtime": "ready",
+        "preferences": "Success",
+        "initialUrl": "resolved without URL",
+        "navigation": "ready",
+        "splashHide": "called; native remove starting view logged",
+        "visibleScreen": "T3 splash; functional UI not verified",
+        "log": ".t3/community-diagnostic3-later-logcat.txt",
+        "screenshot": ".t3/community-diagnostic3-screen.png",
+        "helperError": "Android snapshot helper returned insufficient foreground app content",
+        "helperDiagnosticId": "mwcg4chb-e6245d6a",
+        "helperApplicationWindowRootCount": 0,
+        "uiVerification": "stopped after advised retry and screenshot; no alternate automation engine",
+        "relaunchRace": "One launch immediately after install/force-stop crashed in WidgetExpiryReceiver; next normal open reached main/navigation. Separate issue, not assumed root cause."
+      },
+      "arm64": {
+        "status": "build-and-signature-passed; device-unverified",
+        "architecture": "arm64-v8a",
+        "exitCode": 0,
+        "duration": "6m10s",
+        "tasks": {
+          "total": 1808,
+          "executed": 110,
+          "upToDate": 1698
+        },
+        "log": ".t3/community-arm64-initial-success.log",
+        "signed": true,
+        "deviceTest": "unverified; no physical ARM device attached",
+        "finalIncrementalDuration": "39s",
+        "finalLog": ".t3/community-arm64-final-gradle.log",
+        "apk": ".t3/artifacts/community-v1/t3code-zh-2.3.0-zh.1-arm64-v8a.apk",
+        "apkSha256": "8dde7f558be2b1206cac80e1fd5dd0216c5adc2f6cfcc6a0de44496e984df81b",
+        "versionName": "2.3.0-zh.1",
+        "versionCode": 1,
+        "minSdk": 24,
+        "targetSdk": 36,
+        "signingSchemes": ["v2", "v3"],
+        "alignment": "16 KiB verified",
+        "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5"
+      },
+      "nativeBacktrace": "Unavailable without device root; debuggerd reported root is required. No root access attempted.",
+      "restoredX86": {
+        "status": "passed",
+        "exitCode": 0,
+        "duration": "1m7s",
+        "log": ".t3/community-x86_64-restored-final-gradle.log",
+        "apk": ".t3/artifacts/community-v1/t3code-zh-2.3.0-zh.1-x86_64-rebuilt.apk",
+        "apkSha256": "f9005827658054670ca7c2d23d14650d054e19e1c86baba9f763a1cc31c51c6a",
+        "signature": "same fixed personal certificate; v2/v3 verified",
+        "alignment": "16 KiB zipalign verified",
+        "install": "passed; replaced temporary diagnostic package without uninstalling or clearing data",
+        "launchAfterFinalInstall": "not-run; UI verification stopped after repeated helper failure"
+      }
+    },
+    "previousDeviceBootstrap": {
+      "hostId": "local",
+      "deviceId": "emulator-5554",
+      "deviceOpenAttempts": 3,
+      "status": "booted-after-scoped-avdmanager-Java17-fix",
+      "reportedErrors": [
+        "Failed to allocate an emulator port for frostplay",
+        "avdmanager requires Java class version 61 but inherited Java only supports version 52"
+      ],
+      "inheritedJavaHome": "D:\\jdk1.8.0_181\\",
+      "availableJava17Home": "E:\\File\\jdk\\oracle-17",
+      "diagnostic": "Device panel ready; emulator booted after SDK avdmanager.bat scoped Java17 fix. Original launcher backed up outside repository.",
+      "globalJavaConfigurationChanged": false,
+      "apkInstalled": true,
+      "appLaunched": false,
+      "nextStep": "Resolve persistent splash / missing foreground app accessibility window before language and pairing acceptance; no computer restart required.",
+      "restartedDesktopProcessId": 65792,
+      "deviceSerial": "emulator-5554",
+      "screenshotRequest": "Community app splash remains visible after runtime, preferences, navigation and hide() complete; no current System UI ANR dialog.",
+      "systemLog": ".t3/android-device-system.log",
+      "systemAnrReason": "executing com.android.systemui/.keyguard.KeyguardService waited 20047ms; input method startup also failed; T3 APK not installed",
+      "lastRestart": {
+        "at": "2026-11-11T12:29:53.555Z",
+        "method": "T3 device_close shutdown=true, then device_open",
+        "hostId": "local",
+        "deviceId": "emulator-5554",
+        "dataWiped": false,
+        "observedScreen": "Android Settings Add a language; no System UI ANR dialog visible",
+        "appTestsRun": false
+      },
+      "finalInstalledApk": ".t3/artifacts/community-v1/t3code-zh-2.3.0-zh.1-x86_64-rebuilt.apk"
+    },
+    "previousReview": {
+      "status": "one finding corrected",
+      "finding": "Use zipalign -P16 and check signed APK alignment; upstream baseline binary checks passed with both old and new options (compressed/native layout not a failing reproduction).",
+      "independentExecution": false
+    },
+    "copyPolish": {
+      "date": "2026-11-12",
+      "status": "66 Chinese entries polished; final APKs verified and x86_64 UI checked",
+      "catalogEntries": 191,
+      "polishedEntries": 66,
+      "plannedVersionName": "2.3.0-zh.3",
+      "plannedVersionCode": 3,
+      "englishSourceAndKeysChanged": false,
+      "businessLogicChanged": false,
+      "translationApiCalls": 0,
+      "translationApiTokens": 0,
+      "humanReviewed": false,
+      "styleGuide": "docs/operations/android-community.zh-CN.md#中文文案约定",
+      "changes": ".t3/artifacts/community-v3/evidence/chinese-copy-changes.json",
+      "localeAndPreferencesTests": {
+        "passed": 16,
+        "failed": 0,
+        "files": 3,
+        "log": ".t3/community-v3-locale-tests.log"
+      },
+      "maintenanceTests": {
+        "passed": 11,
+        "failed": 0,
+        "log": ".t3/community-v3-maintenance-tests.log"
+      },
+      "resourceChecks": "passed; no pending/stale/missing or generated catalog changes",
+      "deviceTests": {
+        "platform": "Android x86_64 emulator",
+        "physical": false,
+        "passed": [
+          "Version2 to3 upgrade with install -r retained Chinese preference; final corrected APK reinstalled without clearing data",
+          "Final APK launched and Chinese navigation remained selected",
+          "PR empty title/detail, full filter menu and involvement submenu displayed revised Chinese",
+          "Check filter selected Passing and menu displayed 检查已通过; reset restored default filters",
+          "Environment empty hint displayed revised Chinese",
+          "Final add-environment screen displayed 提供方的凭据保存在电脑上。 instead of stale login wording",
+          "Final Appearance screen displayed 外观模式 and language choice",
+          "Final Appearance screen scrolled to tools section; full revised explanation and radio labels visually fit above tab bar"
+        ],
+        "unverified": [
+          "actual approval card UI",
+          "attachment picker UI",
+          "all other polish strings in their runtime states",
+          "v3 enlarged-font and small-screen coverage",
+          "physical ARM phone",
+          "T3 Connect, pairing, realtime, messages, approvals, reconnect and notifications"
+        ],
+        "screenshots": [
+          ".t3/artifacts/community-v3/evidence/chinese-upgrade-preserved-v3.png",
+          ".t3/artifacts/community-v3/evidence/pr-after-v3.png",
+          ".t3/artifacts/community-v3/evidence/pr-filters-after-v3.png",
+          ".t3/artifacts/community-v3/evidence/check-passed-after-v3.png",
+          ".t3/artifacts/community-v3/evidence/environments-after-v3.png",
+          ".t3/artifacts/community-v3/evidence/add-environment-final-v3.png",
+          ".t3/artifacts/community-v3/evidence/appearance-final-v3.png",
+          ".t3/artifacts/community-v3/evidence/appearance-tools-final-v3.png",
+          ".t3/artifacts/community-v3/evidence/pr-final-v3.png",
+          ".t3/artifacts/community-v3/evidence/pr-filters-final-v3.png"
+        ]
+      },
+      "firstBuild": {
+        "status": "failed",
+        "duration": "8m29s",
+        "task": ":app:createReleaseUpdatesResources",
+        "code": "0xC0000005",
+        "log": ".t3/artifacts/community-v3/evidence/x86_64-first-resources-crash.log",
+        "rootCause": "unconfirmed Windows resource-generator subprocess crash; native compilation and Metro bundling completed"
+      },
+      "retry": "one independent bounded build retry; no task skip, dependency change or business-code workaround",
+      "review": {
+        "status": "one semantic wording issue corrected",
+        "finding": "Provider credentials must not be narrowed to login credentials",
+        "resolution": "提供方的凭据保存在电脑上。",
+        "method": "read-only independent review of66 Chinese copy changes"
+      },
+      "versionName": "2.3.0-zh.3",
+      "versionCode": 3,
+      "buildInputTrackingFix": {
+        "file": "scripts/android-community/native-build.init.gradle",
+        "cause": "React Native BundleHermesCTask.sources includes JS/JSX/TS/TSX but omits JSON; bundle task incorrectly remained UP-TO-DATE after a translation-only edit",
+        "change": "Register generated language JSON as a named relative-path bundle input",
+        "before": {
+          "status": "expected failure",
+          "log": ".t3/artifacts/community-v3/evidence/runtime-input-before.log",
+          "error": "Generated language JSON is missing from release bundle inputs"
+        },
+        "after": {
+          "status": "passed in both final builds",
+          "log": ".t3/artifacts/community-v3/evidence/x86_64-final-gradle.log",
+          "message": "Generated language JSON is tracked by release bundle inputs"
+        },
+        "staleApkCheck": {
+          "checked": 191,
+          "found": 190,
+          "missing": ["connection.localHint"],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "finalApkChecks": {
+          "x86_64": {
+            "checked": 191,
+            "found": 191,
+            "missing": [],
+            "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+          },
+          "arm64": {
+            "checked": 191,
+            "found": 191,
+            "missing": [],
+            "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+          }
+        }
+      },
+      "deviceRestart": {
+        "reason": "temporarily stopped test emulator to reduce build memory pressure",
+        "dataWiped": false,
+        "closeToolError": "Device shutdown failed: Could not communicate with device support. Try refreshing devices.",
+        "followup": "device_list confirmed stopped; device_open frostplay then succeeded; final UI tests completed"
+      }
+    },
+    "previousCommunityBuildV2": {
+      "status": "both-architectures-built-and-signed; x86_64-installed-and-UI-tested",
+      "versionName": "2.3.0-zh.2",
+      "versionCode": 2,
+      "applicationId": "io.github.wuwei0727.t3code.zh",
+      "x86_64": {
+        "exitCode": 0,
+        "duration": "17m",
+        "tasks": {
+          "total": 1808,
+          "executed": 1496,
+          "fromCache": 276,
+          "upToDate": 36
+        },
+        "log": ".t3/artifacts/community-v2/evidence/community-x86_64-gradle.log",
+        "apk": ".t3/artifacts/community-v2/t3code-zh-2.3.0-zh.2-x86_64.apk",
+        "sha256": "23ba96fef549ee7bfd205fe93d9a962bb012a9d54a1312b0dad6ce0fefa6db71",
+        "signature": "fixed personal certificate; v2/v3 and 16 KiB alignment verified",
+        "install": "adb install -r succeeded; no uninstall or data clear",
+        "launch": "passed through bound Device open and actual navigation"
+      },
+      "arm64": {
+        "status": "build-signature-and-metadata-passed; physical-device-unverified",
+        "exitCode": 0,
+        "duration": "5m45s",
+        "tasks": {
+          "total": 1808,
+          "executed": 99,
+          "fromCache": 8,
+          "upToDate": 1701
+        },
+        "log": ".t3\\artifacts\\community-v2\\evidence/community-arm64-v8a-gradle.log",
+        "apk": ".t3/artifacts/community-v2/t3code-zh-2.3.0-zh.2-arm64-v8a.apk",
+        "sha256": "2bb1f9524a6a7fd53ec5b17f79aeb7e251ebd42d5d1cc63285181bddc647e458",
+        "versionName": "2.3.0-zh.2",
+        "versionCode": 2,
+        "minSdk": 24,
+        "targetSdk": 36,
+        "architecture": "arm64-v8a",
+        "signature": "fixed personal certificate; v2/v3 and 16 KiB alignment verified",
+        "deviceTest": "unverified; no physical ARM device attached"
+      },
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "temporaryDiagnosticsIncluded": false,
+      "publicRelease": false
+    },
+    "previousSourceSnapshotV2": {
+      "path": ".t3/artifacts/community-v2/t3code-zh-source-2.3.0-zh.2.zip",
+      "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "restoration": "baseline + tracked.patch + new-files",
+      "patchAppliesToBaseline": "passed with isolated Git index; actual worktree and index unchanged",
+      "licenseIncluded": true,
+      "credentialsIncluded": false,
+      "temporaryDiagnosticsIncluded": false
+    },
+    "mainlandCopy": {
+      "status": "source checks, both APK builds and recorded x86_64 device checks passed; partial localization",
+      "audience": "中国大陆用户",
+      "versionName": "2.3.0-zh.4",
+      "versionCode": 4,
+      "auditedEntries": 191,
+      "chineseChanged": 29,
+      "contextsClarified": 28,
+      "englishTextAndKeysUnchanged": true,
+      "humanReviewed": false,
+      "styleGuide": "community/android/translation-style.json",
+      "review": "independent read-only review found no issues requiring changes; not maintainer approval",
+      "requestAndCache": {
+        "styleGuideIncluded": true,
+        "cacheFormat": 2,
+        "unchangedTranslationsReused": true,
+        "styleChangeAloneDoesNotRetranslate": true,
+        "workflowBranchIncludesStyle": true
+      },
+      "tests": {
+        "maintenance": 11,
+        "languageAndSqlite": 16,
+        "failures": 0,
+        "red": "style-before.log: actual request omitted styleGuide",
+        "green": "style-after.log: style sent, cache isolated, existing text reused"
+      },
+      "artifacts": ".t3/artifacts/community-v4",
+      "realApiCalls": 0,
+      "realApiTokens": 0,
+      "cost": null,
+      "fullyLocalized": false,
+      "publicRelease": false,
+      "deviceTests": {
+        "platform": "Android x86_64 emulator",
+        "hostId": "local",
+        "deviceId": "emulator-5554",
+        "physical": false,
+        "passed": [
+          "Installed final versionCode4 over3 with install -r; launched normally; Chinese retained without uninstall or data wipe",
+          "Opened PR state menu: 开启中/已关闭/已合并/全部状态; chose 已关闭 then reset returned 开启中",
+          "Opened review menu: 全部评审状态/评审通过/需要修改/待评审/暂无评审; chose 评审通过 and confirmed selected root label",
+          "Opened checks menu: 全部检查结果/已通过/未通过; chose 已通过 and confirmed 检查已通过 root label; reset filters",
+          "Opened sort menu: 最近更新/最近创建/最久未更新",
+          "Environment empty state 尚未连接环境 and 添加环境 form inspected",
+          "Settings category 版本控制 displayed and found by Chinese search; no-result placeholder rendered query correctly; test search cleared",
+          "Switched to English, relaunched, PR showed Open and English empty state",
+          "Follow system selected on Chinese Android displayed Chinese",
+          "Selected 简体中文, relaunched, PR showed 开启中 and Chinese empty state",
+          "PR empty state and full filter menu inspected at extra-extra-large text size; no visible overlap or footer clipping; restored original large size and relaunched"
+        ],
+        "unverified": [
+          "ARM physical install/start",
+          "actual data-backed project/thread/PR results",
+          "T3 Connect sign-in/desktop pairing",
+          "realtime sync/send/approvals/reconnect/notifications",
+          "approval card and attachment menu in current runtime",
+          "other settings subpages, error states and all dynamic resources",
+          "small screen and other font sizes",
+          "screen reader complete localization"
+        ],
+        "remainingEnglishObserved": [
+          "initial home header accessibility labels Threads and Search threads",
+          "settings filter/search close/clear accessibility labels",
+          "theme appearance accessibility suffixes; product/theme names intentionally remain unchanged"
+        ],
+        "automationNote": "Two cleanup selectors containing spaces returned INVALID_ARGS; recovered once using fresh snapshot control reference; search cleared successfully. This was a CLI selector error, not an app failure.",
+        "fontSizeAfterTest": "large (original)",
+        "languageAfterTest": "简体中文",
+        "screenshots": [
+          "add-environment-v4.png",
+          "appearance-zh-v4.png",
+          "environments-v4.png",
+          "follow-system-v4.png",
+          "pr-checks-v4.png",
+          "pr-chinese-after-restart-v4.png",
+          "pr-empty-v4.png",
+          "pr-english-after-restart-v4.png",
+          "pr-filters-large-font-v4.png",
+          "pr-large-font-v4.png",
+          "pr-reviews-v4.png",
+          "pr-selected-filters-v4.png",
+          "pr-sort-v4.png",
+          "pr-state-v4.png",
+          "settings-search-empty-v4.png",
+          "settings-search-v4.png",
+          "settings-v4.png"
+        ],
+        "acceptance": {
+          "apkInstallAndLaunch": "version4 passed on x86_64 emulator; ARM physical device unverified",
+          "languageSwitchAndPersistence": "version4 English switch/relaunch, Follow system on Chinese Android, Chinese switch/relaunch and version3-to4 upgrade retaining Chinese passed",
+          "chineseLayoutAndFontScaling": "version4 PR state/review/check/sort menus, empty state, environments, add form and Settings search checked; PR empty state and full menu also checked at extra-extra-large; original large restored; other pages and small screens unverified",
+          "upgradeFromPreviousCommunityApk": "version3 to4 install -r passed with same package and certificate and Chinese retained; no uninstall/data wipe; earlier version1-to2 and2-to3 records retained"
+        },
+        "documentation": "第四版从第三版覆盖升级，中文选择保留；实际点开状态、评审、检查结果和排序菜单，选择并重置筛选。环境空状态、添加表单、设置分类及中文搜索均已核对。英文切换重启、跟随中文系统、切回简体中文并重启验证通过；拉取请求空状态和完整筛选菜单在extra-extra-large字号下未见重叠或底栏遮挡，已恢复原large字号。未连接实际环境，不能据此认定数据加载或跨端功能已通过。"
+      },
+      "integrity": {
+        "entries": 191,
+        "chineseChanges": 29,
+        "contextChanges": 28,
+        "englishTextAndIdsUnchanged": true,
+        "reviewFlagsUnchanged": true,
+        "mobileChanges": ["apps/mobile/src/i18n/messages.generated.json"]
+      },
+      "packagedCatalog": {
+        "x86_64": {
+          "checked": 191,
+          "found": 191,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "arm64": {
+          "checked": 191,
+          "found": 191,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        }
+      },
+      "workflowSyntax": "actionlint1.7.12 passed for four community workflows; shellcheck/pyflakes integrations and GitHub execution not run",
+      "buildMemoryManagement": {
+        "reason": "Available host RAM approached exhaustion during x86 native build",
+        "action": "Closed only this task emulator with device_close shutdown:true; no app data wipe or computer reboot",
+        "recovery": "Available memory recovered to approximately7 GiB; build continued without source workaround"
+      },
+      "maintenanceLint": "vp lint passed for translate.mjs, export-review.mjs and maintenance.test.mjs"
+    },
+    "previousCommunityBuildV3": {
+      "status": "both-architectures-built-signed-and-catalog-checked; x86_64-installed-and-click-tested",
+      "versionName": "2.3.0-zh.3",
+      "versionCode": 3,
+      "applicationId": "io.github.wuwei0727.t3code.zh",
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "x86_64": {
+        "exitCode": 0,
+        "duration": "4m30s after resource input fix",
+        "tasks": {
+          "total": 1809,
+          "executed": 102,
+          "fromCache": 9,
+          "upToDate": 1698
+        },
+        "log": ".t3/artifacts/community-v3/evidence/x86_64-final-gradle.log",
+        "apk": ".t3/artifacts/community-v3/t3code-zh-2.3.0-zh.3-x86_64.apk",
+        "sha256": "6588810eb22908b744749a6c338244223351eefd8ae4f9bd4bdd4f18ca8411a3",
+        "install": "install -r passed; final app opened and clicked",
+        "launch": "passed on Android emulator",
+        "physical": false
+      },
+      "arm64": {
+        "exitCode": 0,
+        "duration": "1m31s after resource input fix",
+        "tasks": {
+          "total": 1809,
+          "executed": 99,
+          "fromCache": 9,
+          "upToDate": 1701
+        },
+        "log": ".t3/artifacts/community-v3/evidence/arm64-final-gradle.log",
+        "apk": ".t3/artifacts/community-v3/t3code-zh-2.3.0-zh.3-arm64-v8a.apk",
+        "sha256": "01f3eb51c186ee8421abfd07486944d6d6a141019036f91814cdbeca34732c0b",
+        "architecture": "arm64-v8a",
+        "deviceTest": "unverified; no physical ARM device attached"
+      },
+      "signing": "same fixed personal certificate as versions1 and2; APK v2/v3 signatures and16 KiB alignment verified",
+      "minSdk": 24,
+      "targetSdk": 36,
+      "temporaryDiagnosticsIncluded": false,
+      "publicRelease": false
+    },
+    "previousSourceSnapshotV3": {
+      "path": ".t3/artifacts/community-v3/t3code-zh-source-2.3.0-zh.3.zip",
+      "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "restoration": "baseline + tracked.patch + new-files",
+      "patchAppliesToBaseline": "passed with isolated Git index; actual worktree and index unchanged",
+      "licenseIncluded": true,
+      "credentialsIncluded": false,
+      "temporaryDiagnosticsIncluded": false
+    },
+    "previousAcceptanceV3": {
+      "apkInstallAndLaunch": "passed on x86_64 emulator for final version3; physical ARM device unverified",
+      "languageSwitchAndPersistence": "version2 English/Chinese switching and relaunch passed; version3 upgrade and final reinstall retained Chinese; Follow system on Chinese Android verified in version2",
+      "chineseLayoutAndFontScaling": "version3 PR menus, environment hints and full Appearance tool explanation visually checked at original large font; extra-extra-large PR/menu check belongs to version2; small screens and remaining pages unverified",
+      "t3ConnectSignInAndPairing": "unverified",
+      "projectAndThreadLists": "unverified",
+      "realtimeMessagesAcrossDevices": "unverified",
+      "sendMessagesAndApprovals": "unverified",
+      "reconnect": "unverified",
+      "notifications": "unverified",
+      "upgradeFromPreviousCommunityApk": "version1 to2 and version2 to3 passed using same package/certificate install -r, preserving language preference; no public previous release"
+    },
+    "featureParityAudit": {
+      "date": "2026-11-12",
+      "trigger": "Historical version4 diagnostic; later user explicitly reported login missing and requested comprehensive source comparison",
+      "status": "confirmed current APK lacks cloud feature entry points; full feature parity not achieved",
+      "inspectedApk": ".t3/artifacts/community-v4/t3code-zh-2.3.0-zh.4-arm64-v8a.apk",
+      "cloudConfiguration": {
+        "method": "Read assets/app.config from delivered ARM64 APK; test nonempty string type, never print configuration values",
+        "clerkPublishableKeyIsNonemptyString": false,
+        "clerkJwtTemplateIsNonemptyString": false,
+        "relayUrlIsNonemptyString": false,
+        "serializedTypes": "empty objects, rejected by resolveCloudPublicConfig trimNonEmpty",
+        "gateUnchangedFromBaseline": true
+      },
+      "confirmedUnavailable": [
+        {
+          "feature": "T3 Connect sign-in and managed relay entry",
+          "cause": "hasCloudPublicConfig() is false; existing upstream conditional hides T3ConnectSection",
+          "source": "apps/mobile/src/features/connection/ConnectionsNewRouteScreen.tsx"
+        },
+        {
+          "feature": "T3 Account and Notifications settings rows",
+          "cause": "Existing upstream gate selects LocalSettingsRouteScreen because cloud configuration is missing",
+          "source": "apps/mobile/src/features/settings/SettingsRouteScreen.tsx"
+        }
+      ],
+      "otherCommunityDifferences": [
+        {
+          "feature": "Official OTA updates",
+          "status": "deliberately disabled per user requirement; APK updates intended"
+        },
+        {
+          "feature": "Official HTTPS Android App Links",
+          "status": "official intent filter omitted for different application ID/signature; custom t3code-zh scheme present; not equivalent to official HTTPS app links"
+        },
+        {
+          "feature": "Official Observe crash reporting",
+          "status": "disabled for community build without own EAS project; native module removed to avoid startup initialization error"
+        }
+      ],
+      "existingConditionalBehavior": [
+        "Providers, thread management, version control, worktrees and maintenance settings are disabled when no server target is selected; gating unchanged by localization",
+        "Navigation customization gate requires more than4 registered sections; baseline has3; gate unchanged"
+      ],
+      "additionalConfirmedCopyDefect": {
+        "source": "apps/mobile/src/features/home/HomeScreen.tsx",
+        "issue": "Thread-search empty title reuses settings.noResults, whose current Chinese says 未找到相关设置; incorrect context, not a deleted feature",
+        "status": "identified; not patched in this diagnostic pass"
+      },
+      "reportingCorrection": "Cloud entry points are unavailable in delivered APK, not merely unverified. Prior build/copy acceptance does not establish official feature parity.",
+      "next": "See featureParityFixV5 and community/android/feature-parity.json; public source-build identifiers restored without requiring private credentials",
+      "historicalScope": "Version4 APK only; superseded for current status by featureParityFixV5"
+    },
+    "previousCommunityBuildV4": {
+      "status": "both architectures built, fixed certificate signed and packaged catalog checked; x86_64 installed and clicked",
+      "versionName": "2.3.0-zh.4",
+      "versionCode": 4,
+      "applicationId": "io.github.wuwei0727.t3code.zh",
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "x86_64": {
+        "exitCode": 0,
+        "duration": "11m 25s",
+        "apk": ".t3/artifacts/community-v4/t3code-zh-2.3.0-zh.4-x86_64.apk",
+        "sha256": "e1d797252c9c85d92270294a77e98f94d5a707dbed3dae682c07a563dd8093c3",
+        "log": ".t3/artifacts/community-v4/evidence/x86_64-gradle.log",
+        "catalogCheck": {
+          "checked": 191,
+          "found": 191,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "signingLog": ".t3/artifacts/community-v4/evidence/x86_64-sign.log",
+        "metadataLog": ".t3/artifacts/community-v4/evidence/x86_64-metadata.log",
+        "physicalTest": "unverified"
+      },
+      "arm64": {
+        "exitCode": 0,
+        "duration": "6m 58s",
+        "apk": ".t3/artifacts/community-v4/t3code-zh-2.3.0-zh.4-arm64-v8a.apk",
+        "sha256": "a3f80e781c493e7648e3e6fa3d09e955d3fe27811ef5c032205867bb48f5236b",
+        "log": ".t3/artifacts/community-v4/evidence/arm64-v8a-gradle.log",
+        "catalogCheck": {
+          "checked": 191,
+          "found": 191,
+          "missing": [],
+          "method": "literal UTF-8/UTF-16 byte presence in packaged Hermes bundle; does not replace UI acceptance"
+        },
+        "signingLog": ".t3/artifacts/community-v4/evidence/arm64-v8a-sign.log",
+        "metadataLog": ".t3/artifacts/community-v4/evidence/arm64-v8a-metadata.log",
+        "physicalTest": "unverified"
+      },
+      "minSdk": 24,
+      "targetSdk": 36,
+      "publicRelease": false
+    },
+    "previousAcceptanceV4": {
+      "apkInstallAndLaunch": "version4 passed on x86_64 emulator; ARM physical device unverified",
+      "languageSwitchAndPersistence": "version4 English switch/relaunch, Follow system on Chinese Android, Chinese switch/relaunch and version3-to4 upgrade retaining Chinese passed",
+      "chineseLayoutAndFontScaling": "version4 PR state/review/check/sort menus, empty state, environments, add form and Settings search checked; PR empty state and full menu also checked at extra-extra-large; original large restored; other pages and small screens unverified",
+      "t3ConnectSignInAndPairing": "unavailable in delivered version4 APK: cloud public configuration missing and upstream gate hides entry; service/callback validation not performed",
+      "projectAndThreadLists": "unverified",
+      "realtimeMessagesAcrossDevices": "unverified",
+      "sendMessagesAndApprovals": "unverified",
+      "reconnect": "unverified",
+      "notifications": "Notifications settings row unavailable with missing cloud configuration; push configuration and end-to-end delivery unverified",
+      "upgradeFromPreviousCommunityApk": "version3 to4 install -r passed with same package and certificate and Chinese retained; no uninstall/data wipe; earlier version1-to2 and2-to3 records retained"
+    },
+    "previousSourceSnapshotV4": {
+      "path": ".t3/artifacts/community-v4/t3code-zh-source-2.3.0-zh.4.zip",
+      "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "restoration": "baseline + tracked.patch + new-files",
+      "patchAppliesToBaseline": "passed with isolated Git index; actual worktree and index unchanged",
+      "licenseIncluded": true,
+      "credentialsIncluded": false,
+      "temporaryDiagnosticsIncluded": false
+    },
+    "featureParityFixV5": {
+      "status": "partial runtime acceptance completed; remaining cases explicitly unverified",
+      "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+      "sourceAudit": "community/android/feature-parity.json",
+      "fixes": [
+        "Use upstream-authorized public Connect configuration without overwriting existing .env",
+        "Fail CI when generated config or packaged APK omits account/Connect configuration",
+        "Restore HTTPS thread intent filter with autoVerify=false; config regression test failed before fix and passed after",
+        "Use home.noResults for thread-search empty state",
+        "Register translation input only where present, preserving unmodified baseline build"
+      ],
+      "tests": {
+        "mobile": 74,
+        "linkConfigRetested": 12,
+        "typecheck": "passed; mobile package only",
+        "maintenance": 12,
+        "lint": "passed for changed JS and HomeScreen",
+        "workflows": "actionlint passed; GitHub execution unverified"
+      },
+      "device": {
+        "date": "2026-11-12",
+        "platform": "Android x86_64 emulator frostplay; no physical device test",
+        "version": "2.3.0-zh.5",
+        "status": "partial runtime acceptance completed; remaining cases explicitly unverified",
+        "installAndLaunch": "passed",
+        "accountEntry": "passed",
+        "directPairing": "passed",
+        "backendStopped": true,
+        "deviceShutdown": true,
+        "disposableConnectionRemoved": false,
+        "teardown": "Only retained isolated backend session was stopped; owned emulator shut down for ARM build. Disposable emulator connection retained because UI automation stopped after repeated tool failure. No user connections/data were removed.",
+        "passed": [
+          "Version4-to5 install -r with retained certificate, no uninstall or wipe; app launched and Chinese persisted",
+          "Settings account/login row opened real native Clerk authentication view with email and Apple/GitHub/Google/Microsoft choices; no real account authentication completed",
+          "Notifications page opened; switches present, delivery not tested",
+          "Add environment shows enabled T3 Connect sign-in row in interactive snapshot; row itself not activated",
+          "Manual pairing against isolated server http://10.0.2.2:16418; existing named fixture conversations loaded",
+          "Explicit HTTPS thread URL opened correct existing conversation; not proof of automatic system verified routing",
+          "Mobile message persisted in same backend conversation; subsequent CLI message appeared on mobile without refresh",
+          "Question fixture selected and submitted on mobile; backend completed with zero pending requests",
+          "Approval model kept as free Replay, mode changed in mobile to Supervised; sent request and tapped 仅本次允许; backend runtimeMode approval-required, completed and pending count zero",
+          "Attachment menu opened and displayed 相册 / 选择文件; no attachment upload performed",
+          "19 Settings routes opened, captured and text snapshots reviewed; target-dependent preference controls visible after pairing"
+        ],
+        "settingsRoutesOpened": [
+          "organization",
+          "appearance",
+          "follow-ups",
+          "keyboard",
+          "voice",
+          "provider-accounts",
+          "thread-preferences",
+          "scheduled-tasks",
+          "project",
+          "source-control",
+          "worktrees",
+          "maintenance",
+          "labs",
+          "about",
+          "archive",
+          "client-storage",
+          "diagnostics",
+          "open-source-licenses",
+          "usage"
+        ],
+        "observedLimitations": [
+          "Many settings subpages, chat/composer and question-panel controls still English; current scope is partial localization",
+          "Usage route returned Codex could not read usage (JSON-RPC -32600); data acceptance failed in fixture environment",
+          "Native Clerk social sign-in was tapped but no completed authentication or authorized callback was observed",
+          "No Firebase client/sender configuration for community package; remote push not available",
+          "Project settings initially prompts selection using filter; project detail mutation not exercised"
+        ],
+        "automationStop": {
+          "firstError": "scroll bottom moved nothing across 3 passes: the container still reports hidden content but its contents never shifted",
+          "advisedRetry": "scroll down --until with direct selector",
+          "retryError": "Invalid selector term \"@e41\", expected key=value",
+          "cause": "Agent passed an element reference where selector syntax was required",
+          "action": "Stopped device UI verification after retry failure; did not switch automation systems",
+          "unfinished": [
+            "断线重连",
+            "第五版再次重启和重新切换语言",
+            "会话搜索无结果实际显示",
+            "真实账号登录与T3 Connect中继",
+            "推送通知",
+            "ARM真机安装",
+            "其他未实际操作的页面行为"
+          ]
+        },
+        "acceptance": {
+          "apkInstallAndLaunch": "version5 passed on x86_64 emulator; ARM physical device unverified",
+          "languageSwitchAndPersistence": "version4-to5 upgrade retained Chinese; version4 English/system/Chinese switching and restart evidence retained; switching and relaunch not repeated on version5",
+          "chineseLayoutAndFontScaling": "version5 account, settings, approval, question and attachments captured; 19 Settings routes opened; many subpages remain English; version4 XL-font evidence retained; no comprehensive small-screen validation",
+          "t3ConnectSignInAndPairing": "account/login and T3 Connect entries restored; native auth page opened; direct isolated-backend pairing passed; actual account authentication, callback and relay unverified",
+          "projectAndThreadLists": "existing isolated conversation list loaded and opened; project settings route opened but project selection/details not fully exercised",
+          "realtimeMessagesAcrossDevices": "passed between isolated server CLI and Android emulator on same existing conversation; desktop UI and real second device unverified",
+          "sendMessagesAndApprovals": "mobile send persisted, free Replay reply rendered; question submission and 仅本次允许 approval completed with backend pending counts zero; real provider behavior unverified",
+          "reconnect": "unverified; UI tool stopped after retry failure before reconnect scenario",
+          "notifications": "settings entry restored and page opened; push unavailable without matching Firebase client and relay sender setup; delivery unverified",
+          "upgradeFromPreviousCommunityApk": "version4-to5 install -r passed with same package and retained certificate; Chinese retained; no uninstall/data wipe; ARM physical upgrade unverified"
+        },
+        "evidence": [
+          "install.log",
+          "settings-before.png",
+          "settings-after.png",
+          "login-restored.png",
+          "notifications-restored.png",
+          "backend-thread-before.json",
+          "thread-after-mobile-send.json",
+          "thread-after-computer-send.json",
+          "mobile-after-computer-send.txt",
+          "real-time-sync.png",
+          "question-thread-after.json",
+          "question-answered.png",
+          "approval-pending.png",
+          "approval-thread-after.json",
+          "attachment-actions.png"
+        ],
+        "paidProviderTurns": 0,
+        "fullOfficialParity": false
+      },
+      "apiUsage": {
+        "calls": 0,
+        "tokens": 0,
+        "cost": null
+      },
+      "fullOfficialParity": false,
+      "review": "Independent read-only review found one baseline build-input regression; corrected. Cloud callback, FCM and verified-link prerequisites remain."
+    },
+    "localizationV6": {
+      "date": "2026-11-12",
+      "resources": 4041,
+      "sourceAudit": "community/android/localization-audit.json",
+      "acceptance": "community/android/acceptance-v6.json",
+      "complete": false,
+      "artifacts": [
+        {
+          "path": ".t3/artifacts/community-v6-final/t3code-zh-2.3.0-zh.6-arm64-v8a.apk",
+          "sha256": "ac92adfa3bb92c5b82c331148dca0ea6fd748bd2b7143fabb5e057809bf4f0d4"
+        },
+        {
+          "path": ".t3/artifacts/community-v6-final/t3code-zh-2.3.0-zh.6-x86_64.apk",
+          "sha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7"
+        }
+      ],
+      "builds": {
+        "arm64": "passed, 1m55s final rebuild",
+        "x86_64": "passed, 46s final rebuild"
+      },
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "installedAbi": "x86_64",
+      "physicalDevice": false,
+      "translationCalls": 0
+    },
+    "acceptanceV5History": {
+      "apkInstallAndLaunch": "version5 passed on x86_64 emulator; ARM physical device unverified",
+      "languageSwitchAndPersistence": "version4-to5 upgrade retained Chinese; version4 English/system/Chinese switching and restart evidence retained; switching and relaunch not repeated on version5",
+      "chineseLayoutAndFontScaling": "version5 account, settings, approval, question and attachments captured; 19 Settings routes opened; many subpages remain English; version4 XL-font evidence retained; no comprehensive small-screen validation",
+      "t3ConnectSignInAndPairing": "account/login and T3 Connect entries restored; native auth page opened; direct isolated-backend pairing passed; actual account authentication, callback and relay unverified",
+      "projectAndThreadLists": "existing isolated conversation list loaded and opened; project settings route opened but project selection/details not fully exercised",
+      "realtimeMessagesAcrossDevices": "passed between isolated server CLI and Android emulator on same existing conversation; desktop UI and real second device unverified",
+      "sendMessagesAndApprovals": "mobile send persisted, free Replay reply rendered; question submission and 仅本次允许 approval completed with backend pending counts zero; real provider behavior unverified",
+      "reconnect": "unverified; UI tool stopped after retry failure before reconnect scenario",
+      "notifications": "settings entry restored and page opened; push unavailable without matching Firebase client and relay sender setup; delivery unverified",
+      "upgradeFromPreviousCommunityApk": "version4-to5 install -r passed with same package and retained certificate; Chinese retained; no uninstall/data wipe; ARM physical upgrade unverified"
+    },
+    "localizationV7": {
+      "date": "2026-11-12",
+      "resources": 4060,
+      "acceptance": "community/android/acceptance-v7.json",
+      "complete": false,
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "path": ".t3/artifacts/community-v7/t3code-zh-2.3.0-zh.7-arm64-v8a.apk",
+          "sha256": "1f760ccfa8e1183eb254e17ff5a882a2ca804bbff818c18a034f4e165260c29e"
+        },
+        {
+          "abi": "x86_64",
+          "path": ".t3/artifacts/community-v7/t3code-zh-2.3.0-zh.7-x86_64.apk",
+          "sha256": "3acd5039b2f7d55f24af4de3cc0cf3e9f4bdca7a7ab9c5cef2c79363257ab4a6"
+        }
+      ],
+      "translationCalls": 0
+    },
+    "continuedV7": {
+      "testsPassed": 68,
+      "testFiles": 9,
+      "record": "community/android/acceptance-v7.json",
+      "physicalDevice": "Redmi K70 Android16 supplied; app tests pending",
+      "deviceAutomation": "Stopped after failed advised retry; no UI fallback"
+    },
+    "localizationV8": {
+      "resources": 4107,
+      "acceptance": "community/android/acceptance-v8.json",
+      "status": "scoped-device-acceptance-passed-stream-failed-overall-incomplete",
+      "complete": false,
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "path": ".t3/artifacts/community-v8/t3code-zh-2.3.0-zh.8-arm64-v8a.apk",
+          "sha256": "1c24dcecb52aa43263008b76e5c6145bb7a9551f4b63c0a877d82d9e213e19b4",
+          "sizeBytes": 103092882,
+          "installedAndLaunched": false
+        },
+        {
+          "abi": "x86_64",
+          "path": ".t3/artifacts/community-v8/t3code-zh-2.3.0-zh.8-x86_64.apk",
+          "sha256": "bb66abf594b500b7a7de6b6f11c09e2de8a4351cbb7e0dc377d515505ba604fb",
+          "sizeBytes": 106488334,
+          "installedAndLaunched": false
+        }
+      ],
+      "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+      "installed": false,
+      "checks": {
+        "mobileTypecheck": "passed",
+        "targetedLint": "passed",
+        "format": "25 scoped source/script/test files formatted",
+        "cloudLocaleTests": {
+          "files": 9,
+          "passed": 68,
+          "failed": 0,
+          "log": ".t3/acceptance-v7-continued/cloud-locale-tests.log"
+        },
+        "layoutTests": {
+          "files": 3,
+          "passed": 35,
+          "failed": 0,
+          "log": ".t3/acceptance-v7-continued/layout-tests.log",
+          "scope": "Existing pure layout tests; not matched K70 visual captures"
+        },
+        "expressionUiTests": {
+          "files": 3,
+          "passed": 36,
+          "failed": 0,
+          "log": ".t3/acceptance-v7-continued/expression-ui-tests.log",
+          "testSetup": "Existing image tests now use same English translator mock as other component tests; original image assertions retained"
+        },
+        "maintenanceTests": {
+          "passed": 12,
+          "failed": 0,
+          "log": ".t3/acceptance-v7-continued/maintenance-tests.log",
+          "regression": "Conditional UI examples first failed inventory assertion (0 != 2), then passed after scanner change"
+        },
+        "resourceCheck": "Final check passed; no pending/stale/missing; API calls0",
+        "mirrorSource": {
+          "files": 401,
+          "mismatches": []
+        },
+        "bothApkPackaging": "Passed: version8, ABI, same fixed certificate, v2/v3 signatures, native alignment, public Connect config and all4107 current Chinese literals",
+        "runtimeResourceSha256": "ee2607bae212b99e948c9312f132735e0020455a71f1812a944ed6ebc39b365d"
+      },
+      "deviceAcceptance": "community/android/acceptance-v8.json"
+    },
+    "localizationV9": {
+      "resources": 4120,
+      "status": "built-installed-scoped-acceptance-media-failed-followup10",
+      "acceptance": "community/android/acceptance-v9.json",
+      "complete": false,
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "path": ".t3/artifacts/community-v9/t3code-zh-2.3.0-zh.9-arm64-v8a.apk",
+          "sha256": "83f028acaa47701f0065612f3919fc939809c9dffde91b9352fcc728e63e9888",
+          "sizeBytes": 103109266,
+          "installedAndLaunched": false
+        },
+        {
+          "abi": "x86_64",
+          "path": ".t3/artifacts/community-v9/t3code-zh-2.3.0-zh.9-x86_64.apk",
+          "sha256": "76321aea6e0fc56ed9db8bd4e5805b2368f0829a96191bccb91c0b3d4d53a2aa",
+          "sizeBytes": 106500622,
+          "installedAndLaunched": true
+        }
+      ],
+      "checks": {
+        "targetedTests": {
+          "passed": 38,
+          "failed": 0,
+          "files": 5,
+          "log": ".t3/acceptance-v8-device/device-source-tests.log"
+        },
+        "mobileTypecheck": "passed",
+        "lint": "passed for four changed mobile files",
+        "resourceCheck": {
+          "mode": "check",
+          "pending": [],
+          "stale": [],
+          "missing": [],
+          "removed": [],
+          "manualReviewRequired": [],
+          "untracked": [],
+          "usage": {
+            "calls": 0,
+            "reservedOutputTokens": 0,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "usageComplete": true,
+            "cost": null,
+            "maxCalls": 8,
+            "maxOutputTokens": 16384
+          }
+        },
+        "review": "Independent scoped review: no concrete issues in stream/version changes; PDF display fallback added afterward",
+        "sharedStreamTests": {
+          "passed": 16,
+          "failed": 0,
+          "log": ".t3/acceptance-v8-device/shared-stream-tests.log"
+        },
+        "mirrorSource": {
+          "files": 401,
+          "mismatches": [],
+          "temporaryDiagnosticRestored": true
+        },
+        "bothApkPackaging": "version9/ABI/fixed certificate/v2-v3 signatures/Connect config/all4120 current Chinese literals passed",
+        "runtimeResourceSha256": "fb7289bb05244a209608161a3218db951d5bdc50a69a9f62c695c0ade4300649"
+      }
+    },
+    "localizationV10": {
+      "resources": 4125,
+      "acceptance": "community/android/acceptance-v10.json",
+      "status": "built-partial-acceptance-third-party-login-blocked-native-error-untranslated",
+      "authFollowUp": "community/android/auth-acceptance.json",
+      "complete": false,
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "path": ".t3/artifacts/community-v10/t3code-zh-2.3.0-zh.10-arm64-v8a.apk",
+          "sha256": "05cfbdfc55a1468cae4d20214ee1a3108fede5bd72ad0f3b93c083bf7ef4e2da",
+          "sizeBytes": 103109266,
+          "installedAndLaunched": false,
+          "deviceStream": {
+            "generatedScriptSha256": "09ded324ba6c51057bbf3ed9467e46ec36ffdac33c37e8c8d22cb2d2578f1a49",
+            "sharedStreamSourceSha256": "6cb1a1ed1afe8d363215341d5d094c0f1817268ee1e86366a71680617dbc7b41",
+            "mirrorMatches": true,
+            "packagedScriptMatches": true
+          }
+        },
+        {
+          "abi": "x86_64",
+          "path": ".t3/artifacts/community-v10/t3code-zh-2.3.0-zh.10-x86_64.apk",
+          "sha256": "a23c9c526756a0495a661fe0df62ce875a3fce952b10adae61b6d0bcdef4e418",
+          "sizeBytes": 106504718,
+          "installedAndLaunched": true,
+          "deviceStream": {
+            "generatedScriptSha256": "09ded324ba6c51057bbf3ed9467e46ec36ffdac33c37e8c8d22cb2d2578f1a49",
+            "sharedStreamSourceSha256": "6cb1a1ed1afe8d363215341d5d094c0f1817268ee1e86366a71680617dbc7b41",
+            "mirrorMatches": true,
+            "packagedScriptMatches": true
+          }
+        }
+      ],
+      "checks": {
+        "mobileTests": {
+          "passed": 38,
+          "failed": 0,
+          "files": 5,
+          "log": ".t3/acceptance-v10-device/mobile-tests.log"
+        },
+        "sharedStreamTests": {
+          "passed": 18,
+          "failed": 0,
+          "files": 2,
+          "red": ".t3/acceptance-v9-device/android-queue-red.log",
+          "green": ".t3/acceptance-v9-device/android-queue-green.log"
+        },
+        "buildInputs": {
+          "red": ".t3/acceptance-v9-device/shared-input-red.log",
+          "green": ".t3/acceptance-v9-device/shared-input-green.log",
+          "redReason": "Shared device stream source missing from release bundle inputs",
+          "behaviorEvidence": "Shared-source-only change initially produced identical diagnostic APK SHA256; after input fix bundle regenerated and APK changed"
+        },
+        "mobileTypecheck": "passed",
+        "clientRuntimeTypecheck": "passed",
+        "targetedLint": "passed",
+        "maintenanceTests": {
+          "passed": 12,
+          "failed": 0,
+          "log": ".t3/acceptance-v9-device/maintenance-tests.log"
+        },
+        "resources": {
+          "mode": "check",
+          "pending": [],
+          "stale": [],
+          "missing": [],
+          "removed": [],
+          "manualReviewRequired": [],
+          "untracked": [],
+          "usage": {
+            "calls": 0,
+            "reservedOutputTokens": 0,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "totalTokens": 0,
+            "usageComplete": true,
+            "cost": null,
+            "maxCalls": 8,
+            "maxOutputTokens": 16384
+          }
+        },
+        "review": "Independent scoped queue/keyframe/late-output review: no concrete findings; mobile host-label adapter additionally preserves remote/user names in existing test",
+        "mirrorSource": {
+          "files": 405,
+          "mismatches": [],
+          "temporaryDiagnosticRestored": true
+        },
+        "bothApkPackaging": "version10/ABI/fixed certificate/v2-v3 signatures/Connect config/all4125 current Chinese literals passed; actual embedded device script matches generated script; no temporary diagnostics",
+        "runtimeResourceSha256": "93f569fc523687a599ef4837c52cb49160044ace164c32f3d1a8a2b8fb2f3bed",
+        "errorPayloads": {
+          "knownCodecPreserved": true,
+          "multilineDiagnosticPreserved": true,
+          "unknownLogUnchanged": true
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "apkInstallAndLaunch": "v12 API36 upgrade11-to12 launched with Apple account retained; ARM64 built/signed, physical unverified",
+    "languageSwitchAndPersistence": "Final10 explicit Chinese/English relaunch and Chinese-system follow preference/update retention passed",
+    "chineseLayoutAndFontScaling": "Final10 API36/1440x3200/assumed560DPI at1.0/1.5: Appearance, Settings and native login inspected",
+    "t3ConnectSignInAndPairing": "v13 account retained after upgrade, cloud route in use, current conversation live updates and mobile send marker verified after manual reconnect",
+    "projectAndThreadLists": "Isolated project/conversation list loaded and threads opened; project-management actions not exhaustively executed",
+    "realtimeMessagesAcrossDevices": "v13 current maintenance conversation received mobile marker via T3 Connect; independent desktop UI not separately tested",
+    "sendMessagesAndApprovals": "v12 API36 isolated Replay allow-once and reject UI actions verified; server runs completed with pendingRequestCount0",
+    "reconnect": "v12 Wi-Fi/mobile-data off: message visibly pending; after restore, current cloud conversation received it and pending cleared",
+    "notifications": "v7 OS permission and accurate Chinese permission success dialog verified; real delivery unavailable without matching Firebase/relay sender configuration",
+    "upgradeFromPreviousCommunityApk": "API36 v11-to12 and v12-to13 install -r passed with account retained; earlier upgrade evidence recorded in prior acceptance files",
+    "record": "community/android/acceptance-v13.json",
+    "complete": false,
+    "latestInstalledRecord": "community/android/acceptance-v13.json",
+    "deviceVideo": "Final10 actual target picture, reload and remote Home over cloud passed; source queue starvation fixed with red/green test"
+  },
+  "localization": {
+    "catalogEntries": 4151,
+    "canonicalEnglish": "community/android/locales/en.json",
+    "runtime": "apps/mobile/src/i18n/messages.generated.json",
+    "manuallyAuthoredDrafts": true,
+    "humanReviewed": false,
+    "fullyLocalized": false,
+    "coverage": [
+      "Settings and appearance",
+      "Conversation feed, composer and native Markdown controls",
+      "Projects/files and source-control/PR presentation",
+      "Questions/approvals and known provider option labels",
+      "Voice/usage and native Android display resources"
+    ],
+    "remaining": "Integrated hardware/provider/external-service states and maintainer translation review remain; actual sign-in and T3 Connect route passed in scoped acceptance",
+    "latestPolish": {
+      "catalogEntries": 192,
+      "entries": 29,
+      "contextChanges": 28,
+      "styleGuide": "community/android/translation-style.json",
+      "humanReviewed": false,
+      "reviewExport": "node scripts/android-community/export-review.mjs .t3/translation-review",
+      "additionalFix": "Dedicated thread-search empty-state key; not settings search"
+    },
+    "previousPolishV3": {
+      "entries": 66,
+      "catalogEntries": 191,
+      "styleGuide": "docs/operations/android-community.zh-CN.md#中文文案约定",
+      "humanReviewed": false
+    },
+    "latestPolishV6": {
+      "catalogEntries": 4041,
+      "humanReviewed": false,
+      "audit": "community/android/localization-audit.json",
+      "acceptance": "community/android/acceptance-v6.json"
+    },
+    "currentSourceCandidate": "community/android/acceptance-v13.json"
+  }
+}

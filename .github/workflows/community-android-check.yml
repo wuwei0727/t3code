@@ -1,0 +1,71 @@
+name: Community Android Check
+
+on:
+  schedule:
+    - cron: "17 2 * * *" # UTC; 10:17 Asia/Shanghai, once per day
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-android-maintenance
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    if: github.repository != 'pingdotgg/t3code' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.inspect.outputs.changed }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Test offline maintenance tools
+        run: node --test scripts/android-community/maintenance.test.mjs
+      - name: Check Android channel without translation credentials
+        id: inspect
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/android-community/upstream.mjs > android-upstream-report.json
+          node --input-type=module <<'NODE'
+          import {readFileSync, appendFileSync} from 'node:fs';
+          const report = JSON.parse(readFileSync('android-upstream-report.json', 'utf8'));
+          appendFileSync(process.env.GITHUB_OUTPUT, `changed=${report.changed}\n`);
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, '```json\n' + JSON.stringify(report, null, 2) + '\n```\n');
+          NODE
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: android-upstream-report
+          path: android-upstream-report.json
+          retention-days: 30
+
+  record-blocker:
+    needs: inspect
+    if: needs.inspect.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Inspect again without running upstream code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/android-community/upstream.mjs > android-upstream-report.json
+      - name: Create or update one blocker record per Android version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/android-community/record-issue.mjs android-upstream-report.json

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
 import * as Dialog from "../../components/ui/Dialog";
@@ -27,6 +28,7 @@ export type InlineCommentParams = PullRequestParams & {
   readonly code: string;
 };
 export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<InlineCommentParams>) {
+  const { t, locale } = useLanguage();
   const params = route.params;
   const navigation = useNavigation();
   const store = usePullRequestReviewDraft(params);
@@ -84,13 +86,13 @@ export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<Inli
   return (
     <PullRequestSheetContent
       busy={busy}
-      title={saved ? "Edit review comment" : "Review comment"}
-      subtitle={`#${params.number} · ${reviewPositionLabel(params.position)}`}
+      title={saved ? t("prInline.edit") : t("prInline.title")}
+      subtitle={`#${params.number} · ${reviewPositionLabel(params.position, locale)}`}
       footer={
         <Button
           fullWidth
           tone="contrast"
-          label={busy ? "Saving…" : "Save draft"}
+          label={busy ? t("prInline.saving") : t("prInline.save")}
           loading={busy}
           disabled={
             !store.ready ||
@@ -118,8 +120,8 @@ export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<Inli
         onBlur={completions.onBlur}
         editable={store.ready && !busy}
         autoFocus
-        accessibilityLabel="Inline review comment"
-        placeholder="Write feedback on this line…"
+        accessibilityLabel={t("prInline.label")}
+        placeholder={t("prInline.placeholder")}
         placeholderTextColorClassName="accent-foreground-muted"
         maxLength={65536}
         value={body}
@@ -127,25 +129,19 @@ export function PullRequestInlineCommentScreen({ route }: StaticScreenProps<Inli
         className="min-h-32 rounded-[20px] bg-grouped-card p-4 text-base text-foreground"
         style={{ textAlignVertical: "top" }}
       />
-      <Text className="text-xs text-foreground-muted">
-        Saved comments are private until you submit your review.
-      </Text>
-      {stale ? (
-        <Text className="text-sm text-danger-foreground">
-          The branch changed. Return to the current diff and select the line again.
-        </Text>
-      ) : null}
+      <Text className="text-xs text-foreground-muted">{t("prInline.private")}</Text>
+      {stale ? <Text className="text-sm text-danger-foreground">{t("prInline.stale")}</Text> : null}
       {store.error || detail.error ? (
         <Text className="text-sm text-danger-foreground">{store.error ?? detail.error}</Text>
       ) : null}
       {saved ? (
         <Button
-          label="Delete draft"
+          label={t("prInline.deleteDraft")}
           onPress={() =>
-            Dialog.alert("Delete this draft?", "Your other review comments will be kept.", [
-              { text: "Cancel", style: "cancel" },
+            Dialog.alert(t("prInline.deleteTitle"), t("prInline.deleteHint"), [
+              { text: t("prInline.cancel"), style: "cancel" },
               {
-                text: "Delete",
+                text: t("prInline.delete"),
                 style: "destructive",
                 onPress: () => {
                   store.update((draft) => ({

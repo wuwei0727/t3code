@@ -2,6 +2,11 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("react-native", () => ({
   View: (props: { readonly children?: ReactNode }) => <div>{props.children}</div>,
   Keyboard: { dismiss: () => {} },

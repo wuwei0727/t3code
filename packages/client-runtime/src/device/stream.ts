@@ -658,7 +658,11 @@ export function createDeviceStreamClient(
     }
     if (videoDecoder.decodeQueueSize > SOFT_DECODE_QUEUE) {
       if (!avcc) {
-        recoverDecoder();
+        if (platform === "android") {
+          // Closing an overloaded decoder can starve its first output on slower WebViews.
+          awaitingKeyframe = true;
+          requestKeyframe();
+        } else recoverDecoder();
         return;
       }
       // Native IDRs are spaced by frame count, so an idle simulator may take

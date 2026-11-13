@@ -1,0 +1,40 @@
+gradle.beforeProject { project ->
+    ['com.android.application', 'com.android.library'].each { pluginId ->
+        project.pluginManager.withPlugin(pluginId) {
+            project.extensions.getByName('androidComponents').finalizeDsl { androidDsl ->
+                androidDsl.defaultConfig.externalNativeBuild.cmake.arguments.addAll([
+                    '-DCMAKE_JOB_POOLS=t3_compile=2;t3_link=1',
+                    '-DCMAKE_JOB_POOL_COMPILE=t3_compile',
+                    '-DCMAKE_JOB_POOL_LINK=t3_link'
+                ])
+                if (pluginId == 'com.android.application') {
+                    if (project.findProperty('t3CommunityUnsigned') == 'true') {
+                        androidDsl.buildTypes.getByName('release').signingConfig = null
+                    }
+                    def react = project.extensions.findByName('react')
+                    if (react != null) {
+                        react.extraPackagerArgs.addAll(['--max-workers', '2'])
+                    }
+                }
+            }
+            if (pluginId == 'com.android.application') {
+                project.tasks.configureEach { task ->
+                    if (task.name.startsWith('createBundle') && task.name.endsWith('JsAndAssets')) {
+                        // React Native's default bundle inputs exclude JSON resources.
+                        def translations = project.rootProject.file('../src/i18n/messages.generated.json')
+                        if (translations.exists()) {
+                            task.inputs.file(translations)
+                                .withPropertyName('communityTranslations')
+                                .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
+                        }
+                        ['client-runtime', 'contracts', 'shared'].each { dependency ->
+                            task.inputs.dir(project.rootProject.file("../../../packages/${dependency}/src"))
+                                .withPropertyName("communitySharedSources-${dependency}")
+                                .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

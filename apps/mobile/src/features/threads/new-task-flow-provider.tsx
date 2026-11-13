@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { ActiveNewTaskContext } from "../../state/active-new-task";
 import { resolveNewThreadModelSelection } from "@t3tools/shared/usageLimits";
 import { useNowMinuteMs } from "../../lib/clock";
@@ -109,7 +110,7 @@ type WorkspaceMode = "local" | "worktree";
 export function branchBadgeLabel(input: {
   readonly branch: VcsRef;
   readonly project: EnvironmentProject | null;
-}): string | null {
+}): "current" | "worktree" | "remote" | "default" | null {
   if (input.branch.current) {
     return "current";
   }
@@ -217,6 +218,7 @@ export function NewTaskFlowProvider(
     routeDraftId?: string;
   }>,
 ) {
+  const { t } = useLanguage();
   const projects = useProjects();
   const threads = useThreadShells();
   const { savedConnectionsById } = useSavedRemoteConnections();
@@ -603,10 +605,8 @@ export function NewTaskFlowProvider(
     if (!isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not switch machine",
-        error instanceof Error
-          ? error.message
-          : "The folder for threads without a project could not be created.",
+        t("newTaskFlowError.switch"),
+        error instanceof Error ? error.message : t("newTaskFlowError.folder"),
       );
     }
     return false;

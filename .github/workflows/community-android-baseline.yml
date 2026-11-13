@@ -1,0 +1,131 @@
+name: Community Android Baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-android-baseline
+  cancel-in-progress: false
+
+jobs:
+  baseline:
+    if: github.repository != 'pingdotgg/t3code' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      CI: "1"
+      APP_VARIANT: production
+      T3CODE_MOBILE_UPDATES_ENABLED: "0"
+      EXPO_NO_DOTENV: "1"
+      EXPO_NO_TYPESCRIPT_SETUP: "1"
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - name: Checkout maintenance tools
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: tooling
+          persist-credentials: false
+
+      - name: Read inspected source SHA
+        id: baseline
+        working-directory: tooling
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const state = JSON.parse(readFileSync('community/android/maintenance.json', 'utf8'));
+          if (!/^[a-f0-9]{40}$/.test(state.inspectedSourceCommit)) throw new Error('Invalid baseline SHA');
+          appendFileSync(process.env.GITHUB_OUTPUT, `sha=${state.inspectedSourceCommit}\n`);
+          NODE
+
+      - name: Checkout unmodified official source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: pingdotgg/t3code
+          ref: ${{ steps.baseline.outputs.sha }}
+          path: source
+          persist-credentials: false
+
+      - name: Setup locked Vite+ and Node
+        id: setup
+        uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb # v1, upstream setup-ci-deps pin
+        with:
+          working-directory: source
+          version-file: pnpm-workspace.yaml
+          node-version-file: package.json
+          cache: false
+          run-install: false
+
+      - name: Setup Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install frozen mobile dependencies
+        id: dependencies
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          vp install --frozen-lockfile --filter=@t3tools/mobile... --filter=@t3tools/scripts... 2>&1 | tee "$RUNNER_TEMP/baseline-install.log"
+          git diff --exit-code
+
+      - name: Generate native Android project
+        id: prebuild
+        working-directory: source/apps/mobile
+        shell: bash
+        run: |
+          set -euo pipefail
+          vp exec expo config --json > "$RUNNER_TEMP/baseline-expo-config.json"
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const config = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/baseline-expo-config.json`));
+          if (config.updates?.enabled !== false) throw new Error('Official OTA must be disabled');
+          NODE
+          vp exec expo prebuild --platform android --no-install 2>&1 | tee "$RUNNER_TEMP/baseline-prebuild.log"
+
+      - name: Build a bundled arm64 Release APK
+        id: build
+        working-directory: source/apps/mobile/android
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon \
+            --max-workers=2 -Pkotlin.compiler.execution.strategy=in-process \
+            '-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m' \
+            --init-script "$GITHUB_WORKSPACE/tooling/scripts/android-community/native-build.init.gradle" \
+            2>&1 | tee "$RUNNER_TEMP/baseline-gradle.log"
+          find app/build/outputs/apk/release -name '*.apk' -exec sha256sum '{}' \; > "$RUNNER_TEMP/baseline-apk-sha256.txt"
+
+      - name: Save actual stage outcomes
+        if: always()
+        env:
+          BASELINE_SHA: ${{ steps.baseline.outputs.sha }}
+          SETUP_RESULT: ${{ steps.setup.outcome }}
+          DEPENDENCIES_RESULT: ${{ steps.dependencies.outcome }}
+          PREBUILD_RESULT: ${{ steps.prebuild.outcome }}
+          BUILD_RESULT: ${{ steps.build.outcome }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { writeFileSync, appendFileSync } from 'node:fs';
+          const e = process.env;
+          const result = { sourceCommit: e.BASELINE_SHA, setup: e.SETUP_RESULT, dependencies: e.DEPENDENCIES_RESULT, prebuild: e.PREBUILD_RESULT, build: e.BUILD_RESULT, runUrl: `${e.GITHUB_SERVER_URL}/${e.GITHUB_REPOSITORY}/actions/runs/${e.GITHUB_RUN_ID}`, storeSourceMappingVerified: false, deviceTests: 'unverified', installWarning: 'Upstream applicationId; do not install over the official app. This is baseline evidence only.' };
+          writeFileSync(`${e.RUNNER_TEMP}/baseline-result.json`, JSON.stringify(result, null, 2));
+          appendFileSync(e.GITHUB_STEP_SUMMARY, '```json\n' + JSON.stringify(result, null, 2) + '\n```\n');
+          NODE
+
+      - name: Upload baseline evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: android-baseline-${{ github.run_id }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/baseline-*.log
+            ${{ runner.temp }}/baseline-result.json
+            ${{ runner.temp }}/baseline-apk-sha256.txt
+            source/apps/mobile/android/app/build/outputs/apk/release/*.apk

@@ -1,3 +1,5 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
+import { formatProviderSubagentStatus } from "@t3tools/client-runtime/state/thread-execution";
 import {
   formatSubagentDisplayTitle,
   resolveSubagentMetadata,
@@ -53,11 +55,14 @@ export function subagentThreadTarget(
     : null;
 }
 
-function rowTitle(subagent: Pick<OrchestrationV2Subagent, "title" | "prompt">): string {
+function rowTitle(
+  subagent: Pick<OrchestrationV2Subagent, "title" | "prompt">,
+  t: UiTranslator,
+): string {
   const title = subagent.title?.trim();
   if (title) return formatSubagentDisplayTitle(title);
   const prompt = subagent.prompt.trim();
-  if (prompt.length === 0) return "Subagent";
+  if (prompt.length === 0) return t("agentPresentation.subagent");
   return prompt.length > PROMPT_TITLE_LIMIT
     ? `${prompt.slice(0, PROMPT_TITLE_LIMIT - 3)}...`
     : prompt;
@@ -70,23 +75,23 @@ function rowTone(status: OrchestrationV2Subagent["status"]): SubagentRowTone {
   return "stopped";
 }
 
-function rowStatusLabel(status: OrchestrationV2Subagent["status"]): string {
+function rowStatusLabel(status: OrchestrationV2Subagent["status"], t: UiTranslator): string {
   switch (status) {
     case "pending":
     case "running":
-      return "Working";
+      return t("agentPresentation.working");
     case "waiting":
-      return "Waiting";
+      return t("agentPresentation.waiting");
     case "idle":
-      return "Idle";
+      return t("agentPresentation.idle");
     case "completed":
-      return "Completed";
+      return t("agentPresentation.completed");
     case "failed":
-      return "Failed";
+      return t("agentPresentation.failed");
     case "cancelled":
-      return "Cancelled";
+      return t("agentPresentation.cancelled");
     case "interrupted":
-      return "Interrupted";
+      return t("agentPresentation.interrupted");
   }
 }
 
@@ -96,12 +101,13 @@ export function resolveSubagentRowPresentation(
     "title" | "prompt" | "status" | "progress" | "result" | "childThreadId" | "remoteChild"
   >,
   canOpenRemote = false,
+  t: UiTranslator = makeTranslator("en"),
 ): SubagentRowPresentation {
   const live = isActiveSubagentStatus(subagent.status);
   return {
-    title: rowTitle(subagent),
+    title: rowTitle(subagent, t),
     detail: subagentDetailPreview(subagent),
-    statusLabel: rowStatusLabel(subagent.status),
+    statusLabel: rowStatusLabel(subagent.status, t),
     tone: rowTone(subagent.status),
     live,
     canOpenThread:
@@ -129,7 +135,10 @@ function railTone(members: ReadonlyArray<RuntimeSubagent>): WorkflowRailTone {
   return members.every((member) => member.status === "completed") ? "completed" : "stopped";
 }
 
-export function workflowRail(group: SubagentWorkflowGroup): ReadonlyArray<WorkflowRailItem> {
+export function workflowRail(
+  group: SubagentWorkflowGroup,
+  t: UiTranslator = makeTranslator("en"),
+): ReadonlyArray<WorkflowRailItem> {
   const items = group.phases.map((phase) => ({
     key: String(phase.index),
     title: phase.title,
@@ -138,7 +147,7 @@ export function workflowRail(group: SubagentWorkflowGroup): ReadonlyArray<Workfl
   if (group.unphasedMembers.length > 0) {
     items.push({
       key: "unphased",
-      title: items.length === 0 ? "Agents" : "Other",
+      title: items.length === 0 ? t("agentPresentation.agents") : t("agentPresentation.other"),
       members: group.unphasedMembers,
     });
   }
@@ -251,4 +260,45 @@ export function resolveSubagentStopTarget(
     };
   }
   return null;
+}
+
+export function localizedProviderSubagentStatus(
+  status: Parameters<typeof formatProviderSubagentStatus>[0],
+  now: number,
+  t: UiTranslator,
+) {
+  const label = formatProviderSubagentStatus(status, now);
+  const match =
+    /^(Starting|Idle|Working|Waiting|Completed|Interrupted|Failed|Cancelled)(?: (in )?(.+))?$/.exec(
+      label,
+    );
+  if (!match) return label;
+  const key = (
+    {
+      Starting: "agentPresentation.starting",
+      Idle: "agentPresentation.idle",
+      Working: "agentPresentation.working",
+      Waiting: "agentPresentation.waiting",
+      Completed: "agentPresentation.completed",
+      Interrupted: "agentPresentation.interrupted",
+      Failed: "agentPresentation.failed",
+      Cancelled: "agentPresentation.cancelled",
+    } as const
+  )[
+    match[1] as
+      | "Starting"
+      | "Idle"
+      | "Working"
+      | "Waiting"
+      | "Completed"
+      | "Interrupted"
+      | "Failed"
+      | "Cancelled"
+  ];
+  const translated = t(key);
+  return match[3]
+    ? match[2]
+      ? t("agentPresentation.timed", { label: translated, duration: match[3] })
+      : `${translated} ${match[3]}`
+    : translated;
 }

@@ -1,3 +1,5 @@
+import { localizeChangeRequestTerminology } from "./changeRequestTerminology";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { AsyncResult } from "effect/reactivity";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomRefresh } from "@effect/atom-react";
@@ -16,6 +18,7 @@ import { pullRequestTarget, type PullRequestParams } from "./usePullRequestDiff"
 import { usePullRequestPermissions } from "./usePullRequestPermissions";
 
 export function usePullRequestAction(params: PullRequestParams, pr: PullRequestDetail | null) {
+  const { t, locale } = useLanguage();
   const target = pullRequestTarget(params);
   const permissions = usePullRequestPermissions(params, pr);
   const run = useAtomCommand(composerPullRequests.runAction, { reportFailure: false });
@@ -37,8 +40,13 @@ export function usePullRequestAction(params: PullRequestParams, pr: PullRequestD
     if (AsyncResult.isFailure(response)) {
       const cause = squashAtomCommandFailure(response);
       Dialog.alert(
-        `Couldn't update this ${sourceControlClients.get(pr?.provider).changeRequest.singular}`,
-        cause instanceof Error ? cause.message : "Try again.",
+        t("prActionUi.failed", {
+          request: localizeChangeRequestTerminology(
+            sourceControlClients.get(pr?.provider).changeRequest,
+            locale,
+          ).singular,
+        }),
+        cause instanceof Error ? cause.message : t("prActionUi.retry"),
       );
       return;
     }
@@ -46,7 +54,7 @@ export function usePullRequestAction(params: PullRequestParams, pr: PullRequestD
   };
   const confirm = (action: PullRequestAction, title: string, message: string) =>
     Dialog.alert(title, message, [
-      { text: "Cancel", style: "cancel" },
+      { text: t("prActionUi.cancel"), style: "cancel" },
       {
         text: title,
         style: action === "close" || action === "delete-branch" ? "destructive" : "default",
@@ -57,8 +65,10 @@ export function usePullRequestAction(params: PullRequestParams, pr: PullRequestD
     const terminology = sourceControlClients.get(pr?.provider).changeRequest;
     confirm(
       "close",
-      pullRequestActionLabel("close", terminology),
-      `Close this ${terminology.singular} without merging its changes?`,
+      pullRequestActionLabel("close", terminology, locale),
+      t("prActionUi.close", {
+        request: localizeChangeRequestTerminology(terminology, locale).singular,
+      }),
     );
   };
   return { available, perform, confirm, confirmClose, busy };

@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import * as Dialog from "../components/ui/Dialog";
 import { useRef } from "react";
 import { PROVIDER_SEND_TURN_MAX_ATTACHMENTS, type ServerConfig } from "@t3tools/contracts";
@@ -26,6 +27,7 @@ export function useComposerAttachmentActions(props: {
   readonly serverConfig: ServerConfig | null | undefined;
   readonly locked?: boolean;
 }) {
+  const { t } = useLanguage();
   const reservedNames = useRef(new Map<string, Set<string>>());
   const capabilities = props.serverConfig?.environment.capabilities;
   const append = async (
@@ -52,9 +54,7 @@ export function useComposerAttachmentActions(props: {
   const report = (title: string, error: string | null | undefined, rejected: number) => {
     const problems = [
       ...(error ? [error] : []),
-      ...(rejected
-        ? [`You can attach up to ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS} attachments per message.`]
-        : []),
+      ...(rejected ? [t("attachActions.max", { count: PROVIDER_SEND_TURN_MAX_ATTACHMENTS })] : []),
     ];
     if (problems.length) Dialog.alert(title, problems.join("\n\n"));
   };
@@ -68,7 +68,7 @@ export function useComposerAttachmentActions(props: {
         maxVideoBytes: capabilities?.fileAttachments?.maxUploadBytes,
       });
       report(
-        "Could not attach photo or video",
+        t("attachActions.media"),
         result.error,
         await append(key, signal, result.attachments, insertion),
       );
@@ -79,7 +79,7 @@ export function useComposerAttachmentActions(props: {
     if (!key || props.locked) return;
     const maxBytes = capabilities?.fileAttachments?.maxUploadBytes;
     if (maxBytes === undefined) {
-      Dialog.alert("Could not attach file", "This server does not support file attachments.");
+      Dialog.alert(t("attachActions.file"), t("attachActions.unsupported"));
       return;
     }
     const insertion = captureComposerDraftInsertion(key);
@@ -89,7 +89,7 @@ export function useComposerAttachmentActions(props: {
         maxBytes,
       });
       report(
-        "Could not attach file",
+        t("attachActions.file"),
         result.error,
         await append(key, signal, result.files, insertion),
       );
@@ -105,11 +105,11 @@ export function useComposerAttachmentActions(props: {
           uris,
           existingCount: countComposerDraftAttachmentsAfterSelection(key, insertion),
         });
-        report("Could not paste images", null, await append(key, signal, images, insertion));
+        report(t("attachActions.images"), null, await append(key, signal, images, insertion));
       } catch (error) {
         Dialog.alert(
-          "Could not paste images",
-          error instanceof Error ? error.message : "Try again.",
+          t("attachActions.images"),
+          error instanceof Error ? error.message : t("attachActions.retry"),
         );
       }
     });
@@ -136,11 +136,11 @@ export function useComposerAttachmentActions(props: {
           ...paste.selection,
         });
         if (rejected) await removePersistedComposerAttachmentFile(attachment.fileUri);
-        report("Could not attach pasted text", null, rejected);
+        report(t("attachActions.text"), null, rejected);
       } catch (error) {
         Dialog.alert(
-          "Could not attach pasted text",
-          error instanceof Error ? error.message : "Try again.",
+          t("attachActions.text"),
+          error instanceof Error ? error.message : t("attachActions.retry"),
         );
       }
     });

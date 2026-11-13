@@ -5,6 +5,11 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 const { Children, mocks } = vi.hoisted(() => ({
   Children: ({ children }: { children?: ReactNode }) => children,
   mocks: {

@@ -53,6 +53,30 @@ const results = (state: SupervisorConnectionState, via?: "relay" | "direct") =>
   diagnose(state, via)?.hops.map((hop) => `${hop.hop}:${hop.result}`);
 
 describe("presentConnectionDiagnosis", () => {
+  it("localizes guidance without changing failure facts, routing or retry state", () => {
+    const input = {
+      hostLabel: "Mac mini",
+      state: backoff(unavailable("origin_unreachable")),
+      via: "relay" as const,
+    };
+    const original = presentConnectionDiagnosis(input)!;
+    const localized = presentConnectionDiagnosis({
+      ...input,
+      translate: (key, _fallback, host) => key + ":" + host,
+    })!;
+    expect(localized.headline).toBe("noAnswer:Mac mini");
+    expect(localized.steps).toEqual(["restartHost:Mac mini", "checkHost:Mac mini"]);
+    expect(localized.hops.map((hop) => hop.label)).toEqual([
+      "device:Mac mini",
+      "connect:Mac mini",
+      "tunnel:Mac mini",
+      "server:Mac mini",
+    ]);
+    expect(localized.hops.map((hop) => hop.result)).toEqual(original.hops.map((hop) => hop.result));
+    expect(localized.facts).toEqual(original.facts);
+    expect(localized.moreInfoUrl).toBe(original.moreInfoUrl);
+  });
+
   it("tells a working tunnel apart from T3 Code not answering", () => {
     expect(diagnose(backoff(unavailable("origin_unreachable")))?.headline).toBe(
       "Tunnel works, but T3 Code on Mac mini did not answer",

@@ -1,3 +1,4 @@
+import { currentTranslator } from "../../i18n/currentLanguage";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   StackActions,
@@ -177,7 +178,10 @@ function openThread(
     void applyLinkedPromptToThreadDraft(
       scopedThreadKey(thread.environmentId, thread.id),
       prompt,
-      promptLinkNotice({ hiddenCharacters: prompt.hiddenCharacters }),
+      promptLinkNotice({
+        translate: currentTranslator(),
+        hiddenCharacters: prompt.hiddenCharacters,
+      }),
     );
   }
 }
@@ -225,7 +229,10 @@ async function openProjectDraft(project: EnvironmentProject, request: LinkedDraf
   try {
     await waitForComposerDraftsLoaded();
   } catch {
-    Dialog.alert("Could not open link", "Drafts could not be loaded, so the prompt was not added.");
+    Dialog.alert(
+      currentTranslator()("newPromptLink.openFailed"),
+      currentTranslator()("newPromptLink.drafts"),
+    );
     return;
   }
   const draftKey = createNewTaskDraft({
@@ -270,6 +277,7 @@ async function openProjectDraft(project: EnvironmentProject, request: LinkedDraf
   if (request.prompt || pullRequestUnavailable !== null || modelUnavailable) {
     showPromptLinkNotice(
       promptLinkNotice({
+        translate: currentTranslator(),
         hiddenCharacters: request.prompt?.hiddenCharacters ?? 0,
         modelUnavailable,
         pullRequestUnavailable,
@@ -295,8 +303,8 @@ async function openScratchDraft(request: LinkedDraftRequest) {
   );
   if (environmentId === null) {
     Dialog.alert(
-      "Could not start without a project",
-      "No connected environment offers threads without a project.",
+      currentTranslator()("newPromptLink.scratchFailed"),
+      currentTranslator()("newPromptLink.noEnvironment"),
     );
     return;
   }
@@ -310,10 +318,8 @@ async function openScratchDraft(request: LinkedDraftRequest) {
     if (!isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not start without a project",
-        error instanceof Error
-          ? error.message
-          : "The folder for threads without a project could not be created.",
+        currentTranslator()("newPromptLink.scratchFailed"),
+        error instanceof Error ? error.message : currentTranslator()("newPromptLink.folder"),
       );
     }
     return;
@@ -328,7 +334,10 @@ function cloneRepository(repository: PromptLinkRepository, request: LinkedDraftR
     appAtomRegistry.get(workspaceConnections.environmentsAtom)[0]?.environmentId ??
     null;
   if (environmentId === null) {
-    Dialog.alert("Could not clone", "Connect an environment first.");
+    Dialog.alert(
+      currentTranslator()("newPromptLink.cloneFailed"),
+      currentTranslator()("newPromptLink.connect"),
+    );
     return;
   }
   const prompt =
@@ -350,12 +359,13 @@ function cloneRepository(repository: PromptLinkRepository, request: LinkedDraftR
   showPromptLinkNotice(
     [
       promptLinkNotice({
+        translate: currentTranslator(),
         hiddenCharacters: request.prompt.hiddenCharacters,
         modelUnavailable: prompt !== null && request.provider !== null,
       }),
       prompt
-        ? "The prompt opens in a new task once the clone starts."
-        : "Open the link again after the clone to get the prompt.",
+        ? currentTranslator()("newPromptLink.opens")
+        : currentTranslator()("newPromptLink.again"),
     ].join("\n\n"),
   );
 }
@@ -364,7 +374,7 @@ function resolveLink(linkSearch: string) {
   const threads = appAtomRegistry.get(environmentThreadShells.threadShellsAtom);
   const parsed = parseNewThreadLink(linkSearch);
   if (!parsed.ok) {
-    Dialog.alert("Could not open link", parsed.error);
+    Dialog.alert(currentTranslator()("newPromptLink.openFailed"), parsed.error);
     return;
   }
   const link = parsed.value;
@@ -409,11 +419,25 @@ function resolveLink(linkSearch: string) {
     })();
     return;
   }
-  Dialog.alert(`You don't have ${promptLinkRepositoryName(repository)}`, undefined, [
-    { text: "Cancel", style: "cancel" },
-    ...(request.prompt
-      ? [{ text: "Use without project", onPress: () => void openScratchDraft(request) }]
-      : []),
-    { text: "Clone", onPress: () => cloneRepository(repository, request) },
-  ]);
+  Dialog.alert(
+    currentTranslator()("newPromptLink.missing", {
+      repository: promptLinkRepositoryName(repository),
+    }),
+    undefined,
+    [
+      { text: currentTranslator()("newPromptLink.cancel"), style: "cancel" },
+      ...(request.prompt
+        ? [
+            {
+              text: currentTranslator()("newPromptLink.scratch"),
+              onPress: () => void openScratchDraft(request),
+            },
+          ]
+        : []),
+      {
+        text: currentTranslator()("newPromptLink.clone"),
+        onPress: () => cloneRepository(repository, request),
+      },
+    ],
+  );
 }

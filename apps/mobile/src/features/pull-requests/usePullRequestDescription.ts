@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import {
   descriptionDraftInForce,
@@ -21,6 +22,7 @@ export function usePullRequestDescription(
   pr: PullRequestDetail | null,
   canEdit: boolean,
 ) {
+  const { t } = useLanguage();
   const target = pullRequestTarget(params);
   const update = useAtomCommand(composerPullRequests.update, { reportFailure: false });
   const refreshDetail = useAtomRefresh(composerPullRequests.detail(target));
@@ -42,7 +44,7 @@ export function usePullRequestDescription(
     if (AsyncResult.isFailure(response)) {
       const cause = squashAtomCommandFailure(response);
       Dialog.alert(
-        "Could not save the description",
+        t("prDescriptionSave.failed"),
         cause instanceof Error ? cause.message : "Try again.",
       );
     }

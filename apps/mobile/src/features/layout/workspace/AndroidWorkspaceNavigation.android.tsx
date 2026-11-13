@@ -27,11 +27,13 @@ import { useAndroidWorkspaceRoot } from "./AndroidWorkspaceTabsProvider";
 import { useNavigationTabOrder, useHiddenNavigationTabs } from "./navigation-tabs";
 import { useWorkspaceTabs } from "./WorkspaceTabsContext";
 import { FLOATING_TABS, floatingTabsMetrics } from "./floating-workspace-tabs";
+import { useLanguage } from "../../../i18n/LanguageProvider";
 
 // Matches RAIL_WIDTH in the native rail.
 export const ANDROID_WORKSPACE_RAIL_WIDTH = 72;
 
 interface NativeNavigationProps extends ViewProps {
+  readonly labels: Readonly<Record<string, string>>;
   readonly rail: boolean;
   readonly floating: boolean;
   readonly tabs: readonly string[];
@@ -72,6 +74,7 @@ export function AndroidWorkspaceNavigation(props: {
   /** The rail needs the whole workspace while it widens over the list. */
   readonly onOverlayChange?: (overlay: boolean) => void;
 }) {
+  const { t } = useLanguage();
   const workspace = useWorkspaceTabs()!;
   const order = useNavigationTabOrder();
   const hidden = useHiddenNavigationTabs();
@@ -117,6 +120,17 @@ export function AndroidWorkspaceNavigation(props: {
       }
     >
       <NativeNavigation
+        labels={{
+          threads: t("navigation.chats"),
+          pullRequests: t("navigation.pulls"),
+          pullRequestsExpanded: t("navigation.pullRequests"),
+          usage: t("navigation.usage"),
+          settings: t("settings.title"),
+          newThread: t("navigation.newThread"),
+          closeRail: t("navigation.closeRail"),
+          collapseRail: t("navigation.collapseRail"),
+          expandRail: t("navigation.expandRail"),
+        }}
         rail={rail}
         floating={floating}
         tabs={tabs}

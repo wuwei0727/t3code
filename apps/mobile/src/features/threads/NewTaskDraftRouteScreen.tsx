@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { currentTranslator } from "../../i18n/currentLanguage";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   CommonActions,
@@ -67,8 +69,8 @@ const branchCheckouts = makeNewTaskBranchCheckouts({
     if (!isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not switch branch",
-        error instanceof Error ? error.message : "The branch could not be checked out.",
+        currentTranslator()("branchCheckoutUi.failed"),
+        error instanceof Error ? error.message : currentTranslator()("branchCheckoutUi.detail"),
       );
     }
     rootNavigationRef.dispatch({
@@ -89,6 +91,7 @@ const idleBranchCheckoutAtom = Atom.make(AsyncResult.initial<BranchCheckoutResul
 );
 
 export function NewTaskDraftRouteScreen({ route }: StaticScreenProps<NewTaskDraftRouteParams>) {
+  const { t } = useLanguage();
   const currentRoute = useRoute();
   const goBack = useWorkspaceBackNavigation("threads");
   const params = route.params ?? {};
@@ -199,9 +202,11 @@ export function NewTaskDraftRouteScreen({ route }: StaticScreenProps<NewTaskDraf
   return (
     <>
       {preparingBranch ? (
-        <ThreadScreenFallback header={<AppBar title="New thread" onBack={goBack} />}>
+        <ThreadScreenFallback
+          header={<AppBar title={t("branchCheckoutUi.title")} onBack={goBack} />}
+        >
           <View className="flex-1 items-center justify-center bg-screen">
-            <Text className="text-foreground">Switching branch...</Text>
+            <Text className="text-foreground">{t("branchCheckoutUi.switching")}</Text>
           </View>
         </ThreadScreenFallback>
       ) : (

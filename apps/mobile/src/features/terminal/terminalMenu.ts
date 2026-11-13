@@ -1,3 +1,5 @@
+import type { UiLocale } from "../../i18n/locale";
+import { makeTranslator } from "../../i18n/translator";
 import { type KnownTerminalSession } from "@t3tools/client-runtime/state/terminal";
 import { DEFAULT_TERMINAL_ID, type ProjectScript } from "@t3tools/contracts";
 import { nextTerminalId, resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabels";
@@ -37,24 +39,30 @@ export function basename(input: string | null): string | null {
   return segments[segments.length - 1] ?? normalized;
 }
 
-export function getTerminalStatusLabel(input: {
-  readonly status: TerminalMenuSession["status"];
-  readonly hasRunningSubprocess?: boolean;
-}): string {
+export function getTerminalStatusLabel(
+  input: {
+    readonly status: TerminalMenuSession["status"];
+    readonly hasRunningSubprocess?: boolean;
+  },
+  locale: UiLocale = "en",
+): string {
+  const t = makeTranslator(locale);
   if (input.status === "running") {
-    return input.hasRunningSubprocess ? "Task running" : "Ready";
+    return input.hasRunningSubprocess
+      ? t("terminal.status.taskRunning")
+      : t("terminal.status.ready");
   }
   if (input.status === "starting") {
-    return "Starting";
+    return t("terminal.status.starting");
   }
   if (input.status === "exited") {
-    return "Exited";
+    return t("terminal.status.exited");
   }
   if (input.status === "error") {
-    return "Error";
+    return t("terminal.status.error");
   }
 
-  return "Not started";
+  return t("terminal.status.notStarted");
 }
 
 /** Count the mounted terminal before sessions load, or new-terminal navigation may replace it with itself. */

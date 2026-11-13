@@ -1,3 +1,5 @@
+import type { UiTranslator } from "../../i18n/translator";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { AppText as Text } from "../../components/ui/AppText";
@@ -6,24 +8,31 @@ import { PullRequestAvatar } from "./PullRequestPresentation";
 import type { PullRequestCompletion } from "@t3tools/shared/pullRequestComposerTrigger";
 import type { usePullRequestCompletions } from "./usePullRequestCompletions";
 
-const COPY = {
-  mention: {
-    label: "Mention a user",
-    pending: "Searching users...",
-    failed: "Couldn't search users on the host",
-    none: "No matching users",
-  },
-  reference: {
-    label: "Reference an issue or change request",
-    pending: "Searching...",
-    failed: "Couldn't search the host",
-    none: "No matching issues or change requests",
-  },
-} as const;
+const completionCopy = (t: UiTranslator) =>
+  ({
+    mention: {
+      label: t("prCompletions.mention"),
+      pending: t("prCompletions.searchUsers"),
+      failed: t("prCompletions.usersFailed"),
+      none: t("prCompletions.noUsers"),
+    },
+    reference: {
+      label: t("prCompletions.reference"),
+      pending: t("prCompletions.search"),
+      failed: t("prCompletions.failed"),
+      none: t("prCompletions.none"),
+    },
+  }) as const;
 
-const STATE_LABEL = { open: "Open", closed: "Closed", merged: "Merged" } as const;
+const stateLabels = (t: UiTranslator) =>
+  ({
+    open: t("prCompletions.open"),
+    closed: t("prCompletions.closed"),
+    merged: t("prCompletions.merged"),
+  }) as const;
 
 function CompletionRow({ completion }: { readonly completion: PullRequestCompletion }) {
+  const { t } = useLanguage();
   if (completion.kind === "mention") {
     const { actor } = completion;
     return (
@@ -50,7 +59,7 @@ function CompletionRow({ completion }: { readonly completion: PullRequestComplet
         {candidate.title}
       </Text>
       <Text className="shrink-0 text-xs text-foreground-tertiary">
-        {STATE_LABEL[candidate.state]}
+        {stateLabels(t)[candidate.state]}
       </Text>
     </>
   );
@@ -62,8 +71,9 @@ export function PullRequestCompletionSuggestions({
 }: {
   readonly completions: ReturnType<typeof usePullRequestCompletions>;
 }) {
+  const { t } = useLanguage();
   if (completions.kind === null) return null;
-  const copy = COPY[completions.kind];
+  const copy = completionCopy(t)[completions.kind];
   return (
     <GlassSurface
       glassEffectStyle="clear"

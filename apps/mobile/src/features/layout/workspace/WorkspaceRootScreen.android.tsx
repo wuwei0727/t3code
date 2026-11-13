@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { useAndroidFloatingTabs } from "../../settings/appearance/AppearancePreferencesProvider";
 import { WorkspaceNoTabs } from "./WorkspaceNoTabs";
 import { useEnabledNavigationTabs } from "./navigation-tabs";
@@ -32,6 +33,7 @@ export function WorkspaceRootScreen() {
 }
 
 function WorkspaceRoot() {
+  const { t } = useLanguage();
   const floatingTabsEnabled = useAndroidFloatingTabs();
   const { layout, startNewTask, workspacePageWidth } = useAdaptiveWorkspaceLayout();
   const workspace = useWorkspaceTabs()!;
@@ -88,7 +90,7 @@ function WorkspaceRoot() {
                   ) : layout.usesSplitView ? (
                     <>
                       <NativeStackScreenOptions options={{ headerShown: false }} />
-                      <AppBar embedded title="Pull requests" />
+                      <AppBar embedded title={t("workspaceRootAndroid.pr")} />
                       <WorkspaceEmptyDetail tab="pullRequests" />
                     </>
                   ) : (

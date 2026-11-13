@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { SymbolView } from "../../components/ui/AppSymbol";
 import { Menu } from "../../components/ui/Menu";
 import type { MenuAction } from "@react-native-menu/menu";
@@ -80,6 +82,7 @@ function swipeActionsWidth(hasSecondaryAction: boolean) {
 }
 
 function resolveSecondaryAction(input: {
+  readonly translate: UiTranslator;
   readonly close: () => void;
   readonly onDelete: () => void;
   readonly secondaryAction: ThreadSwipeAction | null | undefined;
@@ -88,10 +91,10 @@ function resolveSecondaryAction(input: {
   if (input.secondaryAction === null) return null;
   if (input.secondaryAction === undefined) {
     return {
-      accessibilityLabel: `Delete ${input.threadTitle}`,
+      accessibilityLabel: input.translate("threadSwipe.deleteTitle", { title: input.threadTitle }),
       tone: "danger",
       icon: "trash",
-      label: "Delete",
+      label: input.translate("threadSwipe.delete"),
       onPress: () => {
         input.close();
         input.onDelete();
@@ -237,6 +240,7 @@ interface ThreadSwipeableProps {
 }
 
 export function ThreadSwipeable(props: ThreadSwipeableProps) {
+  const { t } = useLanguage();
   const swipeableRef = useRef<SwipeableMethods | null>(null);
   const hasSecondaryAction = props.secondaryAction !== null;
   const actionsWidth = swipeActionsWidth(hasSecondaryAction);
@@ -464,6 +468,7 @@ export function ThreadSwipeable(props: ThreadSwipeableProps) {
           onFullSwipeArmedChange={handleFullSwipeArmedChange}
           primaryAction={{ ...primaryAction, onPress: commitPrimaryAction }}
           secondaryAction={resolveSecondaryAction({
+            translate: t,
             close: () => methods.close(),
             onDelete,
             secondaryAction,

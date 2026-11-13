@@ -2,6 +2,11 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "zh-CN", t: makeTranslator("zh-CN") }) };
+});
+
 // Every click handler a button was rendered with, so a test can deliver a
 // native event that was dispatched against an older render.
 const renderedClicks = vi.hoisted(() => [] as Array<() => void>);
@@ -53,6 +58,22 @@ function mountHost() {
   act(() => root.render(<Dialog.Host />));
   return { root, container };
 }
+
+it("localizes default actions while preserving explicitly supplied labels and dialog content", () => {
+  const { container } = mountHost();
+  act(() => Dialog.alert("User title", "Original diagnostic"));
+  expect(container.textContent).toContain("确定");
+  expect(container.textContent).toContain("User title");
+  expect(container.textContent).toContain("Original diagnostic");
+  act(() => Dialog.alert("User title", undefined, [{ text: "OK" }]));
+  expect(container.textContent).toContain("OK");
+  expect(container.textContent).not.toContain("确定");
+  act(() =>
+    Dialog.confirm({ title: "Confirm", confirmText: "Custom action", onConfirm: () => {} }),
+  );
+  expect(container.textContent).toContain("取消");
+  expect(container.textContent).toContain("Custom action");
+});
 
 afterEach(() => {
   for (const root of roots.splice(0)) act(() => root.unmount());

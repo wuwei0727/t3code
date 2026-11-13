@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
 import * as Dialog from "../../components/ui/Dialog";
@@ -39,6 +40,7 @@ export function QuestionAttachments(props: {
   onChangeText: (value: string) => void;
   onInputFocusChange?: ((focused: boolean) => void) | undefined;
 }) {
+  const { t } = useLanguage();
   const { selectedThread } = useThreadSelection();
   const navigation = useNavigation();
   const [previewFile, setPreviewFile] = useState<FilePreviewSource | null>(null);
@@ -115,13 +117,13 @@ export function QuestionAttachments(props: {
           (appAtomRegistry.get(questionAttachmentPreparationAtom)[key] ?? 0) > 0
         ) {
           if (append(key, images) > 0)
-            Dialog.alert("Could not paste image", "Too many attachments.");
+            Dialog.alert(t("question.attachments.pasteFailed"), t("question.attachments.tooMany"));
         } else await releaseUnusedComposerAttachmentFiles(images);
       })
       .catch((error) =>
         Dialog.alert(
-          "Could not paste image",
-          error instanceof Error ? error.message : "Try again.",
+          t("question.attachments.pasteFailed"),
+          error instanceof Error ? error.message : t("question.attachments.tryAgain"),
         ),
       )
       .finally(() => changeQuestionAttachmentPreparation(key, -1));
@@ -163,12 +165,18 @@ export function QuestionAttachments(props: {
       }
       const rejected = append(key, picked);
       if (result.error || rejected > 0)
-        Dialog.alert("Could not attach file", result.error ?? "Too many attachments.");
+        Dialog.alert(
+          t("question.attachments.attachFailed"),
+          result.error ?? t("question.attachments.tooMany"),
+        );
     });
     changeQuestionAttachmentPreparation(key, -1);
     if (AsyncResult.isFailure(picked)) {
       const error = squashAtomCommandFailure(picked);
-      Dialog.alert("Could not attach file", error instanceof Error ? error.message : "Try again.");
+      Dialog.alert(
+        t("question.attachments.attachFailed"),
+        error instanceof Error ? error.message : t("question.attachments.tryAgain"),
+      );
     }
   };
   return (
@@ -224,7 +232,7 @@ export function QuestionAttachments(props: {
             focusedRef.current = false;
             onInputFocusChange?.(false);
           }}
-          placeholder="Or type a custom answer"
+          placeholder={t("question.attachments.custom")}
           className="min-h-[54px] rounded-2xl border border-input-border bg-input px-3.5 py-3 font-sans text-base text-foreground"
         />
       </TextInputWrapper>

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   createElement,
   useCallback,
@@ -277,6 +278,7 @@ function getExpoViewConfig(moduleName: string) {
 }
 
 function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
+  const { t } = useLanguage();
   const [failedRowsJson, setFailedRowsJson] = useState<string | null>(null);
   const onRowsFailure = useCallback(() => setFailedRowsJson(props.rowsJson), [props.rowsJson]);
   if (failedRowsJson !== null && failedRowsJson !== props.rowsJson) setFailedRowsJson(null);
@@ -295,10 +297,10 @@ function NativeReviewDiffView(props: NativeReviewDiffViewProps) {
         ],
       },
       createElement(EmptyState, {
-        title: "Could not display diff",
-        detail: "Try loading the diff view again.",
+        title: t("diffSurface.failed"),
+        detail: t("diffSurface.retryDetail"),
         variant: "plain",
-        actionLabel: "Retry diff",
+        actionLabel: t("diffSurface.retry"),
         onAction: () => {
           props.onDebug?.({
             nativeEvent: { message: "surface-retry" },

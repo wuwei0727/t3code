@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageProvider";
+import type { UiLocale } from "../i18n/locale";
 import { useAtomValue } from "@effect/atom-react";
 import { Atom } from "effect/reactivity";
 import * as Linking from "expo-linking";
@@ -11,15 +13,19 @@ import { buildSubscriptionUsageSnapshot } from "./subscriptionUsageSnapshot";
 import { createWidgetTheme } from "./widgetTheme";
 
 // Isolate quota changes from the much busier thread/config presentation stream.
-const snapshotAtom = Atom.make((get) =>
-  buildSubscriptionUsageSnapshot(
-    get(environmentPresentations.presentationsWithProvidersAtom),
-    Linking.createURL("settings/usage", { queryParams: { tab: "limits" } }),
-    Platform.OS === "android" ? Infinity : 6,
-  ),
-).pipe(Atom.withEquality((a, b) => JSON.stringify(a) === JSON.stringify(b)));
+const snapshotAtom = Atom.family((locale: UiLocale) =>
+  Atom.make((get) =>
+    buildSubscriptionUsageSnapshot(
+      get(environmentPresentations.presentationsWithProvidersAtom),
+      Linking.createURL("settings/usage", { queryParams: { tab: "limits" } }),
+      Platform.OS === "android" ? Infinity : 6,
+      locale,
+    ),
+  ).pipe(Atom.withEquality((a, b) => JSON.stringify(a) === JSON.stringify(b))),
+);
 
 export function SubscriptionUsageCoordinator() {
+  const { t, locale } = useLanguage();
   const {
     themeMode,
     themeAppearance,
@@ -27,7 +33,7 @@ export function SubscriptionUsageCoordinator() {
     isReady: appearanceReady,
   } = useAppearancePreferences();
   const catalog = useAtomValue(environmentCatalog.catalogValueAtom);
-  const snapshot = useAtomValue(snapshotAtom);
+  const snapshot = useAtomValue(snapshotAtom(locale));
   const androidAppearance = Platform.OS === "android" ? themeAppearance : null;
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- publishes subscription usage and theme to the native home screen widget
   useEffect(() => {
@@ -36,6 +42,15 @@ export function SubscriptionUsageCoordinator() {
       .then(() =>
         publishSubscriptionUsage({
           ...snapshot,
+          locale,
+          labels: {
+            connect: t("usageWidget.connect"),
+            refresh: t("usageWidget.refresh"),
+            left: t("usageWidget.left"),
+            more: t("usageWidget.more"),
+            asOf: t("usageWidget.asOf"),
+            tap: t("usageWidget.tap"),
+          },
           theme: createWidgetTheme(themeMode, themeVariablesByAppearance),
         }),
       )
@@ -43,6 +58,8 @@ export function SubscriptionUsageCoordinator() {
         console.warn("Could not update subscription usage widget", error);
       });
   }, [
+    t,
+    locale,
     catalog.isReady,
     appearanceReady,
     snapshot,

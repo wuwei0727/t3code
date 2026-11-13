@@ -1,3 +1,5 @@
+import type { UiTranslator } from "../../../i18n/translator";
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { parsePatchFiles } from "@pierre/diffs/utils/parsePatchFiles";
 import type { FileDiffMetadata } from "@pierre/diffs";
@@ -36,13 +38,13 @@ export type GuideStopParams = PullRequestParams & {
   readonly guideGeneratedAt: string;
 };
 
-const attentionLabels = {
-  tradeoff: "A tradeoff to weigh",
-  contract: "A contract to check",
-  product: "A product call",
-  risk: "A risk to judge",
-  accessibility: "An accessibility call",
-};
+const attentionLabels = (t: UiTranslator) => ({
+  tradeoff: t("guideScreen.tradeoff"),
+  contract: t("guideScreen.contract"),
+  product: t("guideScreen.product"),
+  risk: t("guideScreen.risk"),
+  accessibility: t("guideScreen.accessibility"),
+});
 
 export function PullRequestGuideContent({
   params,
@@ -51,13 +53,14 @@ export function PullRequestGuideContent({
   readonly params: PullRequestParams;
   readonly visible?: boolean;
 }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const state = useReviewGuide(params, visible);
   const { guide, stale } = reviewGuideState(state.data);
   return (
     <Animated.View layout={PR_ROW_LAYOUT} className="w-full max-w-[760px] self-center">
       {!state.enabled ? (
-        <Text>Review guides are disabled for this server.</Text>
+        <Text>{t("guideScreen.disabled")}</Text>
       ) : (
         <>
           <GuideNotice state={state} />
@@ -95,6 +98,7 @@ export function PullRequestGuideContent({
 }
 
 export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideStopParams>) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const state = useReviewGuide(route.params);
   const detail = useEnvironmentQuery(composerPullRequests.detail(pullRequestTarget(route.params)));
@@ -129,16 +133,19 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
   return (
     <View className="flex-1 bg-screen">
       <AppBar
-        title={`Stop ${route.params.position + 1} of ${guide?.stops.length ?? "…"}`}
+        title={t("guideScreen.stopPosition", {
+          position: route.params.position + 1,
+          total: guide?.stops.length ?? "…",
+        })}
         onBack={() => navigation.goBack()}
         menus={[
           {
-            title: "Guide options",
+            title: t("guideScreen.options"),
             icon: "ellipsis",
             items: [
               {
                 id: "word-wrap",
-                title: "Word wrap",
+                title: t("guideScreen.wrap"),
                 icon: "text.alignleft",
                 selected: appearance.codeWordBreak,
                 onPress: () => setCodeWordBreak(!appearance.codeWordBreak),
@@ -154,11 +161,11 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
         >
           <View className="w-full max-w-[760px] self-center gap-5">
             {!state.enabled ? (
-              <Text>Review guides are disabled for this server.</Text>
+              <Text>{t("guideScreen.disabled")}</Text>
             ) : changedGuide ? (
-              <Text>This guide was rewritten. Go back to start the new tour.</Text>
+              <Text>{t("guideScreen.rewritten")}</Text>
             ) : !stop ? (
-              <Text>{state.error ?? "Loading stop…"}</Text>
+              <Text>{state.error ?? t("guideScreen.loading")}</Text>
             ) : (
               <>
                 <GuideNotice state={state} />
@@ -169,7 +176,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                     <View className="flex-row items-center gap-2">
                       <SymbolView name="eye" size={17} tintColorClassName="accent-icon-muted" />
                       <Text className="text-sm font-t3-semibold">
-                        {attentionLabels[stop.attention.kind]}
+                        {attentionLabels(t)[stop.attention.kind]}
                       </Text>
                     </View>
                     <PullRequestMarkdown lineBreaks={false} markdown={stop.attention.note} />
@@ -177,7 +184,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stale ? (
                   <Text className="text-sm text-foreground-muted">
-                    Excerpts are hidden until the guide is rewritten for the current head.
+                    {t("guideStaleNotice.hidden")}
                   </Text>
                 ) : (
                   stop.excerpts.map((excerpt) => (
@@ -201,7 +208,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 {diff.error ? <Text className="text-danger-foreground">{diff.error}</Text> : null}
                 {notes.length ? (
                   <View className="gap-4">
-                    <Text className="font-t3-semibold">Notes on this stop</Text>
+                    <Text className="font-t3-semibold">{t("guideScreen.notes")}</Text>
                     {notes.map(({ marker, note }) => (
                       <View key={marker} className="flex-row gap-3">
                         <View className="h-7 w-7 items-center justify-center rounded-lg bg-grouped-card">
@@ -239,7 +246,7 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                 ) : null}
                 {stop.questions.length ? (
                   <View className="gap-3">
-                    <Text className="font-t3-semibold">Questions to consider</Text>
+                    <Text className="font-t3-semibold">{t("guideScreen.questions")}</Text>
                     {stop.questions.map((question) => (
                       <PullRequestMarkdown key={question} lineBreaks={false} markdown={question} />
                     ))}
@@ -249,10 +256,10 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                   accessibilityRole="button"
                   accessibilityLabel={
                     guide && position < guide.stops.length - 1
-                      ? "Next stop"
+                      ? t("guideScreen.next")
                       : canReview
-                        ? "Finish review"
-                        : "Finish tour"
+                        ? t("guideScreen.finishReview")
+                        : t("guideScreen.finish")
                   }
                   className="mt-2 flex-row items-center gap-4 border-t border-border-subtle pt-5 pb-2 active:opacity-60"
                   onPress={() =>
@@ -275,14 +282,14 @@ export function PullRequestGuideStopScreen({ route }: StaticScreenProps<GuideSto
                     <Text className="text-xs text-foreground-muted">
                       {guide && position < guide.stops.length - 1
                         ? `Next · ${position + 2} of ${guide.stops.length}`
-                        : "End of guide"}
+                        : t("guideScreen.end")}
                     </Text>
                     <Text className="text-base font-t3-semibold">
                       {guide && position < guide.stops.length - 1
                         ? guide.stops[position + 1]?.title
                         : canReview
-                          ? "Finish review"
-                          : "Finish tour"}
+                          ? t("guideScreen.finishReview")
+                          : t("guideScreen.finish")}
                     </Text>
                   </View>
                   <View className="h-11 w-11 items-center justify-center rounded-full bg-foreground">

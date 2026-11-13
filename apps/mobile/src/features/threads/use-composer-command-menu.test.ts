@@ -3,6 +3,11 @@ import { ProviderDriverKind, ProviderInstanceId, type ServerProvider } from "@t3
 
 vi.mock("react-native", () => ({ Alert: { alert: vi.fn() } }));
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("../../state/queries", () => ({
   useComposerPathSearch: () => ({ entries: [], isPending: false }),
   useComposerPullRequestSearch: () => ({ entries: [], isPending: false, error: null }),

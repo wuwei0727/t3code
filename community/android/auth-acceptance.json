@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-11-13",
+  "candidateVersionCode": 10,
+  "complete": false,
+  "status": "v11-four-provider-callback-account-restart-passed",
+  "applicationId": "io.github.wuwei0727.t3code.zh",
+  "redirectUri": "clerk://io.github.wuwei0727.t3code.zh.callback",
+  "evidence": {
+    "reportedBy": "user",
+    "providersReportedFailing": ["Apple", "GitHub", "Google", "Microsoft"],
+    "screenshot": "PixPin_2026-11-13_09-00-43.png",
+    "screenshotScope": "One native sign-in screen showing the four provider entries and an unauthorized redirect URI error; four failures are user-reported, not four independent agent traces.",
+    "documentedErrorMessageMatched": true,
+    "rawErrorCodeCaptured": true,
+    "actualErrorCode": "resource_missmatch",
+    "actualErrorMessageMatchesLocalizationPrefix": true,
+    "agentSuccessfulCallbackTests": 0
+  },
+  "authentication": {
+    "status": "blocked",
+    "cause": "The selected Clerk instance rejects the community application's native redirect URI before provider authentication.",
+    "requires": "Keeping the old community redirect requires instance administrator allowlisting. The requested version11 repair instead explicitly passes the existing official OAuth callback while retaining the community package and unchanged authentication verification.",
+    "providerAccountRegistrationResolvesThisError": false,
+    "localManifestAloneResolvesThisError": false,
+    "nextAcceptance": "Build version11 and test each provider's sign-in, callback, cancellation, account preservation and T3 Connect access, including coexistence with the official app. Pre-provider HTTP200 responses are not successful callback tests.",
+    "email": "Historical real email login and account retention through version10 passed; this issue does not establish a new email-login test."
+  },
+  "repairV11": {
+    "status": "v11-four-provider-callback-account-restart-passed",
+    "applicationIdUnchanged": true,
+    "signingCertificateUnchanged": true,
+    "oauthRedirect": "clerk://com.t3tools.t3code.callback",
+    "sdkUiSourceCommit": "f152db19e2999011c1008d3af465d2268915b39d",
+    "sdkUiArchiveSha256": "f96b42d80fa0b4fd657000161e0ece11a0e9f9d81933fb483c67c9144896a660",
+    "scope": [
+      "Initial OAuth sign-in/sign-up",
+      "Alternative methods and forgot-password OAuth",
+      "Profile account linking/reconnecting",
+      "Known native redirect error presentation"
+    ],
+    "google": "Prefer browser OAuth in community UI; do not reuse official package/signature Google One Tap configuration",
+    "serverPreflight": {
+      "scope": "Anonymous native sign-in creation only; no provider account login or completed callback",
+      "packageHeader": "io.github.wuwei0727.t3code.zh",
+      "oldCommunityRedirect": {
+        "provider": "GitHub",
+        "httpStatus": 400,
+        "code": "resource_missmatch"
+      },
+      "officialRedirect": [
+        {
+          "provider": "Apple",
+          "httpStatus": 200,
+          "hasProviderRedirect": true
+        },
+        {
+          "provider": "GitHub",
+          "httpStatus": 200,
+          "hasProviderRedirect": true
+        },
+        {
+          "provider": "Google",
+          "httpStatus": 200,
+          "hasProviderRedirect": true
+        },
+        {
+          "provider": "Microsoft",
+          "httpStatus": 200,
+          "hasProviderRedirect": true
+        }
+      ]
+    },
+    "successfulCallbackTests": 4,
+    "officialAppCoexistence": "unverified; Android may route the shared callback to either installed app or a chooser",
+    "fullyAccepted": false
+  },
+  "localization": {
+    "status": "implemented-and-apk-verified-runtime-error-not-triggered",
+    "component": "Clerk Android UI 1.4.1 native error snackbar",
+    "cause": "AuthStateEffects uses state.message directly when present; Android string resource overrides only localize its fallback message.",
+    "publicErrorTextOverrideFound": false,
+    "requiredPresentation": "Show a localized explanation of the rejected callback while preserving the actual URI and original diagnostic details. English mode must retain English explanatory text.",
+    "suggestedChineseExplanation": "登录回调地址未获当前登录服务授权，请联系服务管理员。你可以先使用邮箱登录。",
+    "suggestedChineseExplanationIsShipped": true,
+    "constraints": "Do not translate network response fields, alter authentication decisions, impersonate the official package, or silently replace the Clerk instance."
+  },
+  "runtimeRetest": {
+    "status": "v11-four-provider-callback-account-restart-passed",
+    "record": "community/android/acceptance-v11.json",
+    "successfulCallbackTests": 4,
+    "alternateUiDriverUsed": false,
+    "liveServerRestarted": false
+  },
+  "references": [
+    "https://clerk.com/docs/android/guides/configure/auth-strategies/social-connections/overview",
+    "https://clerk.com/docs/guides/development/errors/frontend-api",
+    "https://github.com/clerk/clerk-android/blob/v1.4.1/source/ui/src/main/java/com/clerk/ui/auth/AuthStateEffects.kt",
+    "https://github.com/clerk/clerk-android/blob/v1.4.1/source/ui/src/main/java/com/clerk/ui/auth/AuthView.kt"
+  ]
+}

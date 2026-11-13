@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { useNavigation } from "@react-navigation/native";
 import type { EnvironmentId, ThreadId } from "@t3tools/contracts";
@@ -177,6 +178,7 @@ export function ThreadHtmlRender(props: {
   readonly frameWidth: number;
   readonly iconColor: ColorValue;
 }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const { attachmentId, title } = props.render;
   const height = htmlRenderFrameHeight(props.render, props.frameWidth);
@@ -231,7 +233,7 @@ export function ThreadHtmlRender(props: {
               if (uri === null) void refresh().then((next) => next !== null && setUri(next));
             }}
           >
-            <Text className="text-sm text-foreground-muted">Page unavailable</Text>
+            <Text className="text-sm text-foreground-muted">{t("htmlViewer.unavailable")}</Text>
           </Pressable>
         ) : (
           <View className="flex-1 items-center justify-center">

@@ -1,4 +1,5 @@
 import { findSearchTokenRanges, splitSearchText } from "@t3tools/shared/paletteSearch";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import type { EnvironmentThreadSearchMatch } from "@t3tools/client-runtime/state/thread-search";
 
 import { AppText as Text } from "../../components/ui/AppText";
@@ -11,6 +12,7 @@ export function ThreadSearchMatchExcerpt(props: {
   readonly compact?: boolean;
   readonly sidebar?: boolean;
 }) {
+  const { t } = useLanguage();
   const isUser = props.match.source === "user";
   const parts = splitSearchText(
     props.match.snippet,
@@ -40,7 +42,7 @@ export function ThreadSearchMatchExcerpt(props: {
               : "text-adaptive-emerald-600-400",
         )}
       >
-        {isUser ? "You:" : "Agent:"}{" "}
+        {t(isUser ? "searchExcerpt.user" : "searchExcerpt.agent")}{" "}
       </Text>
       {parts.map((part) => (
         <Text

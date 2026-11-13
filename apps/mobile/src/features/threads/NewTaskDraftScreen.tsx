@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { DraftEnvironmentControl } from "./DraftEnvironmentControl";
 import { NativeScrollEdgeEffectsContext } from "../../native/NativeScrollViewMarker";
 import { DraftThreadHeader } from "./DraftThreadHeader";
@@ -158,6 +159,7 @@ export function NewTaskDraftScreen(props: {
   readonly draftId?: string;
   readonly incomingShareId?: string;
 }) {
+  const { t, locale } = useLanguage();
   const [creationMetadata] = useState(makeTurnCommandMetadata);
   const projects = useProjects();
   const flow = useNewTaskFlow();
@@ -224,7 +226,7 @@ export function NewTaskDraftScreen(props: {
     const result = await action();
     if (AsyncResult.isFailure(result)) {
       const error = Cause.squash(result.cause);
-      Dialog.alert(title, error instanceof Error ? error.message : "An error occurred.");
+      Dialog.alert(title, error instanceof Error ? error.message : t("newDraft.error"));
     }
   };
   const deleteProject = useAtomCommand(projectEnvironment.delete, { reportFailure: false });
@@ -238,8 +240,8 @@ export function NewTaskDraftScreen(props: {
     if (AsyncResult.isFailure(result)) {
       const error = Cause.squash(result.cause);
       Dialog.alert(
-        "Failed to remove project",
-        error instanceof Error ? error.message : "An error occurred.",
+        t("newDraft.removeFailed"),
+        error instanceof Error ? error.message : t("newDraft.error"),
       );
       return;
     }
@@ -249,13 +251,16 @@ export function NewTaskDraftScreen(props: {
   };
   const uploadStates = useAtomValue(composerAttachmentUploadsAtom);
   const attachmentBlockReason = selectedProject
-    ? composerAttachmentUploadBlockReason({
-        environmentId: selectedProject.environmentId,
-        attachments: flow.attachments,
-        connected: environmentConnected,
-        serverConfig: selectedEnvironmentServerConfig,
-        states: uploadStates,
-      })
+    ? composerAttachmentUploadBlockReason(
+        {
+          environmentId: selectedProject.environmentId,
+          attachments: flow.attachments,
+          connected: environmentConnected,
+          serverConfig: selectedEnvironmentServerConfig,
+          states: uploadStates,
+        },
+        t("question.attachments.retryAttachment"),
+      )
     : null;
   const attachmentsUploading =
     environmentConnected &&
@@ -525,7 +530,7 @@ export function NewTaskDraftScreen(props: {
   const selectedEnvironmentLabel =
     flow.environments.find(
       (environment) => environment.environmentId === flow.selectedEnvironmentId,
-    )?.environmentLabel ?? "Environment";
+    )?.environmentLabel ?? t("newDraft.environment");
   const availableCurrentBranchName =
     flow.availableBranches.find((branch) => branch.current)?.name ??
     flow.availableBranches.find((branch) => branch.isDefault)?.name ??
@@ -537,16 +542,22 @@ export function NewTaskDraftScreen(props: {
       (flow.workspaceMode === "worktree" ? availableCurrentBranchName : null),
     currentCheckoutBranch: flow.currentCheckoutBranchName,
   });
-  const selectedBranchLabel = resolveNewTaskBranchLabel({
-    branchName: selectedBranchName,
-    startFromOrigin: flow.startFromOrigin,
-    workspaceMode: flow.workspaceMode,
-    pullRequestReference: flow.pullRequestReference,
-  });
-  const workspaceLabel = resolveNewTaskWorkspaceLabel({
-    workspaceMode: flow.workspaceMode,
-    worktreePath: flow.selectedWorktreePath,
-  });
+  const selectedBranchLabel = resolveNewTaskBranchLabel(
+    {
+      branchName: selectedBranchName,
+      startFromOrigin: flow.startFromOrigin,
+      workspaceMode: flow.workspaceMode,
+      pullRequestReference: flow.pullRequestReference,
+    },
+    t,
+  );
+  const workspaceLabel = resolveNewTaskWorkspaceLabel(
+    {
+      workspaceMode: flow.workspaceMode,
+      worktreePath: flow.selectedWorktreePath,
+    },
+    t,
+  );
   const showBranchLoading =
     environmentConnected && flow.branchesLoading && flow.availableBranches.length === 0;
 
@@ -614,6 +625,7 @@ export function NewTaskDraftScreen(props: {
         selectedEnvironmentServerConfig,
         modelSelection,
         selectedProject.id,
+        locale,
       );
       Dialog.alert(title, detail);
       return null;
@@ -621,15 +633,15 @@ export function NewTaskDraftScreen(props: {
     // Recovery may retain over-cap attachments; block send before uploading a turn the server would reject.
     if (draft.attachments.length > PROVIDER_SEND_TURN_MAX_ATTACHMENTS) {
       Dialog.alert(
-        "Too many attachments",
-        `Remove attachments until there are at most ${PROVIDER_SEND_TURN_MAX_ATTACHMENTS}.`,
+        t("newDraft.tooManyAttachments"),
+        t("newDraft.attachmentLimit", { maximum: PROVIDER_SEND_TURN_MAX_ATTACHMENTS }),
       );
       return null;
     }
 
-    const contextBlockReason = composerContextSendBlockReason(draft.context);
+    const contextBlockReason = composerContextSendBlockReason(draft.context, locale);
     if (contextBlockReason) {
-      Dialog.alert("Too much context", contextBlockReason);
+      Dialog.alert(t("newDraft.tooMuchContext"), contextBlockReason);
       return null;
     }
     const strandedThread = threadContextsOutsideEnvironment({
@@ -642,10 +654,10 @@ export function NewTaskDraftScreen(props: {
       const owner =
         flow.environments.find(
           (environment) => environment.environmentId === strandedThread.environmentId,
-        )?.environmentLabel ?? "its machine";
+        )?.environmentLabel ?? t("newDraft.ownerMachine");
       Dialog.alert(
-        "Attached thread unavailable",
-        `"${strandedThread.title}" is on another machine. Switch back to ${owner} or remove it from the draft.`,
+        t("newDraft.attachedThreadUnavailable"),
+        t("newDraft.otherMachine", { thread: strandedThread.title, owner }),
       );
       return null;
     }
@@ -663,8 +675,8 @@ export function NewTaskDraftScreen(props: {
     if (AsyncResult.isFailure(queued)) {
       const error = squashAtomCommandFailure(queued);
       Dialog.alert(
-        "Could not queue task",
-        error instanceof Error ? error.message : "The task could not be saved to the outbox.",
+        t("newDraft.queueFailed"),
+        error instanceof Error ? error.message : t("newDraft.outboxFailed"),
       );
       return null;
     }
@@ -696,13 +708,13 @@ export function NewTaskDraftScreen(props: {
   const setupBlockReason =
     isIncomingShareReady && !isImportingShare
       ? cloneBlocksStart
-        ? "Wait for the project clone to finish."
+        ? t("newDraft.waitClone")
         : flow.submitting
-          ? "Starting the thread…"
+          ? t("newDraft.starting")
           : flow.workspaceMode === "worktree" && (!flow.selectedBranchName || !flow.isGitRepoKnown)
-            ? "Choose a base branch before creating a worktree."
+            ? t("newDraft.chooseBranch")
             : null
-      : "Wait for shared content to finish importing.";
+      : t("newDraft.waitImport");
   const chooseProject = () => {
     if (isComposerInteractionLocked) {
       return;
@@ -731,22 +743,22 @@ export function NewTaskDraftScreen(props: {
   );
   const shareUnavailableNotice = isIncomingShareUnavailable ? (
     <Text textRole="footnote" className="text-center text-foreground-muted">
-      The shared content is no longer in the inbox. You can continue editing this task draft.
+      {t("draftShareNotice.unavailable")}
     </Text>
   ) : null;
   const hero = flow.isScratchDraft ? (
     <View className="items-center gap-2 px-6" testID="new-task-hero">
       <Text className="text-center text-2xl font-t3-medium tracking-tight text-foreground">
-        What should we work on?
+        {t("newTaskHero.work")}
       </Text>
       <View className="flex-row flex-wrap items-center justify-center gap-x-1">
         <ComposerInlineControl
-          accessibilityHint="Opens the project picker"
-          accessibilityLabel="No project"
+          accessibilityHint={t("newDraft.projectPicker")}
+          accessibilityLabel={t("newDraft.noProject")}
           chevronDirection="right"
           disabled={isComposerInteractionLocked}
           icon="folder"
-          label="No project"
+          label={t("newDraft.noProject")}
           onPress={chooseProject}
         />
         {environmentControl}
@@ -757,12 +769,14 @@ export function NewTaskDraftScreen(props: {
     <View className="items-center gap-6 px-6" testID="new-task-hero">
       <View className="w-full items-center gap-1.5">
         <Text className="text-center text-2xl font-t3-medium tracking-tight text-foreground">
-          What should we build
+          {t("newTaskHero.build")}
         </Text>
         <View className="max-w-full flex-row items-center justify-center">
-          <Text className="text-2xl font-t3-medium tracking-tight text-foreground">in </Text>
+          <Text className="text-2xl font-t3-medium tracking-tight text-foreground">
+            {t("newTaskHero.in")}
+          </Text>
           <Pressable
-            accessibilityHint="Opens the project picker"
+            accessibilityHint={t("newDraft.projectPicker")}
             accessibilityLabel={selectedProjectLabel ?? selectedProject.title}
             accessibilityRole="button"
             disabled={isComposerInteractionLocked}
@@ -822,14 +836,14 @@ export function NewTaskDraftScreen(props: {
     );
 
   const contextProjectLabel = flow.isScratchDraft
-    ? "No project"
+    ? t("newDraft.noProject")
     : (selectedProjectLabel ?? selectedProject.title);
   const contextControls = (
     <View className="flex-row items-center gap-1 px-2">
       <View className="min-w-0 shrink">
         <ComposerInlineControl
-          accessibilityHint="Opens the project picker"
-          accessibilityLabel={`Project: ${contextProjectLabel}`}
+          accessibilityHint={t("newDraft.projectPicker")}
+          accessibilityLabel={t("newDraft.projectLabel", { project: contextProjectLabel })}
           chevronDirection="right"
           disabled={isComposerInteractionLocked}
           icon="folder"
@@ -840,7 +854,10 @@ export function NewTaskDraftScreen(props: {
       </View>
       <View className="min-w-0 shrink">
         <ComposerInlineControl
-          accessibilityLabel={`Choose environment, ${selectedEnvironmentLabel}, ${connectionState === "connected" ? "Connected" : "Offline"}`}
+          accessibilityLabel={t("newDraft.environmentLabel", {
+            environment: selectedEnvironmentLabel,
+            status: t(connectionState === "connected" ? "newDraft.connected" : "newDraft.offline"),
+          })}
           chevronDirection="right"
           disabled={isComposerInteractionLocked}
           renderIcon={(size) => (
@@ -866,7 +883,9 @@ export function NewTaskDraftScreen(props: {
   const workspaceControls = (
     <View className="flex-row items-center gap-1 px-2">
       <ComposerInlineControl
-        accessibilityHint={`Switches to ${flow.workspaceMode === "local" ? "a new worktree" : "the current checkout"}`}
+        accessibilityHint={t(
+          flow.workspaceMode === "local" ? "newDraft.switchWorktree" : "newDraft.switchCheckout",
+        )}
         accessibilityLabel={workspaceLabel}
         disabled={isComposerInteractionLocked || !flow.isGitRepo}
         renderIcon={(size) => (
@@ -884,11 +903,14 @@ export function NewTaskDraftScreen(props: {
 
       <View className="min-w-0 shrink">
         <ComposerInlineControl
-          accessibilityLabel={`${flow.workspaceMode === "worktree" ? "Base branch" : "Branch"}: ${selectedBranchLabel}`}
+          accessibilityLabel={t(
+            flow.workspaceMode === "worktree" ? "newDraft.baseBranch" : "newDraft.branch",
+            { branch: selectedBranchLabel },
+          )}
           chevronDirection="right"
           disabled={isComposerInteractionLocked || !flow.isGitRepo}
           icon="arrow.triangle.branch"
-          label={showBranchLoading ? "Loading branches…" : selectedBranchLabel}
+          label={showBranchLoading ? t("newDraft.loadingBranches") : selectedBranchLabel}
           maxWidth="100%"
           onPress={() => openContextPicker("NewTaskBranch")}
         />
@@ -903,7 +925,7 @@ export function NewTaskDraftScreen(props: {
           <ProjectCloneBanner
             clone={projectClone}
             onCancel={() =>
-              void runCloneAction("Failed to cancel clone", () =>
+              void runCloneAction(t("newDraft.cancelCloneFailed"), () =>
                 cancelProjectClone({
                   environmentId: selectedProject.environmentId,
                   input: { projectId: selectedProject.id },
@@ -911,7 +933,7 @@ export function NewTaskDraftScreen(props: {
               )
             }
             onRetry={() =>
-              void runCloneAction("Failed to retry clone", () =>
+              void runCloneAction(t("newDraft.retryCloneFailed"), () =>
                 retryProjectClone({
                   environmentId: selectedProject.environmentId,
                   input: { projectId: selectedProject.id },
@@ -929,17 +951,15 @@ export function NewTaskDraftScreen(props: {
 
   if (!flow.selectedModel) {
     return (
-      <ThreadScreenFallback header={<AppBar title="New thread" onBack={goBack} />}>
+      <ThreadScreenFallback header={<AppBar title={t("newDraft.newThread")} onBack={goBack} />}>
         <View className="flex-1 justify-end gap-3 p-4">
           {environmentControl}
-          <Text className="text-foreground-muted">
-            Your draft is saved on this device. Connect to an environment to choose its first model.
-          </Text>
+          <Text className="text-foreground-muted">{t("newDraft.savedDraft")}</Text>
           <ComposerEditor
             draftKey={flow.draftKey}
             value={flow.prompt}
             onChangeText={flow.setPrompt}
-            placeholder="Ask anything"
+            placeholder={t("newDraft.ask")}
             multiline
             style={{ minHeight: 64 }}
           />
@@ -976,7 +996,7 @@ export function NewTaskDraftScreen(props: {
         selectedThread={thread}
         selectedThreadDetailRef={null}
         contentPresentation={{ kind: "ready" }}
-        screenTone={connectionTone(connectionState)}
+        screenTone={connectionTone(connectionState, t)}
         connectionError={environmentRuntime?.connectionError ?? null}
         environmentLabel={selectedEnvironmentLabel}
         feedbackSubmissions={[]}

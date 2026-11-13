@@ -3,6 +3,11 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ t: makeTranslator("en"), locale: "en" }) };
+});
+
 const harness = vi.hoisted(() => ({
   failImage: () => {},
   loadImage: (_event: { source: { width: number; height: number } }) => {},

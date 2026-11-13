@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import type { EnvironmentId } from "@t3tools/contracts";
 
 import type { AppBarMenuItem } from "../../components/ui/AppBar.types";
@@ -13,6 +14,7 @@ export interface HomeListFilterMenuProject {
 }
 
 export function buildHomeListFilterMenuItems(props: {
+  readonly translate?: UiTranslator;
   readonly environments: ReadonlyArray<HomeListFilterMenuEnvironment>;
   readonly projects: ReadonlyArray<HomeListFilterMenuProject>;
   readonly selectedEnvironmentId: EnvironmentId | null;
@@ -20,15 +22,16 @@ export function buildHomeListFilterMenuItems(props: {
   readonly onEnvironmentChange: (environmentId: EnvironmentId | null) => void;
   readonly onProjectChange: (projectKey: string | null) => void;
 }): AppBarMenuItem[] {
+  const t = props.translate ?? makeTranslator("en");
   const items: AppBarMenuItem[] = [
     {
       id: "environment",
-      title: "Environment",
+      title: t("homeFilters.environment"),
       items: [
         {
           id: "environment:all",
-          title: "All environments",
-          subtitle: "Show threads from every environment",
+          title: t("homeFilters.allEnvironments"),
+          subtitle: t("homeFilters.everyEnvironment"),
           selected: props.selectedEnvironmentId === null,
           onPress: () => props.onEnvironmentChange(null),
         },
@@ -45,12 +48,12 @@ export function buildHomeListFilterMenuItems(props: {
   if (props.projects.length > 0) {
     items.push({
       id: "project",
-      title: "Project",
+      title: t("homeFilters.project"),
       items: [
         {
           id: "project:all",
-          title: "All projects",
-          subtitle: "Show threads from every project",
+          title: t("homeFilters.allProjects"),
+          subtitle: t("homeFilters.everyProject"),
           selected: props.selectedProjectKey === null,
           onPress: () => props.onProjectChange(null),
         },

@@ -7,6 +7,7 @@ import { AppText as Text } from "../../../../components/ui/AppText";
 import { ListChoiceRow } from "../../../../components/ui/ListChoiceRow";
 import { mobilePreferencesAtom, updateMobilePreferencesAtom } from "../../../../state/preferences";
 import { SettingsSection } from "../../components/SettingsSection";
+import { useLanguage } from "../../../../i18n/LanguageProvider";
 
 const TOOL_CALL_VISIBILITY_OPTIONS: ReadonlyArray<{
   readonly value: ToolCallVisibility;
@@ -19,6 +20,13 @@ const TOOL_CALL_VISIBILITY_OPTIONS: ReadonlyArray<{
 ];
 
 export function ToolCallsAppearanceSection() {
+  const { t } = useLanguage();
+  const labels = {
+    showAll: t("appearance.showAll"),
+    hideSuccessful: t("appearance.hideSuccessful"),
+    hideAll: t("appearance.hideAll"),
+    zen: t("appearance.zen"),
+  };
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
   const preferences = useAtomValue(mobilePreferencesAtom);
   const selected = AsyncResult.isSuccess(preferences)
@@ -27,11 +35,11 @@ export function ToolCallsAppearanceSection() {
 
   return (
     <View className="gap-3">
-      <SettingsSection title="Tool calls in chat">
+      <SettingsSection title={t("appearance.toolCalls")}>
         {TOOL_CALL_VISIBILITY_OPTIONS.map((option, index) => (
           <ListChoiceRow
             key={option.value}
-            label={option.label}
+            label={labels[option.value]}
             selected={selected === option.value}
             separated={index > 0}
             disabled={selected === null}
@@ -39,10 +47,7 @@ export function ToolCallsAppearanceSection() {
           />
         ))}
       </SettingsSection>
-      <Text className="px-2 text-sm text-foreground-muted">
-        Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows
-        only final answers. Approvals, questions, and errors always show.
-      </Text>
+      <Text className="px-2 text-sm text-foreground-muted">{t("appearance.toolHint")}</Text>
     </View>
   );
 }

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../../i18n/LanguageProvider";
 import {
   MAX_TERMINAL_FONT_SIZE,
   MIN_TERMINAL_FONT_SIZE,
@@ -13,6 +14,7 @@ import {
 import { FontSizeSliderRow } from "../components/FontSizeSliderRow";
 
 export function TerminalAppearanceSection() {
+  const { t } = useLanguage();
   const { isReady, appearance, setTerminalFontSize } = useAppearancePreferences();
   const custom = appearance.isTerminalFontSizeCustom;
 
@@ -21,13 +23,13 @@ export function TerminalAppearanceSection() {
   };
 
   return (
-    <SettingsSection title="Terminal">
+    <SettingsSection title={t("appearance.terminal")}>
       <TerminalAppearancePreview fontSize={appearance.terminalFontSize} />
       <AppearancePreviewSeparator />
       <SettingsSwitchRow
         disabled={!isReady}
         icon="terminal"
-        label="Custom font size"
+        label={t("appearance.customFont")}
         onValueChange={handleToggleCustom}
         value={custom}
       />
@@ -35,7 +37,7 @@ export function TerminalAppearanceSection() {
         <FontSizeSliderRow
           disabled={!isReady}
           icon="textformat.size"
-          label="Font size"
+          label={t("appearance.fontSize")}
           max={MAX_TERMINAL_FONT_SIZE}
           min={MIN_TERMINAL_FONT_SIZE}
           onChange={setTerminalFontSize}

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 
+vi.mock("../../state/preferences", () => ({ mobilePreferencesAtom: Symbol("preferences") }));
 vi.mock("expo-quick-actions", () => ({}));
 vi.mock("react-native", () => ({ Platform: { OS: "android" } }));
 vi.mock("../../persistence/imperative", () => ({}));
@@ -34,11 +35,16 @@ describe("createRecentThreadShortcuts", () => {
   it("waits for the persisted list before recording the open thread", async () => {
     const { save, publish, recents } = setup(() => Promise.resolve([thread("old")]));
     recents.recordActiveThread(thread("new"));
+    recents.republish();
     expect(publish).not.toHaveBeenCalled();
     await recents.loaded;
     await recents.saved();
     expect(publish).toHaveBeenLastCalledWith([thread("new"), thread("old")]);
     expect(save).toHaveBeenLastCalledWith([thread("new"), thread("old")]);
+    const savedCount = save.mock.calls.length;
+    recents.republish();
+    expect(publish).toHaveBeenLastCalledWith([thread("new"), thread("old")]);
+    expect(save).toHaveBeenCalledTimes(savedCount);
   });
 
   it("does not persist the empty fallback after a failed load", async () => {

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Pressable, ScrollView } from "react-native";
 import { SymbolView } from "../../components/ui/AppSymbol";
 import { ListFilterMenu } from "../layout/workspace/ListFilterMenu";
@@ -17,6 +18,7 @@ export function ThreadListFilters(props: {
   /** List padding the scroller bleeds through so pills start where row content does. */
   readonly gutter: number;
 }) {
+  const { t } = useLanguage();
   const selectedEnvironment = props.environments.find(
     (environment) => environment.environmentId === props.selectedEnvironmentId,
   );
@@ -31,13 +33,13 @@ export function ThreadListFilters(props: {
       contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 2, paddingBottom: 10, gap: 8 }}
     >
       <ListFilterMenu
-        label={selectedEnvironment?.label ?? "All environments"}
-        accessibilityLabel="Filter threads by environment"
+        label={selectedEnvironment?.label ?? t("threadFilters.allEnvironments")}
+        accessibilityLabel={t("threadFilters.environment")}
         active={selectedEnvironment !== undefined}
         actions={[
           {
             id: "all",
-            title: "All environments",
+            title: t("threadFilters.allEnvironments"),
             state: props.selectedEnvironmentId === null ? "on" : "off",
           },
           ...props.environments.map((environment) => ({
@@ -60,13 +62,13 @@ export function ThreadListFilters(props: {
         }}
       />
       <ListFilterMenu
-        label={selectedProject?.label ?? "All projects"}
-        accessibilityLabel="Filter threads by project"
+        label={selectedProject?.label ?? t("threadFilters.allProjects")}
+        accessibilityLabel={t("threadFilters.project")}
         active={selectedProject !== undefined}
         actions={[
           {
             id: "all",
-            title: "All projects",
+            title: t("threadFilters.allProjects"),
             state: props.selectedProjectKey === null ? "on" : "off",
           },
           ...props.projects.map((project) => ({
@@ -88,7 +90,7 @@ export function ThreadListFilters(props: {
       {props.selectedEnvironmentId !== null || props.selectedProjectKey !== null ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Reset thread filters"
+          accessibilityLabel={t("threadFilters.reset")}
           className="h-8 w-8 items-center justify-center"
           onPress={() => {
             props.onEnvironmentChange(null);

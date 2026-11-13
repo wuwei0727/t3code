@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useEffectEvent, useState } from "react";
 import { Platform, Pressable, StyleSheet, View, type AccessibilityActionEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -16,6 +17,7 @@ interface WorkspacePaneDividerProps {
 }
 
 export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
+  const { t } = useLanguage();
   const [dragging, setDragging] = useState(false);
   const handleResizeStart = useEffectEvent(() => {
     setDragging(true);
@@ -58,14 +60,14 @@ export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
       <Pressable
         className="relative z-[100] -mx-[22px] w-[44px] self-stretch justify-center"
         accessibilityActions={[
-          { name: "increment", label: "Make pane wider" },
-          { name: "decrement", label: "Make pane narrower" },
+          { name: "increment", label: t("paneDivider.wider") },
+          { name: "decrement", label: t("paneDivider.narrower") },
         ]}
         accessibilityLabel={props.accessibilityLabel}
         accessibilityRole="adjustable"
         accessibilityValue={{
           now: Math.round(props.currentWidth),
-          text: `${Math.round(props.currentWidth)} points wide`,
+          text: t("paneDivider.width", { width: Math.round(props.currentWidth) }),
         }}
         onAccessibilityAction={handleAccessibilityAction}
       >

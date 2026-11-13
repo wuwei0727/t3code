@@ -1,3 +1,6 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiTranslator } from "../../i18n/translator";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { pipe } from "effect/Function";
 import { useAtomValue } from "@effect/atom-react";
 import {
@@ -41,23 +44,28 @@ import { ListChoiceRow as SettingsChoiceRow } from "../../components/ui/ListChoi
 import { SettingsSection } from "../settings/components/SettingsSection";
 import { Button } from "../../components/ui/Button";
 import { Sheet } from "../../components/ui/Sheet";
-import { RUNTIME_MODE_CHOICES } from "./thread-settings-options";
+import { RUNTIME_MODE_CHOICES, localizeRuntimeModeChoice } from "./thread-settings-options";
 
 /** The same five levels as web's access picker: read-only, then the runtime modes. */
-const ACCESS_CHOICES: ReadonlyArray<{
+const accessChoices = (
+  t: UiTranslator,
+): ReadonlyArray<{
   readonly access: AuthMcpClientAccess;
   readonly label: string;
   readonly description: string;
-}> = [
+}> => [
   {
     access: "read-only",
-    label: "Read only",
-    description: "Read projects and threads. Cannot start, message or change anything.",
+    label: t("linkRequest.readOnly"),
+    description: t("linkRequest.readOnlyHint"),
   },
-  ...RUNTIME_MODE_CHOICES.map((choice) => ({ ...choice, access: choice.mode })),
+  ...RUNTIME_MODE_CHOICES.map((choice) => ({
+    ...localizeRuntimeModeChoice(choice, t),
+    access: choice.mode,
+  })),
 ];
-const accessLabel = (access: AuthMcpClientAccess) =>
-  ACCESS_CHOICES.find((choice) => choice.access === access)?.label ?? access;
+const accessLabel = (access: AuthMcpClientAccess, t: UiTranslator) =>
+  accessChoices(t).find((choice) => choice.access === access)?.label ?? access;
 
 const LINK_SYMBOL: AppSymbolName = { ios: "link", android: "desktop_windows" };
 
@@ -75,9 +83,10 @@ export function LinkRequestCard(props: {
   readonly projectedItem: OrchestrationV2ProjectedTurnItem;
   readonly iconColor: ColorValue;
 }) {
+  const { t, locale } = useLanguage();
   const { item, visibility } = props.projectedItem;
   if (item.type !== "link_request") return null;
-  const display = linkRequestDisplay(item, visibility, accessLabel);
+  const display = linkRequestDisplay(item, visibility, (access) => accessLabel(access, t));
   if (display.kind === "pending") {
     return <PendingLinkRequest environmentId={props.environmentId} item={item} />;
   }
@@ -93,7 +102,29 @@ export function LinkRequestCard(props: {
     <View className="mb-3 min-h-9 flex-row items-center gap-2 px-1">
       <SymbolView name={icon} size={13} tintColor={props.iconColor} type="monochrome" />
       <Text className="flex-1 font-sans text-sm text-foreground-muted" numberOfLines={2}>
-        {display.label}
+        {locale === "en"
+          ? display.label
+          : display.kind === "pending-elsewhere"
+            ? t("linkRequest.waiting")
+            : display.outcome === "linked"
+              ? t("linkRequest.linkedDisplay", {
+                  target:
+                    item.linkedLabel ??
+                    (item.url === undefined
+                      ? t("linkRequest.genericMachine")
+                      : linkRequestTargetName(item)),
+                  access:
+                    item.linkedAccess === undefined
+                      ? ""
+                      : ` · ${accessLabel(item.linkedAccess, t)}`,
+                })
+              : display.outcome === "declined"
+                ? t("linkRequest.declined")
+                : display.outcome === "failed"
+                  ? t("linkRequest.failedDisplay", {
+                      error: item.failure ?? t("linkRequest.refused"),
+                    })
+                  : t("linkRequest.ended")}
       </Text>
     </View>
   );
@@ -103,6 +134,7 @@ function PendingLinkRequest(props: {
   readonly environmentId: EnvironmentId;
   readonly item: LinkRequestItem;
 }) {
+  const { t } = useLanguage();
   const { item } = props;
   const [open, setOpen] = useState(false);
   const [declining, setDeclining] = useState(false);
@@ -135,8 +167,8 @@ function PendingLinkRequest(props: {
       <View className="gap-1">
         <Text className="font-t3-bold text-base text-foreground">
           {picksMachine(item)
-            ? "Link a machine to this environment"
-            : `Link ${target} to this environment`}
+            ? t("linkRequest.linkMachineHere")
+            : t("linkRequest.linkHere", { target })}
         </Text>
         {item.reason.trim() ? (
           <Text className="font-sans text-sm leading-5 text-foreground-muted">{item.reason}</Text>
@@ -148,13 +180,13 @@ function PendingLinkRequest(props: {
           accessibilityLiveRegion="polite"
           className="font-sans text-sm text-danger-foreground"
         >
-          {error}
+          {error === makeTranslator("en")("linkRequest.failed") ? t("linkRequest.failed") : error}
         </Text>
       ) : null}
       {canAnswer ? (
         <>
           <Button
-            label={picksMachine(item) ? "Choose machine…" : "Review link…"}
+            label={picksMachine(item) ? t("linkRequest.choose") : t("linkRequest.review")}
             disabled={declining}
             onPress={() => setOpen(true)}
             tone="primary"
@@ -169,13 +201,15 @@ function PendingLinkRequest(props: {
               className="px-1 py-1 active:opacity-60 disabled:opacity-50"
               onPress={() => void decline()}
             >
-              <Text className="font-sans text-xs text-foreground-muted">Decline</Text>
+              <Text className="font-sans text-xs text-foreground-muted">
+                {t("linkRequest.decline")}
+              </Text>
             </Pressable>
           </View>
         </>
       ) : (
         <Text className="font-sans text-xs text-foreground-muted">
-          Only a session that manages access here can answer this.
+          {t("linkRequest.onlyManager")}
         </Text>
       )}
       {open ? (
@@ -194,6 +228,7 @@ function LinkRequestSheet(props: {
   readonly item: LinkRequestItem;
   readonly onClose: () => void;
 }) {
+  const { t } = useLanguage();
   const { item } = props;
   const insets = useSafeAreaInsets();
   const pickMachine = picksMachine(item);
@@ -284,7 +319,11 @@ function LinkRequestSheet(props: {
 
   return (
     <Sheet
-      title={pickMachine ? "Link a machine" : `Link ${targetName}`}
+      title={
+        pickMachine
+          ? t("linkRequest.linkMachine")
+          : t("linkRequest.linkTarget", { target: targetName })
+      }
       onClose={props.onClose}
       // An answer that lands after a close would still link, and would close a reopened sheet.
       dismissDisabled={busy}
@@ -298,8 +337,7 @@ function LinkRequestSheet(props: {
       >
         <View className="gap-1">
           <Text className="font-sans text-sm leading-5 text-foreground-muted">
-            Agents here can then launch, message and wait on threads there. It appears in that
-            machine's Connections, where it can be revoked.
+            {t("linkRequest.explanation")}
           </Text>
           {item.url !== undefined && target.kind === "machine" ? (
             <Text className="font-sans text-xs text-foreground-muted" numberOfLines={1}>
@@ -312,10 +350,11 @@ function LinkRequestSheet(props: {
             accessibilityRole="alert"
             className="gap-1 rounded-xl border border-warning-border bg-warning p-3"
           >
-            <Text className="font-t3-bold text-sm text-warning-foreground">Check this address</Text>
+            <Text className="font-t3-bold text-sm text-warning-foreground">
+              {t("linkRequest.checkAddress")}
+            </Text>
             <Text className="font-sans text-xs leading-snug text-warning-foreground">
-              This app cannot confirm it is one of your machines. The pairing code you paste is sent
-              there.
+              {t("linkRequest.addressWarning")}
             </Text>
             <Text selectable className="font-sans text-xs leading-snug text-warning-foreground">
               {linkDestination(address)}
@@ -323,7 +362,7 @@ function LinkRequestSheet(props: {
           </View>
         ) : null}
         {pickMachine ? (
-          <SettingsSection title="Machine">
+          <SettingsSection title={t("linkRequest.machine")}>
             {machines.map((machine, index) => (
               <MachineRow
                 key={machine.environmentId}
@@ -338,8 +377,8 @@ function LinkRequestSheet(props: {
               />
             ))}
             <SettingsChoiceRow
-              label="Another address…"
-              description="Link a machine this app does not know, by its https or Tailscale address."
+              label={t("linkRequest.another")}
+              description={t("linkRequest.anotherHint")}
               selected={selected === ANOTHER_ADDRESS}
               separated={machines.length > 0}
               disabled={busy}
@@ -353,7 +392,7 @@ function LinkRequestSheet(props: {
         {needsAddress && item.url === undefined ? (
           <View className="gap-2">
             <TextInput
-              accessibilityLabel="Address"
+              accessibilityLabel={t("linkRequest.address")}
               placeholder="https://machine.tailnet.ts.net"
               value={address}
               onChangeText={setAddress}
@@ -365,24 +404,22 @@ function LinkRequestSheet(props: {
             />
             {target.kind === "machine" ? (
               <Text className="font-sans text-xs text-foreground-muted">
-                This app has no address for {target.label} that another machine can reach. Enter its
-                https or Tailscale address.
+                {t("linkRequest.noAddress", { target: target.label })}
               </Text>
             ) : null}
           </View>
         ) : null}
         {useExisting ? (
           <Text className="font-sans text-sm leading-5 text-foreground-muted">
-            This environment is already linked to {targetName}. The agent can use that link as it
-            is; change its access in Settings → Connections.
+            {t("linkRequest.existing", { target: targetName })}
           </Text>
         ) : target.kind === "none" ? null : (
           <>
             {canMint ? null : (
               <View className="gap-2">
                 <TextInput
-                  accessibilityLabel="Pairing code"
-                  placeholder="Paste the code"
+                  accessibilityLabel={t("linkRequest.pairingCode")}
+                  placeholder={t("linkRequest.pasteCode")}
                   value={pairingCode}
                   onChangeText={setPairingCode}
                   editable={!busy}
@@ -393,13 +430,12 @@ function LinkRequestSheet(props: {
                   spellCheck={false}
                 />
                 <Text className="font-sans text-xs text-foreground-muted">
-                  Create a link on {targetName}: Settings → Connections → Create link, then paste
-                  its code here.
+                  {t("linkRequest.createCode", { target: targetName })}
                 </Text>
               </View>
             )}
-            <SettingsSection title="What agents here may do there">
-              {ACCESS_CHOICES.map((choice, index) => (
+            <SettingsSection title={t("linkRequest.accessTitle")}>
+              {accessChoices(t).map((choice, index) => (
                 <SettingsChoiceRow
                   key={choice.access}
                   label={choice.label}
@@ -412,8 +448,7 @@ function LinkRequestSheet(props: {
               ))}
             </SettingsSection>
             <Text className="font-sans text-xs text-foreground-muted">
-              An agent here never gets more there than its own mode here either. Threads it starts
-              there cannot change that environment's own threads, projects or settings.
+              {t("linkRequest.accessLimit")}
             </Text>
           </>
         )}
@@ -423,17 +458,29 @@ function LinkRequestSheet(props: {
             accessibilityLiveRegion="polite"
             className="font-sans text-sm text-danger-foreground"
           >
-            {error}
+            {error === makeTranslator("en")("linkRequest.failed") ? t("linkRequest.failed") : error}
           </Text>
         ) : null}
         <Button
-          label={busy ? "Linking…" : useExisting ? "Use this link" : "Link"}
+          label={
+            busy
+              ? t("linkRequest.linking")
+              : useExisting
+                ? t("linkRequest.useLink")
+                : t("linkRequest.link")
+          }
           disabled={busy || !ready}
           onPress={() => void submit()}
           tone="primary"
           fullWidth
         />
-        <Button label="Cancel" tone="secondary" disabled={busy} onPress={props.onClose} fullWidth />
+        <Button
+          label={t("linkRequestMore.cancel")}
+          tone="secondary"
+          disabled={busy}
+          onPress={props.onClose}
+          fullWidth
+        />
       </ScrollView>
     </Sheet>
   );
@@ -447,14 +494,15 @@ function MachineRow(props: {
   readonly disabled: boolean;
   readonly onPress: () => void;
 }) {
+  const { t } = useLanguage();
   const { machine } = props;
   const status = machine.linked
-    ? "Linked"
+    ? t("linkRequest.linked")
     : machine.connected
       ? null
       : machine.connectOnly
         ? "T3 Connect"
-        : "Not connected";
+        : t("linkRequest.notConnected");
   return (
     <Pressable
       accessibilityRole="radio"

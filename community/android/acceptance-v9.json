@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-12T18:24:03.431436+00:00",
+  "complete": false,
+  "fullyLocalized": false,
+  "humanReviewed": false,
+  "status": "built-installed-scoped-acceptance-media-failed-followup10",
+  "versionName": "2.3.0-zh.9",
+  "versionCode": 9,
+  "applicationId": "io.github.wuwei0727.t3code.zh",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "catalogEntries": 4120,
+  "newEntriesSinceV8": 13,
+  "historicalAcceptance": "community/android/acceptance-v8.json",
+  "changes": [
+    "Display-only exact known device stream errors; raw unknown decoder/network diagnostics preserved",
+    "Typed device hub/agent version summary translated; exact installed/required/running versions preserved",
+    "Known Android PDF loading fallback translated; raw file errors preserved"
+  ],
+  "checks": {
+    "targetedTests": {
+      "passed": 38,
+      "failed": 0,
+      "files": 5,
+      "log": ".t3/acceptance-v8-device/device-source-tests.log"
+    },
+    "mobileTypecheck": "passed",
+    "lint": "passed for four changed mobile files",
+    "resourceCheck": {
+      "mode": "check",
+      "pending": [],
+      "stale": [],
+      "missing": [],
+      "removed": [],
+      "manualReviewRequired": [],
+      "untracked": [],
+      "usage": {
+        "calls": 0,
+        "reservedOutputTokens": 0,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "totalTokens": 0,
+        "usageComplete": true,
+        "cost": null,
+        "maxCalls": 8,
+        "maxOutputTokens": 16384
+      }
+    },
+    "review": "Independent scoped review: no concrete issues in stream/version changes; PDF display fallback added afterward",
+    "sharedStreamTests": {
+      "passed": 16,
+      "failed": 0,
+      "log": ".t3/acceptance-v8-device/shared-stream-tests.log"
+    },
+    "mirrorSource": {
+      "files": 401,
+      "mismatches": [],
+      "temporaryDiagnosticRestored": true
+    },
+    "bothApkPackaging": "version9/ABI/fixed certificate/v2-v3 signatures/Connect config/all4120 current Chinese literals passed",
+    "runtimeResourceSha256": "fb7289bb05244a209608161a3218db951d5bdc50a69a9f62c695c0ade4300649"
+  },
+  "installed": true,
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".t3/artifacts/community-v9/t3code-zh-2.3.0-zh.9-arm64-v8a.apk",
+      "sha256": "83f028acaa47701f0065612f3919fc939809c9dffde91b9352fcc728e63e9888",
+      "sizeBytes": 103109266,
+      "installedAndLaunched": false
+    },
+    {
+      "abi": "x86_64",
+      "path": ".t3/artifacts/community-v9/t3code-zh-2.3.0-zh.9-x86_64.apk",
+      "sha256": "76321aea6e0fc56ed9db8bd4e5805b2368f0829a96191bccb91c0b3d4d53a2aa",
+      "sizeBytes": 106500622,
+      "installedAndLaunched": true
+    }
+  ],
+  "devicePreview": {
+    "status": "failed-on-v8-unresolved",
+    "observed": "No video received from the device. Reconnect to try again.",
+    "hostDiagnostics": {
+      "status": "streaming",
+      "streamMode": "grpc-screenshot",
+      "codec": "h264",
+      "clients": 1,
+      "lastFrameAt": "2026-11-12T17:56:22.262Z",
+      "lastErrorPresent": false
+    },
+    "scope": "Host h264 capture active, no capture error; no proof of mobile frames; root cause unresolved. No media/auth change made",
+    "diagnostic": {
+      "packets": 813,
+      "keys": 9,
+      "sps": 9,
+      "configured": 5,
+      "decoded": 56,
+      "outputs": 0,
+      "decoderErrors": 0,
+      "codec": "avc1.42c020",
+      "fetchStatus": 200,
+      "socketOpen": true,
+      "secureContext": true
+    },
+    "followup": "Queue starvation reproduced on unchanged baseline source; red regression then18 green tests. Candidate10 preserves queued decoder work; native rerun pending."
+  },
+  "remaining": [
+    "Final v9 build/sign/package/source comparison and install/relaunch/upgrade/display fallback verification",
+    "Unresolved device video stream failure",
+    "Real notification delivery with own Firebase/sender setup",
+    "Third-party SSO callback variants",
+    "Physical ARM/HyperOS runtime restrictions",
+    "Independent desktop UI and external integration/provider states",
+    "Maintainer translation review and protected GitHub workflows",
+    "Google Play production/source provenance"
+  ],
+  "deviceAcceptance": {
+    "upgrade": {
+      "from": 8,
+      "to": 9,
+      "status": "passed",
+      "account": {
+        "manageAccount": true,
+        "security": true,
+        "signOut": true
+      }
+    },
+    "realT3Connect": {
+      "status": "passed",
+      "solePath": true,
+      "accountRetained": true,
+      "currentConversationLive": true,
+      "mobileMarker": "【v9 云连接复验】第九版覆盖升级后，账号保留，继续当前会话。",
+      "markerReceivedInActiveTask": true
+    },
+    "displayFallbacks": {
+      "deviceVersionDialog": "Chinese inspected, exact version values preserved",
+      "streamFailure": "Chinese inspected; video remains failed",
+      "evidence": [
+        ".t3/acceptance-v9-device/device-versions-after.png",
+        ".t3/acceptance-v9-device/device-stream-after.png"
+      ]
+    },
+    "limits": "Not a repeat of every v8 flow on v9; API36/font/direct/approval/attachment/offline evidence belongs to v8 until repeated"
+  },
+  "sourceOverlayNote": "Pending candidate10 stream.ts/stream.test.ts changes excluded from v9 overlay; these files remain upstream baseline in v9.",
+  "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5"
+}

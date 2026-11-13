@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { uuidv4 } from "../../lib/uuid";
 import { ThreadUndoNotice } from "./ThreadUndoNotice";
 import { use } from "react";
@@ -39,6 +40,7 @@ import { WorkspaceListHeader } from "../layout/workspace/WorkspaceListHeader";
 import { buildHomeListFilterMenuItems } from "./home-list-filter-menu";
 
 export function HomeRouteScreen() {
+  const { t } = useLanguage();
   const nativePrimaryColumn = use(NativePrimaryColumnContext);
   const { layout, setPrimarySidebarSearchQuery, startNewTask } = useAdaptiveWorkspaceLayout();
   const { primarySidebarSearchQuery } = useWorkspacePaneState();
@@ -167,17 +169,18 @@ export function HomeRouteScreen() {
     <AndroidHomeFabLayout onStartNewTask={startNewTask}>
       <>
         <WorkspaceListHeader
-          accessibilityLabel="T3 Code, Threads"
+          accessibilityLabel={t("homeRoute.title")}
           onOpenEnvironments={() => openSettings(navigation, "SettingsEnvironments")}
           search={{
             value: searchQuery,
             onChangeText: setSearchQuery,
-            placeholder: "Search",
-            accessibilityLabel: "Search threads",
+            placeholder: t("homeRoute.search"),
+            accessibilityLabel: t("homeRoute.searchThreads"),
           }}
           filter={{
             customized: selectedEnvironmentId !== null || selectedProjectKey !== null,
             items: buildHomeListFilterMenuItems({
+              translate: t,
               environments,
               projects: projectFilterOptions,
               selectedEnvironmentId,

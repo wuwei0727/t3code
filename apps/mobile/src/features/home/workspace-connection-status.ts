@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import type { WorkspaceState } from "../../state/workspaceModel";
 
 export interface WorkspaceConnectionStatusPresentation {
@@ -16,30 +17,37 @@ function shouldShowWorkspaceConnectionStatus(state: WorkspaceState): boolean {
   );
 }
 
-function workspaceConnectionStatusLabel(state: WorkspaceState): string {
-  if (state.networkStatus === "offline") return "You are offline";
+function workspaceConnectionStatusLabel(state: WorkspaceState, t: UiTranslator): string {
+  if (state.networkStatus === "offline") return t("workspaceStatus.offline");
   if (state.hasReadyEnvironment && state.hasSyncingConnectedEnvironment) {
-    return state.hasLoadedShellSnapshot ? "Syncing threads..." : "Loading threads...";
+    return state.hasLoadedShellSnapshot
+      ? t("workspaceStatus.syncing")
+      : t("workspaceStatus.loading");
   }
   if (state.connectingEnvironments.length === 1) {
-    return `Reconnecting to ${state.connectingEnvironments[0]!.environmentLabel}`;
+    return t("workspaceStatus.reconnect", {
+      environment: state.connectingEnvironments[0]!.environmentLabel,
+    });
   }
   if (state.connectingEnvironments.length > 1) {
-    return `Reconnecting ${state.connectingEnvironments.length} environments`;
+    return t("workspaceStatus.many", { count: state.connectingEnvironments.length });
   }
   if (state.connectionError !== null) return state.connectionError;
   if (state.hasPendingShellSnapshot) {
-    return state.hasLoadedShellSnapshot ? "Syncing threads..." : "Loading threads...";
+    return state.hasLoadedShellSnapshot
+      ? t("workspaceStatus.syncing")
+      : t("workspaceStatus.loading");
   }
-  return "Not connected";
+  return t("workspaceStatus.none");
 }
 
 export function workspaceConnectionStatusPresentation(
   state: WorkspaceState,
+  t: UiTranslator = makeTranslator("en"),
 ): WorkspaceConnectionStatusPresentation | null {
   if (!shouldShowWorkspaceConnectionStatus(state)) return null;
   return {
-    label: workspaceConnectionStatusLabel(state),
+    label: workspaceConnectionStatusLabel(state, t),
     showsProgress:
       state.networkStatus !== "offline" &&
       (state.hasReadyEnvironment || state.connectionError === null) &&

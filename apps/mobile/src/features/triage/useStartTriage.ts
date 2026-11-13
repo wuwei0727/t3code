@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { pipe } from "effect/Function";
 import {
   isAtomCommandInterrupted,
@@ -27,6 +28,7 @@ const CLI_COMMAND = "npx t3 triage";
  * clones the matching source, then a No project draft opens with the prompt.
  */
 export function useStartTriage() {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const selectDetail = useSelectWorkspaceDetail();
   const prepare = useAtomCommand(serverEnvironment.prepareTriage, { reportFailure: false });
@@ -34,17 +36,20 @@ export function useStartTriage() {
 
   const fail = (message: string) =>
     Dialog.alert(
-      "Could not start triage",
-      `${message} Run ${CLI_COMMAND} in a terminal on that machine instead.`,
+      t("triageErrors.title"),
+      t("triageErrors.terminal", { message, command: CLI_COMMAND }),
       [
         {
-          text: "Copy command",
+          text: t("triageErrors.copy"),
           onPress: () =>
             void Clipboard.setStringAsync(CLI_COMMAND).catch(() =>
-              Dialog.alert("Could not copy", `Type ${CLI_COMMAND} instead.`),
+              Dialog.alert(
+                t("triageErrors.copyFailed"),
+                t("triageErrors.type", { command: CLI_COMMAND }),
+              ),
             ),
         },
-        { text: "OK", style: "cancel" },
+        { text: t("triageErrors.ok"), style: "cancel" },
       ],
     );
   const errorMessage = (error: unknown, fallback: string) =>
@@ -70,8 +75,7 @@ export function useStartTriage() {
       if (!isAtomCommandInterrupted(scratch)) {
         pipe(
           squashAtomCommandFailure(scratch),
-          (failure) =>
-            errorMessage(failure, "This machine cannot start threads without a project."),
+          (failure) => errorMessage(failure, t("triageErrors.scratch")),
           fail,
         );
       }
@@ -85,7 +89,7 @@ export function useStartTriage() {
       if (!isAtomCommandInterrupted(prepared)) {
         pipe(
           squashAtomCommandFailure(prepared),
-          (failure) => errorMessage(failure, "The server could not prepare it."),
+          (failure) => errorMessage(failure, t("triageErrors.prepare")),
           fail,
         );
       }
@@ -94,7 +98,7 @@ export function useStartTriage() {
     try {
       await waitForComposerDraftsLoaded();
     } catch {
-      fail("Drafts could not be loaded.");
+      fail(t("triageErrors.drafts"));
       return;
     }
     if (routeChanged()) return;

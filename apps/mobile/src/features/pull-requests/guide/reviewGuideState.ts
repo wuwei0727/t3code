@@ -1,3 +1,4 @@
+import { makeTranslator, type UiTranslator } from "../../../i18n/translator";
 import type { PullRequestReviewGuideResult } from "@t3tools/contracts";
 
 export function reviewGuideState(data: PullRequestReviewGuideResult | null) {
@@ -13,62 +14,62 @@ export function reviewGuideState(data: PullRequestReviewGuideResult | null) {
   };
 }
 
-export function guideNoticeState(state: {
-  readonly data: PullRequestReviewGuideResult | null;
-  readonly isPending: boolean;
-  readonly running: boolean;
-  readonly startError: string | null;
-  readonly error: string | null;
-}) {
+export function guideNoticeState(
+  state: {
+    readonly data: PullRequestReviewGuideResult | null;
+    readonly isPending: boolean;
+    readonly running: boolean;
+    readonly startError: string | null;
+    readonly error: string | null;
+  },
+  t: UiTranslator = makeTranslator("en"),
+) {
   const { guide, stale, failure } = reviewGuideState(state.data);
   if (state.running) {
     return {
       kind: "writing" as const,
-      title: "Rewriting guide",
-      description: guide
-        ? "You can keep reading this guide while the agent writes the update."
-        : "An agent is reading the change and writing the tour. You can leave and come back when it’s ready.",
-      action: guide ? "Rewriting…" : "Writing guide…",
+      title: t("guideState.rewriting"),
+      description: guide ? t("guideState.keep") : t("guideState.writingDetail"),
+      action: guide ? t("guideState.rewriteBusy") : t("guideState.writing"),
     };
   }
   const error = state.startError ?? failure;
   if (error) {
     return {
       kind: "failed" as const,
-      title: "Could not write guide",
+      title: t("guideState.failed"),
       description: error,
-      action: "Try again",
+      action: t("guideState.retry"),
     };
   }
   if (state.error) {
     return {
       kind: "unavailable" as const,
-      title: "Could not refresh guide",
+      title: t("guideState.refreshFailed"),
       description: state.error,
-      action: "Try again",
+      action: t("guideState.retry"),
     };
   }
   if (!state.data) {
     return {
       kind: "loading" as const,
-      title: "Review guide",
-      description: "Checking for a saved guide…",
-      action: "Loading guide…",
+      title: t("guideState.title"),
+      description: t("guideState.checking"),
+      action: t("guideState.loading"),
     };
   }
   if (stale) {
     return {
       kind: "stale" as const,
-      title: "New changes since this guide",
-      description: "You can read the previous guide, or rewrite it for the latest changes.",
-      action: "Rewrite guide",
+      title: t("guideState.new"),
+      description: t("guideState.stale"),
+      action: t("guideState.rewrite"),
     };
   }
   return {
     kind: guide ? ("ready" as const) : ("empty" as const),
-    title: "Review guide",
-    description:
-      "Get a tour of the change, with code excerpts and notes on what needs a closer look.",
-    action: "Write guide",
+    title: t("guideState.title"),
+    description: t("guideState.detail"),
+    action: t("guideState.write"),
   };
 }

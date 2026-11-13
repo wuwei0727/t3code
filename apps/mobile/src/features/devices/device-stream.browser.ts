@@ -50,7 +50,8 @@ export function start(configuration: DeviceStreamConfiguration) {
   frame.setAttribute("role", "application");
   frame.setAttribute(
     "aria-label",
-    platform === "ios" ? "iOS Simulator screen" : "Android Emulator screen",
+    configuration.ui?.screenLabel ??
+      (platform === "ios" ? "iOS Simulator screen" : "Android Emulator screen"),
   );
   frame.tabIndex = 0;
   Object.assign(frame.style, {
@@ -68,7 +69,7 @@ export function start(configuration: DeviceStreamConfiguration) {
   image.style.display = "none";
   const inputStatus = document.createElement("div");
   inputStatus.setAttribute("role", "status");
-  inputStatus.textContent = "Reconnecting device controls...";
+  inputStatus.textContent = configuration.ui?.reconnecting ?? "Reconnecting device controls...";
   Object.assign(inputStatus.style, {
     position: "fixed",
     bottom: "12px",

@@ -1,3 +1,5 @@
+import { makeTranslator } from "../i18n/translator";
+import { useLanguage } from "../i18n/LanguageProvider";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import * as Dialog from "../components/ui/Dialog";
 import type { MediaActionsSource } from "../lib/mediaActionsSource";
@@ -41,6 +43,7 @@ function canReadHostMedia(environmentId: EnvironmentId | null): boolean {
 }
 
 export function useMediaActions(source: MediaActionsSource | undefined, onOpenFile?: () => void) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const hostEnvironmentId =
     source &&
@@ -75,8 +78,12 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
       .catch((error: unknown) => {
         if (!request.signal.aborted) {
           Dialog.alert(
-            kind === "share" ? "Could not share file" : "Could not save image",
-            error instanceof Error ? error.message : "Try again.",
+            kind === "share" ? t("mediaActions.shareFailed") : t("mediaActions.saveFailed"),
+            error instanceof Error
+              ? error.message === makeTranslator("en")("mediaActions.loadFailure")
+                ? t("mediaActions.loadFailure")
+                : error.message
+              : t("mediaActions.retry"),
           );
         }
       })
@@ -91,7 +98,7 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
   const hostUri = async (source: MediaActionsSource, signal: AbortSignal) => {
     const uri = "uri" in source ? normalizeNativeMarkdownUrl(source.uri) : await refresh();
     if (signal.aborted || !canReadHostMedia(hostEnvironmentId)) return null;
-    if (uri === null) throw new Error("The file could not be loaded. Reconnect and try again.");
+    if (uri === null) throw new Error(makeTranslator("en")("mediaActions.loadFailure"));
     return uri;
   };
 
@@ -151,7 +158,7 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             ? [
                 {
                   id: "copy-full-path" as const,
-                  title: "Copy full path",
+                  title: t("mediaActions.fullPath"),
                   run: () => copyTextWithHaptic(formatFilePathForClipboard(reference.path)),
                 },
               ]
@@ -160,7 +167,7 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             ? [
                 {
                   id: "copy-relative-path" as const,
-                  title: "Copy relative path",
+                  title: t("mediaActions.relativePath"),
                   run: () =>
                     copyTextWithHaptic(formatFilePathForClipboard(relativePath, reference.path)),
                 },
@@ -170,7 +177,7 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             ? [
                 {
                   id: "copy-url" as const,
-                  title: "Copy URL",
+                  title: t("mediaActions.url"),
                   run: () => copyTextWithHaptic(reference.url),
                 },
               ]
@@ -179,7 +186,7 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             ? [
                 {
                   id: "open-file" as const,
-                  title: "Open in file viewer",
+                  title: t("mediaActions.openViewer"),
                   disabled: !canReadMedia,
                   run: () => {
                     if (!canReadHostMedia(hostEnvironmentId)) return;
@@ -197,7 +204,10 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             ? [
                 {
                   id: "save-image" as const,
-                  title: busy === "save-image" ? "Saving image…" : "Save image",
+                  title:
+                    busy === "save-image"
+                      ? t("mediaActions.savingImage")
+                      : t("mediaActions.saveImage"),
                   run: saveImage,
                   disabled: busy !== null || !canReadMedia,
                 },
@@ -207,10 +217,10 @@ export function useMediaActions(source: MediaActionsSource | undefined, onOpenFi
             id: "save" as const,
             title:
               busy === "share"
-                ? "Opening share sheet…"
+                ? t("mediaActions.openingShare")
                 : canSaveImageToLibrary(source.mimeType)
-                  ? "Share"
-                  : "Save or share",
+                  ? t("mediaActions.share")
+                  : t("mediaActions.saveShare"),
             run: share,
             disabled: busy !== null || !canReadMedia,
           },

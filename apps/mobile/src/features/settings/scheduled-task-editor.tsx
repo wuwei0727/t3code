@@ -9,6 +9,7 @@ import { threadFamilies } from "../../state/threads";
 import { createDraft, scheduledTaskDefaultModel } from "./scheduledTaskDraft";
 import { useSettingsEnvironmentFilter } from "./settings-environment-filter";
 import { settingsTargetsForProject } from "./settings-environment-filter.logic";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 import {
   scheduledTaskEditorHasChanges,
@@ -19,12 +20,13 @@ import {
   type ScheduledTaskEditor,
 } from "./scheduled-task-editor-state";
 
-export const NEW_THREAD_DESTINATION_LABEL = "New thread each run";
+export const NEW_THREAD_DESTINATION_LABEL = "scheduledTasks.newThread";
 
 export function useScheduledTaskDestinationLabel(
   environmentId: EnvironmentId | null,
   threadId: ThreadId | null,
 ): string {
+  const { t } = useLanguage();
   const ref =
     environmentId === null || threadId === null ? null : scopeThreadRef(environmentId, threadId);
   const shell = useThreadShell(ref);
@@ -35,8 +37,8 @@ export function useScheduledTaskDestinationLabel(
       : null,
   );
   const thread = shell ?? family.data?.threads.find((row) => row.id === threadId);
-  if (ref === null) return NEW_THREAD_DESTINATION_LABEL;
-  return thread?.title.trim() || `Thread ${ref.threadId}`;
+  if (ref === null) return t(NEW_THREAD_DESTINATION_LABEL);
+  return thread?.title.trim() || t("scheduledTasks.picker.threadId", { id: ref.threadId });
 }
 
 /** The form draft lives in an atom, so it survives while its native picker routes are on top. */

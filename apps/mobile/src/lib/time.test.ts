@@ -6,18 +6,23 @@ const timestamp = Date.parse(at);
 
 describe("relative time", () => {
   it.each([
-    [59_999, "<1m", "1m"],
-    [119_999, "1m", "2m"],
-    [3_599_999, "59m", "1h"],
-    [7_199_999, "1h", "2h"],
-    [86_399_999, "23h", "1d"],
-    [172_799_999, "1d", "2d"],
-  ] as const)("updates at the next boundary after %i ms", (elapsed, before, after) => {
-    const nowMs = timestamp + elapsed;
-    expect(relativeTime(at, nowMs)).toBe(before);
-    expect(msUntilRelativeTimeChange(at, nowMs)).toBe(1);
-    expect(relativeTime(at, nowMs + 1)).toBe(after);
-  });
+    [59_999, "<1m", "1m", "<1分", "1分"],
+    [119_999, "1m", "2m", "1分", "2分"],
+    [3_599_999, "59m", "1h", "59分", "1时"],
+    [7_199_999, "1h", "2h", "1时", "2时"],
+    [86_399_999, "23h", "1d", "23时", "1天"],
+    [172_799_999, "1d", "2d", "1天", "2天"],
+  ] as const)(
+    "updates at the next boundary after %i ms",
+    (elapsed, before, after, beforeChinese, afterChinese) => {
+      const nowMs = timestamp + elapsed;
+      expect(relativeTime(at, nowMs)).toBe(before);
+      expect(msUntilRelativeTimeChange(at, nowMs)).toBe(1);
+      expect(relativeTime(at, nowMs + 1)).toBe(after);
+      expect(relativeTime(at, nowMs, "zh-CN")).toBe(beforeChinese);
+      expect(relativeTime(at, nowMs + 1, "zh-CN")).toBe(afterChinese);
+    },
+  );
 
   it.each([
     [0, 60_000],

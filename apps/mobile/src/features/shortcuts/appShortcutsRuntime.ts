@@ -1,3 +1,4 @@
+import { mobilePreferencesAtom } from "../../state/preferences";
 import * as QuickActions from "expo-quick-actions";
 import { Platform } from "react-native";
 import type { NavigationState } from "@react-navigation/native";
@@ -75,6 +76,12 @@ export function createRecentThreadShortcuts(dependencies: RecentThreadShortcutsD
     loaded,
     /** Resolves once every save issued so far has finished. */
     saved: () => saveQueue,
+    republish(): void {
+      if (recents === null) return;
+      void dependencies.publish(recents).catch((error: unknown) => {
+        console.warn("[app-shortcuts] failed to update launcher shortcuts", error);
+      });
+    },
     recordActiveThread(next: RecentThreadShortcut | null): void {
       active = next;
       if (recents === null || next === null) return;
@@ -135,15 +142,22 @@ export function installAppShortcuts(navigate: (href: string) => void): () => voi
   const recents = createRecentThreadShortcuts({
     load: loadRecentThreadShortcuts,
     save: saveRecentThreadShortcuts,
-    publish: (list) => QuickActions.setItems(buildShortcutActions(list)),
+    publish: async (list) => {
+      const { currentTranslator } = await import("../../i18n/currentLanguage");
+      return QuickActions.setItems(buildShortcutActions(list, currentTranslator()));
+    },
   });
   const unsubscribe = appAtomRegistry.subscribe(
     activeThreadShortcutAtom,
     (active) => recents.recordActiveThread(active),
     { immediate: true },
   );
+  const unsubscribeLanguage = appAtomRegistry.subscribe(mobilePreferencesAtom, () =>
+    recents.republish(),
+  );
   return () => {
     subscription.remove();
+    unsubscribeLanguage();
     unsubscribe();
   };
 }

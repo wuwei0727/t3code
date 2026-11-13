@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-12",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "comparison": "Selected upstream source baseline, not a claim about unverified Google Play production APK",
+  "navigation": {
+    "file": "apps/mobile/src/Stack.tsx",
+    "identicalToUpstream": true,
+    "sha256": "405e3522454248fb672b28a9a9c4105c501cb419dc7d121aa452c07bf2d41b73",
+    "registeredNativeStackScreens": 88,
+    "routes": [
+      "Settings",
+      "SettingsEnvironments",
+      "SettingsEnvironmentDetail",
+      "SettingsEnvironmentNewThreads",
+      "SettingsEnvironmentSourceControl",
+      "SettingsEnvironmentAgentBehavior",
+      "SettingsWorktrees",
+      "SettingsLabs",
+      "SettingsProviderAccounts",
+      "SettingsEnvironmentMaintenance",
+      "SettingsNotifications",
+      "SettingsThreads",
+      "SettingsAbout",
+      "SettingsEnvironmentNew",
+      "SettingsArchive",
+      "SettingsNavigation",
+      "SettingsAppearance",
+      "SettingsProjectGrouping",
+      "SettingsOrganization",
+      "SettingsProjectOverview",
+      "SettingsKeyboard",
+      "SettingsVoice",
+      "SettingsVoiceModels",
+      "SettingsFollowUp",
+      "SettingsScheduledTasks",
+      "SettingsScheduledTaskNew",
+      "SettingsScheduledTaskEdit",
+      "SettingsScheduledTaskBranch",
+      "SettingsScheduledTaskThread",
+      "SettingsScheduledTaskModel",
+      "SettingsClientStorage",
+      "SettingsDiagnostics",
+      "SettingsUsageAccount",
+      "SettingsOpenSourceLicenses",
+      "SettingsOpenSourceLicense",
+      "SettingsUsage",
+      "SettingsAuth",
+      "SettingsWaitlist",
+      "ComponentCatalog",
+      "Home",
+      "PullRequest",
+      "PullRequestGuideStop",
+      "PullRequestFile",
+      "PullRequestFiles",
+      "PullRequestReviewers",
+      "PullRequestLabels",
+      "PullRequestFilterSearch",
+      "PullRequestDiscussion",
+      "PullRequestInlineComment",
+      "PullRequestReview",
+      "PullRequestEdit",
+      "Thread",
+      "NewTaskProject",
+      "NewTaskEnvironment",
+      "NewTaskBranch",
+      "AddProject",
+      "AddProjectRepository",
+      "AddProjectDestination",
+      "AddProjectLocal",
+      "AddProjectNew",
+      "NewTaskFiles",
+      "NewTaskFile",
+      "NewTaskAttachment",
+      "NewTaskThreadSettings",
+      "ThreadTerminal",
+      "ThreadInspectorFullscreen",
+      "ThreadDevicePreview",
+      "ThreadBrowserPreview",
+      "ThreadReview",
+      "ThreadReviewComment",
+      "ThreadFiles",
+      "ThreadFile",
+      "ThreadMcpApp",
+      "ThreadAttachment",
+      "ThreadSettingsSheet",
+      "ThreadQueue",
+      "ThreadBackgroundWork",
+      "ThreadAgents",
+      "GitOverview",
+      "ThreadPullRequests",
+      "GitCommit",
+      "GitBranches",
+      "GitConfirm",
+      "SettingsLegal",
+      "ConnectOnboarding",
+      "Connections",
+      "ConnectionsNew",
+      "NotFound"
+    ]
+  },
+  "changedTrackedFiles": [
+    "M\tapps/mobile/app.config.test.ts",
+    "M\tapps/mobile/app.config.ts",
+    "M\tapps/mobile/modules/t3-native-controls/android/src/main/java/expo/modules/t3nativecontrols/T3WorkspaceNavigationModule.kt",
+    "M\tapps/mobile/package.json",
+    "M\tapps/mobile/src/App.tsx",
+    "M\tapps/mobile/src/components/RenderErrorBoundary.tsx",
+    "M\tapps/mobile/src/features/connection/ConnectionsNewRouteScreen.tsx",
+    "M\tapps/mobile/src/features/connection/ConnectionsRouteScreen.tsx",
+    "M\tapps/mobile/src/features/connection/LocalEnvironmentList.tsx",
+    "M\tapps/mobile/src/features/connection/pairing.test.ts",
+    "M\tapps/mobile/src/features/connection/pairing.ts",
+    "M\tapps/mobile/src/features/home/HomeScreen.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/AndroidWorkspaceNavigation.android.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/PullRequestToolbar.android.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/WorkspaceNativeTabs.ios.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/WorkspaceRootScreen.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/WorkspaceSectionToolbar.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/WorkspaceToolbar.tsx",
+    "M\tapps/mobile/src/features/layout/workspace/navigation-tabs.ts",
+    "M\tapps/mobile/src/features/observability/observe.ts",
+    "M\tapps/mobile/src/features/pull-requests/PullRequestFilterSearchScreen.tsx",
+    "M\tapps/mobile/src/features/pull-requests/PullRequestListFilters.tsx",
+    "M\tapps/mobile/src/features/pull-requests/PullRequestsScreen.tsx",
+    "M\tapps/mobile/src/features/settings/SettingsAppearanceRouteScreen.tsx",
+    "M\tapps/mobile/src/features/settings/SettingsEnvironmentsRouteScreen.tsx",
+    "M\tapps/mobile/src/features/settings/SettingsNavigationRouteScreen.tsx",
+    "M\tapps/mobile/src/features/settings/SettingsRouteScreen.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/AndroidNavigationAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/CodeAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/TerminalAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/TextAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/ThemeAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/settings/appearance/sections/ToolCallsAppearanceSection.tsx",
+    "M\tapps/mobile/src/features/threads/ComposerAttachmentButton.tsx",
+    "M\tapps/mobile/src/features/threads/PendingApprovalCard.tsx",
+    "M\tapps/mobile/src/lib/appLinking.test.ts",
+    "M\tapps/mobile/src/lib/appLinking.ts",
+    "M\tapps/mobile/src/persistence/mobile-database.test.ts",
+    "M\tapps/mobile/src/persistence/mobile-preferences.ts"
+  ],
+  "deletedTrackedFiles": [],
+  "unchangedBusinessSurfaces": [
+    {
+      "path": "apps/server",
+      "identicalToUpstream": true
+    },
+    {
+      "path": "packages/contracts",
+      "identicalToUpstream": true
+    },
+    {
+      "path": "packages/client-runtime",
+      "identicalToUpstream": true
+    }
+  ],
+  "areas": [
+    {
+      "area": "账户",
+      "features": "登录、账户资料、退出、T3 Connect 个人页",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Native login page opened; real login, SSO callback and relay unverified"
+    },
+    {
+      "area": "环境",
+      "features": "手动地址/配对码、扫码、连接列表、启停、移除、云环境列表与刷新",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Direct pairing passed against isolated server; enabled T3 Connect sign-in row observed; relay and QR scan unverified"
+    },
+    {
+      "area": "项目",
+      "features": "本地目录、克隆仓库、新建仓库、项目选择与分组",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Fixture conversation list and existing project context loaded; project selection/detail operations not fully exercised"
+    },
+    {
+      "area": "会话",
+      "features": "列表、搜索、筛选、新建、历史消息、发送、归档、恢复、排队、重连",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Existing conversation opened via HTTPS; mobile send and server CLI-to-mobile live update passed; other operations unverified"
+    },
+    {
+      "area": "任务操作",
+      "features": "提供方/模型/分支选择、审批、问题回复、附件、语音、智能体与后台任务",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Replay question reply and supervised approval allowed once passed; model/runtime selector and attachment menu opened; no real provider/attachment upload/voice test"
+    },
+    {
+      "area": "拉取请求",
+      "features": "列表、搜索、全部筛选项、详情、文件、讨论、评审、评审人、标签、编辑和引导",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Version4 filter/menu evidence retained; authenticated PR loading and operations unverified"
+    },
+    {
+      "area": "开发工具",
+      "features": "文件树与文件、差异与评审、终端、Git分支与提交、浏览器和设备预览",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "File/Git/Terminal action buttons present in conversation; operations not exercised"
+    },
+    {
+      "area": "用量",
+      "features": "用量页面、配额与账户明细",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "Page opened; Codex usage returned JSON-RPC -32600 in fixture environment; data acceptance failed"
+    },
+    {
+      "area": "设置",
+      "features": "环境、通用、外观、聊天、键盘、语音、提供方、会话、定时任务、项目、版本控制、工作树、维护、实验功能、关于、归档、存储、诊断、法律和许可证",
+      "source": "route registrations and action branches retained; modified files reviewed against baseline",
+      "runtime": "19 routes opened and captured; preference controls retained; no destructive action performed; many labels remain English"
+    }
+  ],
+  "defects": [
+    {
+      "name": "设置 → T3账户/登录",
+      "v4": "entry absent",
+      "cause": "Public build configuration omitted; existing upstream hasCloudPublicConfig gate hides it",
+      "v5": "restored; Settings account row and native Clerk login view opened on installed x86_64 APK; actual account authentication unverified"
+    },
+    {
+      "name": "添加环境 → 登录 T3 Connect / 云环境列表",
+      "v4": "entry absent",
+      "cause": "Same missing public configuration",
+      "v5": "restored; enabled T3 Connect sign-in row observed; real account, callback and relay unverified"
+    },
+    {
+      "name": "设置 → 通知",
+      "v4": "entry absent",
+      "cause": "Same missing public configuration",
+      "v5": "restored; notifications settings page opened; FCM delivery unavailable without matching configuration"
+    },
+    {
+      "name": "会话搜索无结果",
+      "v4": "Incorrect text: 未找到相关设置",
+      "cause": "Wrong localization key",
+      "v5": "Changed to dedicated home.noResults: 未找到相关会话",
+      "runtime": "not exercised after source fix; packaged resource verified, not UI acceptance"
+    },
+    {
+      "name": "HTTPS会话链接原生匹配声明",
+      "v4": "removed by community intentFilters=[]",
+      "cause": "Overly broad removal while separating community package identity",
+      "v5": "Restore exact upstream thread URL matching with autoVerify=false; no claim of domain-owner verification",
+      "proof": "thread-links-red.log failed on []; thread-links-green.log verifies restored filter",
+      "runtime": "explicit HTTPS thread URL opened correct existing conversation; automatic routing/verification unverified"
+    }
+  ],
+  "externalDependencies": [
+    {
+      "name": "第三方登录回调",
+      "state": "not verified / authorization required",
+      "detail": "Native Clerk callback clerk://io.github.wuwei0727.t3code.zh.callback must be authorized by the selected Clerk instance administrator. Public configuration gives no administrative access."
+    },
+    {
+      "name": "Android推送",
+      "state": "not available in this build configuration",
+      "detail": "No Firebase Android client for this community package and matching sender setup on relay. Permission prompt or Settings page is not delivery proof."
+    },
+    {
+      "name": "官方HTTPS会话链接直接唤起社区包",
+      "state": "native declaration restored and explicit app opening passed; automatic domain verification unavailable",
+      "detail": "Restored upstream HTTPS /threads/ intent filter with autoVerify=false. Community package/signature is not in upstream assetlinks.json, so automatic verified association is not claimed. Android allows users to associate supported domains manually. Custom t3code-zh scheme retained."
+    }
+  ],
+  "explicitCommunityDifferences": [
+    {
+      "name": "官方Expo OTA",
+      "reason": "Disabled as explicitly requested; updates use fixed-signature APK install -r"
+    },
+    {
+      "name": "官方EAS Observe崩溃上报",
+      "reason": "Official EAS identity excluded; native Observe crashes without EAS project ID, so disabled. Diagnostics pages and local logging retained."
+    },
+    {
+      "name": "应用标识和签名",
+      "reason": "Separate community package and retained personal certificate; can coexist with official app; updates must retain this certificate"
+    }
+  ],
+  "existingUpstreamConditions": [
+    "提供方、会话、版本控制、工作树和维护设置在没有环境目标时禁用；原版相同条件，连接后需实际验收。",
+    "导航标签自定义由上游 navigationCustomizationAvailable 控制；当前注册标签数量未达到显示条件，汉化未修改该条件。"
+  ],
+  "runtimeEvidence": ".t3/artifacts/community-v5/evidence",
+  "acceptance": "Partial runtime acceptance completed; see recorded cases and tool stop. No claim of all 88 routes exercised or full official service parity.",
+  "runtimeSummary": {
+    "date": "2026-11-12",
+    "platform": "Android x86_64 emulator frostplay; no physical device test",
+    "version": "2.3.0-zh.5",
+    "status": "partial runtime acceptance completed; remaining cases explicitly unverified",
+    "installAndLaunch": "passed",
+    "accountEntry": "passed",
+    "directPairing": "passed",
+    "backendStopped": true,
+    "deviceShutdown": true,
+    "disposableConnectionRemoved": false,
+    "teardown": "Only retained isolated backend session was stopped; owned emulator shut down for ARM build. Disposable emulator connection retained because UI automation stopped after repeated tool failure. No user connections/data were removed.",
+    "passed": [
+      "Version4-to5 install -r with retained certificate, no uninstall or wipe; app launched and Chinese persisted",
+      "Settings account/login row opened real native Clerk authentication view with email and Apple/GitHub/Google/Microsoft choices; no real account authentication completed",
+      "Notifications page opened; switches present, delivery not tested",
+      "Add environment shows enabled T3 Connect sign-in row in interactive snapshot; row itself not activated",
+      "Manual pairing against isolated server http://10.0.2.2:16418; existing named fixture conversations loaded",
+      "Explicit HTTPS thread URL opened correct existing conversation; not proof of automatic system verified routing",
+      "Mobile message persisted in same backend conversation; subsequent CLI message appeared on mobile without refresh",
+      "Question fixture selected and submitted on mobile; backend completed with zero pending requests",
+      "Approval model kept as free Replay, mode changed in mobile to Supervised; sent request and tapped 仅本次允许; backend runtimeMode approval-required, completed and pending count zero",
+      "Attachment menu opened and displayed 相册 / 选择文件; no attachment upload performed",
+      "19 Settings routes opened, captured and text snapshots reviewed; target-dependent preference controls visible after pairing"
+    ],
+    "settingsRoutesOpened": [
+      "organization",
+      "appearance",
+      "follow-ups",
+      "keyboard",
+      "voice",
+      "provider-accounts",
+      "thread-preferences",
+      "scheduled-tasks",
+      "project",
+      "source-control",
+      "worktrees",
+      "maintenance",
+      "labs",
+      "about",
+      "archive",
+      "client-storage",
+      "diagnostics",
+      "open-source-licenses",
+      "usage"
+    ],
+    "observedLimitations": [
+      "Many settings subpages, chat/composer and question-panel controls still English; current scope is partial localization",
+      "Usage route returned Codex could not read usage (JSON-RPC -32600); data acceptance failed in fixture environment",
+      "Native Clerk social sign-in was tapped but no completed authentication or authorized callback was observed",
+      "No Firebase client/sender configuration for community package; remote push not available",
+      "Project settings initially prompts selection using filter; project detail mutation not exercised"
+    ],
+    "automationStop": {
+      "firstError": "scroll bottom moved nothing across 3 passes: the container still reports hidden content but its contents never shifted",
+      "advisedRetry": "scroll down --until with direct selector",
+      "retryError": "Invalid selector term \"@e41\", expected key=value",
+      "cause": "Agent passed an element reference where selector syntax was required",
+      "action": "Stopped device UI verification after retry failure; did not switch automation systems",
+      "unfinished": [
+        "断线重连",
+        "第五版再次重启和重新切换语言",
+        "会话搜索无结果实际显示",
+        "真实账号登录与T3 Connect中继",
+        "推送通知",
+        "ARM真机安装",
+        "其他未实际操作的页面行为"
+      ]
+    },
+    "acceptance": {
+      "apkInstallAndLaunch": "version5 passed on x86_64 emulator; ARM physical device unverified",
+      "languageSwitchAndPersistence": "version4-to5 upgrade retained Chinese; version4 English/system/Chinese switching and restart evidence retained; switching and relaunch not repeated on version5",
+      "chineseLayoutAndFontScaling": "version5 account, settings, approval, question and attachments captured; 19 Settings routes opened; many subpages remain English; version4 XL-font evidence retained; no comprehensive small-screen validation",
+      "t3ConnectSignInAndPairing": "account/login and T3 Connect entries restored; native auth page opened; direct isolated-backend pairing passed; actual account authentication, callback and relay unverified",
+      "projectAndThreadLists": "existing isolated conversation list loaded and opened; project settings route opened but project selection/details not fully exercised",
+      "realtimeMessagesAcrossDevices": "passed between isolated server CLI and Android emulator on same existing conversation; desktop UI and real second device unverified",
+      "sendMessagesAndApprovals": "mobile send persisted, free Replay reply rendered; question submission and 仅本次允许 approval completed with backend pending counts zero; real provider behavior unverified",
+      "reconnect": "unverified; UI tool stopped after retry failure before reconnect scenario",
+      "notifications": "settings entry restored and page opened; push unavailable without matching Firebase client and relay sender setup; delivery unverified",
+      "upgradeFromPreviousCommunityApk": "version4-to5 install -r passed with same package and retained certificate; Chinese retained; no uninstall/data wipe; ARM physical upgrade unverified"
+    },
+    "evidence": [
+      "install.log",
+      "settings-before.png",
+      "settings-after.png",
+      "login-restored.png",
+      "notifications-restored.png",
+      "backend-thread-before.json",
+      "thread-after-mobile-send.json",
+      "thread-after-computer-send.json",
+      "mobile-after-computer-send.txt",
+      "real-time-sync.png",
+      "question-thread-after.json",
+      "question-answered.png",
+      "approval-pending.png",
+      "approval-thread-after.json",
+      "attachment-actions.png"
+    ],
+    "paidProviderTurns": 0,
+    "fullOfficialParity": false
+  },
+  "recordScope": "Historical v5 evidence; current source audit is localization-audit.json, source/APK candidate is acceptance-v8.json, latest installed acceptance is acceptance-v7.json. Historical hashes are not current proof."
+}

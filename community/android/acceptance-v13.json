@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "versionName": "2.3.0-zh.13",
+  "versionCode": 13,
+  "status": "both-apks-signed-api36-upgrade-and-timeout-translation-verified",
+  "complete": false,
+  "changes": ["Localize known relay discovery timeout in environment list and T3 account page"],
+  "resourceEntries": 4151,
+  "verification": {
+    "focusedLanguageTests": {
+      "passed": 12,
+      "failed": 0,
+      "regressionFailedBeforeFix": true
+    },
+    "maintenanceScriptTests": {
+      "passed": 15,
+      "failed": 0
+    },
+    "translationCheck": "passed; no pending, stale or missing; API calls0",
+    "formatAndLint": "four changed TypeScript files passed",
+    "mobileTypecheck": "passed (exit0; existing Effect schema suggestions)",
+    "officialCoexistence": {
+      "officialRelease": "https://github.com/pingdotgg/t3code/releases/tag/android-beta-784",
+      "apkSha256": "f5060a87457eed6d3700f5018a1f0546da5027554ca2fd20b0ca87caca983abe",
+      "package": "com.t3tools.t3code",
+      "versionCode": 784,
+      "abis": ["arm64-v8a", "armeabi-v7a"],
+      "install": "passed alongside community package",
+      "callbackResolvers": [
+        "com.t3tools.t3code/com.clerk.api.sso.SSOReceiverActivity",
+        "io.github.wuwei0727.t3code.zh/com.clerk.api.sso.SSOReceiverActivity"
+      ],
+      "launch": "failed on x86_64 emulator native bridge; SoLoader could not find libreactnative.so",
+      "fullCallbackAcceptance": "Excluded from remaining acceptance by explicit user instruction on 2026-11-13; not claimed as tested"
+    },
+    "apkPackaging": "both ABIs version13, same fixed certificate,4151 catalog literals,Connect config and device stream bundle verified",
+    "builds": {
+      "x86_64": "passed;13m58s",
+      "arm64": "passed;7m7s"
+    },
+    "deviceUpgrade": "API36 emulator v12-to13 install -r passed; account retained; cloud connection re-established before offline test",
+    "runtimeTimeoutTranslation": {
+      "accountProfile": "passed; Chinese timeout and DNS/firewall hint visible, screenshot retained",
+      "environmentsPage": "passed; same Chinese hint visible, screenshot retained"
+    },
+    "networkRecovery": "Wi-Fi and mobile data restored; connection recovered after tapping Reconnect environment, cloud route shows In use. Long-offline automatic recovery not claimed.",
+    "nativeUnitTests": {
+      "passed": 2,
+      "failed": 0,
+      "reuse": "x86 build FROM-CACHE, ARM build UP-TO-DATE; not a fresh native test execution"
+    },
+    "t3Connect": {
+      "cloudRouteConnected": true,
+      "directTestRouteDisabled": true,
+      "currentMaintenanceConversationOpened": true,
+      "liveAssistantUpdatesVisible": true,
+      "mobileMessageReceivedInCurrentThread": true,
+      "marker": "【v13 云连接复验】覆盖升级后账户保留，长离线测试后手动重连成功，从 Android 继续当前会话。"
+    },
+    "physicalRedmiK70": {
+      "status": "in-progress",
+      "device": "Redmi K70",
+      "deviceEvidence": "User-provided device screenshot and physical-device acceptance marker",
+      "expectedVersion": "2.3.0-zh.13",
+      "installedVersionIndependentlyChecked": true,
+      "mobileSend": "Acceptance marker received in this maintenance conversation",
+      "marker": "Redmi K70 真机验收",
+      "desktopToPhoneReply": "User responded from physical-device acceptance flow after being asked to read assistant reply",
+      "installationModeAndAccountRetention": "User confirmed upgrade installation with account automatically retained",
+      "languagePersistence": "User confirmed switching to English and English retained after dismissing and reopening app",
+      "offlineRecovery": "Passed for this physical-device trial. User disabled Wi-Fi and mobile data, submitted once while offline (pending shown), restored Wi-Fi without manual reconnect or resend, and Android automatically delivered one message. User confirmed the earlier equal-text web message was sent separately from computer/web.",
+      "approvals": "Passed on physical Redmi K70 across home Tailscale connection using isolated free Replay environment. Allow-once run6 completed with fixture response; reject run7 completed without approved response; both pendingRequestCount=0. Does not verify real-provider or cloud-route approval.",
+      "upgradeSourceVersion": "not independently verified",
+      "usbInspection": "Physical Redmi K70 Android16 detected and authorized; package version verified",
+      "installedVersion": "2.3.0-zh.13 / versionCode13",
+      "remoteDebugging": {
+        "transport": "Tailscale with paired Android wireless debugging",
+        "networkAdbRead": "passed; model and installed package version read through tailnet endpoint",
+        "crossNetworkAfterLeavingOffice": "Passed from home Wi-Fi using Tailscale endpoint 100.98.248.115:42917; physical UI read and controlled",
+        "uiReadAndControl": "Passed after home reconnect; Appearance controls and app relaunch exercised",
+        "currentBlocker": null
+      },
+      "languageChecks": {
+        "englishPersisted": "User confirmed relaunch retained English; agent independently observed English selected on physical Appearance page",
+        "switchBackToChinese": "Agent selected Simplified Chinese on physical device over Tailscale; conversation list and navigation immediately displayed Chinese",
+        "chinesePersistedAfterRelaunch": "Passed on physical phone after home-network reconnect and explicit app relaunch; Chinese conversation list visible",
+        "followSystem": "Passed selection on Chinese-language system; Chinese UI retained; explicitly restored Simplified Chinese afterward"
+      },
+      "homeCloudConnection": "Environment page showed sole cloud route connected after home Wi-Fi reconnection",
+      "approvalEvidence": ["physical-approval-allow.json", "physical-approval-reject.json"],
+      "approvalTestCleanup": "Temporary localhost environment removed through UI; only connected T3 Connect environment remains. Own adb reverse16418 removed and isolated test server terminal stopped; listener absent.",
+      "offlineRecoveryEvidence": {
+        "screenshot": "ec0968cce46e0cd9053c6cc61d2cd3a1_compress.jpg",
+        "mobileReceivedUtc": "2026-11-13T12:50:19.184Z",
+        "webMessageId": "9e73bae1-ac38-47ae-9418-57fd5a5bdb9f",
+        "mobileMessageId": "0c2eeec7-e864-4d3c-bcc6-9dd36eb506c4",
+        "webReceivedUtc": "2026-11-13T12:50:06.432Z",
+        "duplicateAssessment": "No duplicate mobile submission observed in this trial; first message independently sent from web, second from mobile offline queue, confirmed by user and creationSource metadata."
+      }
+    },
+    "realPush": {
+      "userSetup": "Official T3 Connect only; user has no managed Firebase project or relay",
+      "client": "Community package lacks google_app_id and gcm_defaultSenderId configuration",
+      "delivered": false,
+      "sender": "Official relay administration unavailable; requires administrator-supported Firebase integration or separately authorized self-managed infrastructure",
+      "status": "blocked-external-configuration"
+    },
+    "githubActionsExecution": {
+      "ghCli": "2.104.0 installed",
+      "public": true,
+      "runtimeGenerationCheck": "passed",
+      "repository": "wuwei0727/t3code",
+      "runUrl": null,
+      "preflightTestsPassed": 15,
+      "remoteWorkflowCount": 0,
+      "catalogCheck": "passed",
+      "status": "awaiting-authentication-and-source-upload"
+    }
+  },
+  "previousAcceptance": "community/android/acceptance-v12.json",
+  "remaining": [
+    "Physical ARM acceptance in progress; real push and GitHub Actions execution unverified",
+    "Integrated provider/external-service states and human translation review"
+  ],
+  "artifacts": [
+    {
+      "file": "t3code-zh-2.3.0-zh.13-arm64-v8a.apk",
+      "sha256": "acef4cf78da523276b797f99fa6f7b6a052ad4731fdae54d7518a7867511367e",
+      "sizeBytes": 103113455
+    },
+    {
+      "file": "t3code-zh-2.3.0-zh.13-x86_64.apk",
+      "sha256": "98edc6fbb8b57af6d319f74b86057f87727ad0ce55b48fe9967ef947ea0375c9",
+      "sizeBytes": 106508907
+    }
+  ]
+}

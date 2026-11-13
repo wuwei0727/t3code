@@ -1,5 +1,6 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { WorkspaceNoTabs } from "./WorkspaceNoTabs";
-import { WORKSPACE_TAB_LABELS, useEnabledNavigationTabs } from "./navigation-tabs";
+import { useWorkspaceTabLabels, useEnabledNavigationTabs } from "./navigation-tabs";
 import { WorkspaceExtraTab } from "./WorkspaceExtraTab";
 import { WorkspaceSettingsList } from "../../settings/SettingsRouteScreen";
 import { WorkspaceSectionToolbar } from "./WorkspaceSectionToolbar";
@@ -39,20 +40,20 @@ import {
 } from "./useSystemWorkspaceTabBar";
 import { openSettings } from "../../settings/settings-navigation";
 
-const TAB_TITLES = WORKSPACE_TAB_LABELS;
-
 function WorkspaceRootTitle(props: {
   readonly columnWidth: number;
   readonly onOpenEnvironments: () => void;
 }) {
+  const { t } = useLanguage();
+  const tabTitles = useWorkspaceTabLabels();
   const { state, settingsOpen } = useWorkspaceTabs()!;
   const maxWidth = Math.max(0, props.columnWidth - (use(HeaderItemsWidthContext) ?? 160));
   const enabled = useEnabledNavigationTabs();
   const tabTitle = settingsOpen
-    ? "Settings"
+    ? t("settings.title")
     : enabled.length
-      ? TAB_TITLES[state.selectedTab]
-      : "Navigation";
+      ? tabTitles[state.selectedTab]
+      : t("navigation.title");
   return (
     <View style={{ width: maxWidth, minHeight: 32, justifyContent: "center" }}>
       <WorkspaceConnectionTitle
@@ -65,6 +66,8 @@ function WorkspaceRootTitle(props: {
 }
 
 function WorkspaceRootContent() {
+  const { t, locale } = useLanguage();
+  const tabTitles = useWorkspaceTabLabels();
   const navigation = useNavigation();
   const { width: windowWidth } = useWindowDimensions();
   const { layout, startNewTask } = useAdaptiveWorkspaceLayout();
@@ -117,6 +120,7 @@ function WorkspaceRootContent() {
       <View className={sidebarPicker ? "flex-1 bg-drawer" : "flex-1 bg-screen"}>
         <NativeStackScreenOptions
           optionsVersion={[
+            locale,
             settingsOpen,
             state.selectedTab,
             state.selectionRevision,
@@ -126,10 +130,10 @@ function WorkspaceRootContent() {
           ]}
           options={{
             title: settingsOpen
-              ? "Settings"
+              ? t("settings.title")
               : enabled.length
-                ? TAB_TITLES[state.selectedTab]
-                : "Navigation",
+                ? tabTitles[state.selectedTab]
+                : t("navigation.title"),
             headerShown: true,
             headerTransparent: NATIVE_LIQUID_GLASS_SUPPORTED,
             headerStyle: NATIVE_LIQUID_GLASS_SUPPORTED

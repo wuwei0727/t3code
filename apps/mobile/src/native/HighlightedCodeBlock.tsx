@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import { useState } from "react";
 import { Pressable, ScrollView, Text } from "react-native";
 import type { MarkdownStyle } from "react-native-enriched-markdown";
@@ -29,9 +30,9 @@ const FENCE_DISPLAY_NAMES: Readonly<Record<string, string>> = {
 };
 
 // The native block's long-press menu, with its labels and iOS symbols.
-const CODE_MENU_ACTIONS = [
-  { id: "copy-code", title: "Copy", image: "doc.on.doc" },
-  { id: "copy-markdown", title: "Copy as Markdown", image: "doc.text" },
+const codeMenuActions = (t: import("../i18n/translator").UiTranslator) => [
+  { id: "copy-code", title: t("codeBlock.copy"), image: "doc.on.doc" },
+  { id: "copy-markdown", title: t("codeBlock.markdown"), image: "doc.text" },
 ];
 
 /** A fence in a language enriched-markdown cannot colour, drawn like its native block. */
@@ -45,6 +46,7 @@ export function HighlightedCodeBlock(props: {
   readonly textStyle: NativeMarkdownTextStyle;
   readonly codeStyle: NonNullable<MarkdownStyle["codeBlock"]>;
 }) {
+  const { t } = useLanguage();
   const { code, codeStyle, textStyle } = props;
   const [wrapped, setWrapped] = useState(false);
   const lines = useMarkdownCodeHighlight({
@@ -87,7 +89,7 @@ export function HighlightedCodeBlock(props: {
   const content = (
     <Menu
       shouldOpenOnLongPress
-      actions={CODE_MENU_ACTIONS}
+      actions={codeMenuActions(t)}
       style={{ flexGrow: 1 }}
       onPressAction={({ nativeEvent }) => {
         copyTextWithHaptic(
@@ -106,14 +108,14 @@ export function HighlightedCodeBlock(props: {
         <>
           <CodeBlockHeaderButton
             icon="text.alignleft"
-            label={wrapped ? "Disable line wrap" : "Wrap lines"}
+            label={wrapped ? t("codeBlock.unwrap") : t("codeBlock.wrap")}
             textStyle={textStyle}
             active={wrapped}
             onPress={() => setWrapped((value) => !value)}
           />
           <CodeBlockHeaderButton
             icon="doc.on.doc"
-            label="Copy code"
+            label={t("codeBlock.code")}
             textStyle={textStyle}
             onPress={() => copyTextWithHaptic(code)}
           />

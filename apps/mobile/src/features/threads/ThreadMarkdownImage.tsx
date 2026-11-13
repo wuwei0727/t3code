@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomValue } from "@effect/atom-react";
 import { MISSING_FILE_ACCESS_MESSAGE } from "@t3tools/client-runtime/state/assets";
 import type { AssetResource, EnvironmentId } from "@t3tools/contracts";
@@ -99,6 +100,7 @@ export function ThreadMarkdownImageView(props: {
   readonly actionsSource?: MediaActionsSource;
   readonly onPressPreview: (source: FilePreviewSource) => void;
 }) {
+  const { t } = useLanguage();
   const withGallery = useFilePreviewGallery();
   const sourceIdentifier = useId();
   const mediaActions = useMediaActions(props.actionsSource);
@@ -146,18 +148,16 @@ export function ThreadMarkdownImageView(props: {
         <MediaActionsMenu media={mediaActions}>
           <Pressable
             accessibilityRole="imagebutton"
-            accessibilityLabel={props.alt ?? "Markdown image"}
-            accessibilityHint={
-              mediaActions.actions.length > 0 ? "Touch and hold for media actions" : undefined
-            }
+            accessibilityLabel={props.alt ?? t("markdownImage.alt")}
+            accessibilityHint={mediaActions.actions.length > 0 ? t("media.hold") : undefined}
             className="items-center justify-center rounded-[10px] bg-md-code-bg"
             style={frameStyle}
           >
             {failed ? (
               <Text className="px-3 text-center text-xs text-foreground-muted">
                 {props.unavailableDetail
-                  ? `Image unavailable. ${props.unavailableDetail}`
-                  : "Image unavailable"}
+                  ? t("markdownImage.unavailableDetail", { detail: props.unavailableDetail })
+                  : t("files.surfaces.imageUnavailable")}
               </Text>
             ) : (
               <AppActivityIndicator />
@@ -169,16 +169,14 @@ export function ThreadMarkdownImageView(props: {
           <MediaActionsMenu media={mediaActions}>
             <Pressable
               accessibilityRole="imagebutton"
-              accessibilityLabel={props.alt ?? "Markdown image"}
-              accessibilityHint={
-                mediaActions.actions.length > 0 ? "Touch and hold for media actions" : undefined
-              }
+              accessibilityLabel={props.alt ?? t("markdownImage.alt")}
+              accessibilityHint={mediaActions.actions.length > 0 ? t("media.hold") : undefined}
               onPress={() =>
                 props.onPressPreview(
                   withGallery({
                     kind: "image",
                     uri: props.uri!,
-                    name: props.actionsSource?.name ?? props.alt ?? "Image",
+                    name: props.actionsSource?.name ?? props.alt ?? t("filePreview.image"),
                     sourceIdentifier,
                     actionsSource: props.actionsSource,
                   }),
@@ -252,12 +250,13 @@ function ThreadMarkdownImageRequest(props: {
 }
 
 function ThreadMarkdownImageLoading() {
+  const { t } = useLanguage();
   return (
     <View
       pointerEvents="none"
       style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
     >
-      <Text className="text-xs text-foreground-muted">Loading image…</Text>
+      <Text className="text-xs text-foreground-muted">{t("markdownImage.loading")}</Text>
     </View>
   );
 }

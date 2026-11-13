@@ -1,7 +1,7 @@
-import {
-  formatProviderSubagentStatus,
-  type ProviderSubagentStatus,
-} from "@t3tools/client-runtime/state/thread-execution";
+import { localizedProviderSubagentStatus } from "./threadAgentsPresentation";
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeProviderOptionText } from "../../lib/providerOptionUi";
+import { type ProviderSubagentStatus } from "@t3tools/client-runtime/state/thread-execution";
 import { isOrchestrationV2WorkActive, type EnvironmentId, type ThreadId } from "@t3tools/contracts";
 import { useState } from "react";
 import { View } from "react-native";
@@ -21,19 +21,25 @@ export function ProviderSubagentBar(props: {
   /** Set for providers whose children T3 reads on demand instead of streaming. */
   readonly inspect: { readonly environmentId: EnvironmentId; readonly threadId: ThreadId } | null;
 }) {
+  const { t } = useLanguage();
   const [inspecting, setInspecting] = useState(false);
   const live = props.status !== null && isOrchestrationV2WorkActive(props.status.status);
   const nowMs = useVisibleSecondClock(live);
-  const statusLabel = formatProviderSubagentStatus(props.status, nowMs);
+  const statusLabel = localizedProviderSubagentStatus(props.status, nowMs, t);
+  const effortLabel =
+    props.effortLabel === null ? null : localizeProviderOptionText(props.effortLabel, t);
   const modelDescription =
-    props.effortLabel === null ? props.modelLabel : `${props.modelLabel}, ${props.effortLabel}`;
+    effortLabel === null ? props.modelLabel : `${props.modelLabel}, ${effortLabel}`;
 
   return (
     <View className="flex-row items-center gap-3 rounded-[20px] border border-border-subtle bg-card-alt py-2 pe-2 ps-4">
       {}
       <View
         accessible
-        accessibilityLabel={`${modelDescription} subagent, ${statusLabel}. It runs on its own and cannot take messages.`}
+        accessibilityLabel={t("providerAgentBar.label", {
+          model: modelDescription,
+          status: statusLabel,
+        })}
         className="min-w-0 flex-1 gap-0.5"
       >
         <View className="min-w-0 flex-row items-center gap-1.5">
@@ -47,12 +53,12 @@ export function ProviderSubagentBar(props: {
           <Text numberOfLines={1} className="min-w-0 shrink font-t3-bold text-sm text-foreground">
             {props.modelLabel}
           </Text>
-          {props.effortLabel === null ? null : (
+          {effortLabel === null ? null : (
             <Text
               numberOfLines={1}
               className="shrink-0 font-sans text-sm text-foreground-secondary"
             >
-              {props.effortLabel}
+              {effortLabel}
             </Text>
           )}
         </View>
@@ -61,14 +67,22 @@ export function ProviderSubagentBar(props: {
           className="font-sans text-xs text-foreground-secondary"
           style={{ fontVariant: ["tabular-nums"] }}
         >
-          {statusLabel} · Runs on its own
+          {t("providerAgentBar.independent", { status: statusLabel })}
         </Text>
       </View>
       {props.inspect ? (
-        <Button label="Work" tone="secondary" onPress={() => setInspecting(true)} />
+        <Button
+          label={t("providerAgentBar.work")}
+          tone="secondary"
+          onPress={() => setInspecting(true)}
+        />
       ) : null}
       {props.onOpenParent ? (
-        <Button label="Open parent" tone="secondary" onPress={props.onOpenParent} />
+        <Button
+          label={t("providerAgentBar.parent")}
+          tone="secondary"
+          onPress={props.onOpenParent}
+        />
       ) : null}
       {props.inspect && inspecting ? (
         <NativeChildWorkSheet {...props.inspect} onClose={() => setInspecting(false)} />

@@ -1,3 +1,5 @@
+import { localizeChangeRequestTerminology } from "./changeRequestTerminology";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomRefresh, useAtomSet, useAtomValue } from "@effect/atom-react";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -16,7 +18,7 @@ import {
   allowedMergeMethods,
   canPerformPullRequestAction,
   mergeUnavailableReason,
-  MERGE_METHODS,
+  mergeMethodPresentation,
   PR_ACTION_ICONS,
   pullRequestActionLabel,
 } from "./pullRequestActions";
@@ -33,8 +35,12 @@ export function PullRequestMergeControls(props: {
   readonly params: PullRequestParams;
   readonly stack: PullRequestStackState;
 }) {
+  const { t, locale } = useLanguage();
   const { pr, stack } = props;
-  const terminology = sourceControlClients.get(pr.provider).changeRequest;
+  const terminology = localizeChangeRequestTerminology(
+    sourceControlClients.get(pr.provider).changeRequest,
+    locale,
+  );
   const target = pullRequestTarget(props.params);
   const permissions = usePullRequestPermissions(props.params, pr);
   const stateAction = usePullRequestAction(props.params, pr);
@@ -56,7 +62,9 @@ export function PullRequestMergeControls(props: {
     : methods.includes("squash")
       ? "squash"
       : methods[0];
-  const scope = stack.stack ? pullRequestStackMerge(stack.stack, pr.number, terminology) : null;
+  const scope = stack.stack
+    ? pullRequestStackMerge(stack.stack, pr.number, terminology, locale)
+    : null;
   const canMergeSingle = singlePullRequestMergeAllowed({
     supportsStackActions: stack.supportsStackActions,
     hasStack: stack.stack !== null,
@@ -66,25 +74,28 @@ export function PullRequestMergeControls(props: {
     permissions.connected && stack.supportsStackActions && !stack.isFresh && !stack.error;
   const reason =
     (!permissions.connected
-      ? "Reconnect to merge."
-      : mergeUnavailableReason(pr, permissions.canWrite, terminology)) ??
+      ? t("prMerge.reconnect")
+      : mergeUnavailableReason(pr, permissions.canWrite, terminology, locale)) ??
     (stack.stack
       ? !stack.supportsStackActions
-        ? "This environment can display stacks but cannot merge them."
+        ? t("prMerge.displayOnly")
         : !stack.isFresh
-          ? "Refresh the stack before merging."
+          ? t("prMerge.refreshFirst")
           : scope?.reason
       : !canMergeSingle
         ? stack.error
-          ? "Couldn't check stack membership. Refresh before merging."
-          : "Checking stack membership…"
+          ? t("prMerge.checkFailed")
+          : t("prMerge.checkingMembership")
         : null);
   const canMerge = !busy && method !== undefined && !reason;
   const label = method
     ? scope && scope.layers.length > 1
-      ? `${MERGE_METHODS[method].title} stack (${scope.layers.length})`
-      : MERGE_METHODS[method].title
-    : "Merge unavailable";
+      ? t("prMerge.stackLabel", {
+          method: mergeMethodPresentation(method, locale).title,
+          count: scope.layers.length,
+        })
+      : mergeMethodPresentation(method, locale).title
+    : t("prMerge.unavailable");
   const nextAction =
     pr.state === "closed" ? "reopen" : pr.state === "open" && pr.isDraft ? "ready" : null;
   // States the button itself names, instead of a reason line under it. Draft and
@@ -97,26 +108,28 @@ export function PullRequestMergeControls(props: {
   } | null =
     nextAction && stateAction.available(nextAction)
       ? {
-          label: pullRequestActionLabel(nextAction, terminology),
+          label: pullRequestActionLabel(nextAction, terminology, locale),
           icon: PR_ACTION_ICONS[nextAction],
           final: nextAction === "reopen",
           action: nextAction,
         }
       : pr.state === "merged"
-        ? { label: "Merged", icon: PullRequestGlyph.merged, final: true }
+        ? { label: t("prMerge.merged"), icon: PullRequestGlyph.merged, final: true }
         : pr.state === "closed"
-          ? { label: "Closed", icon: PullRequestGlyph.closed, final: true }
+          ? { label: t("prMerge.closed"), icon: PullRequestGlyph.closed, final: true }
           : pr.isDraft
-            ? { label: "Draft", icon: PullRequestGlyph.draft }
+            ? { label: t("prMerge.draft"), icon: PullRequestGlyph.draft }
             : pr.mergeability === "conflicting"
-              ? { label: "Resolve conflicts to merge", icon: PullRequestGlyph.conflicting }
+              ? { label: t("prMerge.conflicts"), icon: PullRequestGlyph.conflicting }
               : pr.autoMergeEnabled
                 ? {
-                    label: `Auto-merge pending${pr.autoMergeMethod ? ` (${pr.autoMergeMethod})` : ""}`,
+                    label: t("prMerge.autoPending", {
+                      method: pr.autoMergeMethod ? ` (${pr.autoMergeMethod})` : "",
+                    }),
                     icon: "clock",
                   }
                 : checkingStack && !busy
-                  ? { label: "Checking stack…", icon: PullRequestGlyph.merged }
+                  ? { label: t("prMerge.checking"), icon: PullRequestGlyph.merged }
                   : null;
   const autoAction = pr.autoMergeEnabled ? "disable-auto-merge" : "enable-auto-merge";
   const canAutoMerge =
@@ -152,7 +165,7 @@ export function PullRequestMergeControls(props: {
                     !canPerformPullRequestAction(fresh, "merge") ||
                     !allowedMergeMethods(fresh).includes(method)
                   )
-                    throw new Error(`The ${terminology.singular} changed. Refresh before merging.`);
+                    throw new Error(t("prMerge.changed", { request: terminology.singular }));
                   return method;
                 },
               }
@@ -170,8 +183,8 @@ export function PullRequestMergeControls(props: {
     if (AsyncResult.isFailure(response)) {
       const cause = squashAtomCommandFailure(response);
       Dialog.alert(
-        "Couldn't complete the merge action",
-        cause instanceof Error ? cause.message : "Try again.",
+        t("prMerge.failed"),
+        cause instanceof Error ? cause.message : t("prMerge.retry"),
       );
     }
   };
@@ -179,23 +192,34 @@ export function PullRequestMergeControls(props: {
     const title =
       action === "merge"
         ? scope && scope.layers.length > 1
-          ? `Merge ${scope.layers.length} stack layers?`
-          : `${pullRequestActionLabel("merge", terminology)}?`
+          ? t("prMerge.layersTitle", { count: scope.layers.length })
+          : t("prMerge.mergeTitle", {
+              action: pullRequestActionLabel("merge", terminology, locale),
+            })
         : action === "enable-auto-merge"
-          ? "Enable auto-merge?"
-          : "Disable auto-merge?";
+          ? t("prMerge.enableTitle")
+          : t("prMerge.disableTitle");
     const message =
       action === "merge" && scope
-        ? `Merge ${scope.layers.map((layer) => `#${layer.number}`).join(" → ")} into ${stack.stack?.base} using ${method}. Layers above #${pr.number} stay open.`
+        ? t("prMerge.stackConfirmation", {
+            layers: scope.layers.map((layer) => `#${layer.number}`).join(" → "),
+            base: stack.stack?.base ?? "",
+            method: method ?? "",
+            number: pr.number,
+          })
         : action === "enable-auto-merge"
-          ? `Merge #${pr.number} using ${method} when its requirements are met. This may happen immediately.`
+          ? t("prMerge.autoConfirmation", { number: pr.number, method: method ?? "" })
           : action === "disable-auto-merge"
-            ? `Stop the provider from automatically merging this ${terminology.singular}.`
-            : `Merge #${pr.number} into ${pr.baseBranch} using ${method}.`;
+            ? t("prMerge.disableConfirmation", { request: terminology.singular })
+            : t("prMerge.confirmation", {
+                number: pr.number,
+                base: pr.baseBranch,
+                method: method ?? "",
+              });
     Dialog.alert(title, message, [
-      { text: "Cancel", style: "cancel" },
+      { text: t("prMerge.cancel"), style: "cancel" },
       {
-        text: action === "merge" ? label : title.replace("?", ""),
+        text: action === "merge" ? label : title.replace(/[?？]$/, ""),
         onPress: () => void perform(action),
       },
     ]);
@@ -205,16 +229,16 @@ export function PullRequestMergeControls(props: {
       <SplitButton
         label={
           busy || stateAction.busy
-            ? "Working…"
+            ? t("prMerge.working")
             : !permissions.connected
-              ? "Reconnect to merge"
+              ? t("prMerge.reconnectAction")
               : (status?.label ?? label)
         }
         accessibilityLabel={
           status
             ? status.label
             : scope
-              ? `${label}, ${scope.layers.length} stack layers through #${pr.number}`
+              ? t("prMerge.layersLabel", { label, count: scope.layers.length, number: pr.number })
               : label
         }
         icon={status?.icon ?? PullRequestGlyph.merged}
@@ -223,14 +247,14 @@ export function PullRequestMergeControls(props: {
         onPress={() =>
           status?.action ? void stateAction.perform(status.action) : confirm("merge")
         }
-        menuTitle="Merge options"
+        menuTitle={t("prMerge.options")}
         actions={
           status?.final
             ? []
             : [
                 ...methods.map((id) => ({
                   id,
-                  title: MERGE_METHODS[id].title,
+                  title: mergeMethodPresentation(id, locale).title,
                   state: id === method ? ("on" as const) : ("off" as const),
                   attributes: { disabled: !canMerge && !canAutoMerge },
                 })),
@@ -238,7 +262,7 @@ export function PullRequestMergeControls(props: {
                   ? [
                       {
                         id: autoAction,
-                        title: pr.autoMergeEnabled ? "Disable auto-merge" : "Enable auto-merge",
+                        title: pr.autoMergeEnabled ? t("prMerge.disable") : t("prMerge.enable"),
                         image: "clock",
                       },
                     ]
@@ -257,7 +281,7 @@ export function PullRequestMergeControls(props: {
         <Text className="px-1 text-xs text-foreground-muted">{reason}</Text>
       ) : null}
       {stack.error && stack.supportsStackActions ? (
-        <Button label="Retry stack lookup" tone="text" onPress={stack.refresh} />
+        <Button label={t("prMerge.retryStack")} tone="text" onPress={stack.refresh} />
       ) : null}
     </View>
   );

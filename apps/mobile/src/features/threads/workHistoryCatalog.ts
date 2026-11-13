@@ -1,0 +1,17 @@
+export const historyLabels = {
+  "Earlier work": "workHistoryUi.earlier",
+  Worked: "workHistoryUi.worked",
+  "Worked for {{duration}}": "workHistoryUi.workedFor",
+  "You stopped this response": "workHistoryUi.stopped",
+  "You stopped after {{duration}}": "workHistoryUi.stoppedAfter",
+  "Context compaction failed": "workHistoryUi.compactFailed",
+  "Context compaction stopped": "workHistoryUi.compactStopped",
+  "Compacting context": "workHistoryUi.compacting",
+  "Context compacted": "workHistoryUi.compact",
+  "Context compacted {{before}} → {{after}} tokens": "workHistoryUi.tokens",
+  "Context compacted after {{age}} idle": "workHistoryUi.idle",
+  "Context automatically compacted before cache expiry": "workHistoryUi.cache",
+  "Context compacted before sending": "workHistoryUi.beforeSend",
+  "Compacting before the cache expires…": "workHistoryUi.beforeCache",
+  "Compacting…": "workHistoryUi.progress",
+} as const;

@@ -1,3 +1,5 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
+import { localizeGitUiText } from "./gitPresentation";
 import * as Dialog from "../../../components/ui/Dialog";
 import { cn } from "../../../lib/cn";
 import { useOpenPullRequest } from "../../../native/useOpenPullRequest";
@@ -60,6 +62,7 @@ export function GitOverviewSheet(props: GitOverviewSheetProps) {
 }
 
 function GitOverviewSheetContent(props: GitOverviewSheetProps) {
+  const { t, locale } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const presentation = props.presentation ?? "sheet";
@@ -96,7 +99,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
   );
 
   const currentBranchLabel = gitStatus.data?.refName ?? selectedThread?.branch ?? "Detached HEAD";
-  const currentStatusSummary = statusSummary(gitStatus.data);
+  const currentStatusSummary = statusSummary(gitStatus.data, locale);
   const currentWorktreePath = selectedThreadWorktreePath;
   const gitOperationLabel = gitState.gitOperationLabel;
   const busy = gitOperationLabel !== null;
@@ -113,7 +116,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
     },
     disabledReason:
       !canWriteSourceControl && item.kind !== "open_pr"
-        ? "This connection cannot change source control."
+        ? t("git.overview.cannotWrite")
         : getGitActionDisabledReason({
             item,
             gitStatus: gitStatus.data,
@@ -129,11 +132,17 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
   const openExistingPr = async () => {
     const prUrl = gitStatus.data?.pr?.state === "open" ? gitStatus.data.pr.url : null;
     if (!prUrl) {
-      Dialog.alert(`No open ${shortLabel}`, `This branch does not have an open ${singular}.`);
+      Dialog.alert(
+        t("git.overview.noOpen", { request: shortLabel }),
+        t("git.overview.noOpenMessage", { request: singular }),
+      );
       return;
     }
     if (!(await openPullRequest(prUrl))) {
-      Dialog.alert(`Unable to open ${shortLabel}`, `The ${singular} could not be opened.`);
+      Dialog.alert(
+        t("git.overview.openFailed", { request: shortLabel }),
+        t("git.overview.openFailedMessage", { request: singular }),
+      );
     }
   };
 
@@ -249,8 +258,23 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
           <ListRow
             key={`${item.id}-${item.label}`}
             icon={menuItemIconName(item.icon)}
-            label={item.label}
-            description={disabledReason ?? rowStatusDetail(item)}
+            label={localizeGitUiText(item.label, locale, { request: shortLabel })}
+            description={(() => {
+              const value = disabledReason ?? rowStatusDetail(item);
+              return value
+                ? localizeGitUiText(value, locale, {
+                    request: shortLabel,
+                    article: sourceControlClients.get(gitStatus.data?.sourceControlProvider?.kind)
+                      .changeRequest.shortLabelWithArticle,
+                    count:
+                      item.dialogAction === "commit"
+                        ? (gitStatus.data?.workingTree?.files.length ?? 0)
+                        : (gitStatus.data?.aheadCount ?? 0),
+                    number: gitStatus.data?.pr?.number ?? 0,
+                    state: gitStatus.data?.pr?.state ?? "open",
+                  })
+                : undefined;
+            })()}
             disabled={item.disabled}
             onPress={() => void onPressMenuItem(item)}
           />
@@ -258,11 +282,15 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         {behindCount > 0 ? (
           <ListRow
             icon="arrow.down.circle"
-            label="Pull latest"
+            label={t("git.overview.pullLatest")}
             description={
               canWriteSourceControl
-                ? `${behindCount} commit${behindCount === 1 ? "" : "s"} behind upstream`
-                : "This connection cannot change source control."
+                ? localizeGitUiText(
+                    `${behindCount} commit${behindCount === 1 ? "" : "s"} behind upstream`,
+                    locale,
+                    { count: behindCount },
+                  )
+                : t("git.overview.cannotWrite")
             }
             disabled={!canWriteSourceControl || busy || !isRepo}
             onPress={() => void gitActions.onPullSelectedThreadBranch()}
@@ -270,8 +298,8 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         ) : null}
         <ListRow
           icon="text.bubble"
-          label="Review changes"
-          description="Inspect changes, uncommitted edits, and turn diffs"
+          label={t("git.overview.review")}
+          description={t("git.overview.reviewHint")}
           disabled={busy || !isRepo}
           onPress={() => {
             const params = { environmentId, threadId };
@@ -286,11 +314,9 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         />
         <ListRow
           icon="point.topleft.down.curvedto.point.bottomright.up"
-          label="Branches & worktrees"
+          label={t("git.overview.branches")}
           description={
-            canChangeThreadBranch
-              ? "Switch branch, create branch, or move to a worktree"
-              : "View branches and worktrees"
+            canChangeThreadBranch ? t("git.overview.switchHint") : t("git.overview.viewHint")
           }
           disabled={busy || !isRepo}
           onPress={() =>
@@ -305,15 +331,19 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
         {linkedPrActions.canLink ? (
           <ListRow
             icon="link"
-            label={`Link ${linkedPrActions.terminology.singular}`}
-            description={`Attach a ${linkedPrActions.terminology.singular} by URL or number`}
+            label={t("git.overview.link", { request: linkedPrActions.terminology.singular })}
+            description={t("git.overview.linkHint", {
+              request: linkedPrActions.terminology.singular,
+            })}
             onPress={linkedPrActions.promptLink}
           />
         ) : null}
       </ListSection>
 
       {linkedPrLines.length > 0 ? (
-        <ListSection title={`Linked ${linkedPrActions.terminology.plural}`}>
+        <ListSection
+          title={t("git.overview.linked", { requests: linkedPrActions.terminology.plural })}
+        >
           {linkedPrLines.map((line, index) => (
             <LinkedPullRequestRow
               key={linkedPullRequestKey(line)}
@@ -328,7 +358,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
       ) : null}
 
       {currentWorktreePath ? (
-        <ListSection title="Worktree">
+        <ListSection title={t("git.overview.worktree")}>
           <Text selectable textRole="footnote" className="p-4 text-foreground-muted">
             {currentWorktreePath}
           </Text>
@@ -338,7 +368,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
   );
 
   const refresh = {
-    accessibilityLabel: "Refresh repository status",
+    accessibilityLabel: t("git.overview.refresh"),
     disabled: busy || isRefreshing,
     onPress: () => void handleRefresh(),
   };

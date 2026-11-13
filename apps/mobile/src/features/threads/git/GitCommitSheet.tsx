@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { ScreenContent } from "../../../components/ui/ScreenContent";
 import { SheetHeader } from "../../../components/ui/SheetHeader";
 import { Button } from "../../../components/ui/Button";
@@ -23,6 +24,7 @@ type GitCommitSheetProps = StaticScreenProps<{
 }>;
 
 export function GitCommitSheet(_props: GitCommitSheetProps) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -69,10 +71,10 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
   const android = Platform.OS === "android";
   const header = (
     <SheetHeader
-      title="Commit changes"
+      title={t("git.commitChanges")}
       subtitle={gitStatus.data?.refName ?? "(detached HEAD)"}
       onCancel={() => navigation.goBack()}
-      accessibilityLabel="Cancel commit"
+      accessibilityLabel={t("git.cancelCommit")}
     />
   );
 
@@ -96,37 +98,35 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
           contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
         >
           {isDefaultRef ? (
-            <Text className="text-sm text-warning-foreground">
-              You’re on the default branch. You can create a new branch when committing.
-            </Text>
+            <Text className="text-sm text-warning-foreground">{t("git.defaultWarning")}</Text>
           ) : null}
           <View className="gap-2">
-            <Text className="text-sm font-t3-medium text-foreground">Commit message</Text>
+            <Text className="text-sm font-t3-medium text-foreground">{t("git.message")}</Text>
             <TextInput
               multiline
-              accessibilityLabel="Commit message"
+              accessibilityLabel={t("git.message")}
               value={dialogCommitMessage}
               onChangeText={setDialogCommitMessage}
-              placeholder="Describe your changes…"
+              placeholder={t("git.describe")}
               textAlignVertical="top"
               className="min-h-24 rounded-xl bg-subtle px-4 py-3 text-base"
             />
-            <Text className="text-xs text-foreground-muted">
-              Leave empty to generate a message automatically.
-            </Text>
+            <Text className="text-xs text-foreground-muted">{t("git.automaticMessage")}</Text>
           </View>
           <View>
             <View className="flex-row items-center justify-between gap-2 pb-2">
               <View className="flex-1 gap-1">
-                <Text className="text-base font-t3-bold text-foreground">Changed files</Text>
+                <Text className="text-base font-t3-bold text-foreground">
+                  {t("git.changedFiles")}
+                </Text>
                 <Text className="text-xs text-foreground-muted">
-                  {selectedFiles.length} of {allFiles.length} selected · +
-                  {formatDiffCount(selectedInsertions)} −{formatDiffCount(selectedDeletions)}
+                  {t("git.selected", { selected: selectedFiles.length, total: allFiles.length })} ·
+                  +{formatDiffCount(selectedInsertions)} −{formatDiffCount(selectedDeletions)}
                 </Text>
               </View>
               {allFiles.length > 0 ? (
                 <Button
-                  label={allSelected ? "Deselect all" : "Select all"}
+                  label={allSelected ? t("git.deselect") : t("git.select")}
                   tone="text"
                   onPress={() =>
                     setExcludedFiles(
@@ -137,9 +137,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
               ) : null}
             </View>
             {allFiles.length === 0 ? (
-              <Text className="py-4 text-sm text-foreground-muted">
-                No changed files to commit.
-              </Text>
+              <Text className="py-4 text-sm text-foreground-muted">{t("git.noChanges")}</Text>
             ) : (
               allFiles.map((file) => {
                 const included = !excludedFiles.has(file.path);
@@ -209,7 +207,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
           </View>
           <View className="gap-2">
             <Button
-              label="Commit changes"
+              label={t("git.commitChanges")}
               icon="checkmark"
               tone="primary"
               fullWidth
@@ -217,7 +215,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
               onPress={() => void runCommitAction(false)}
             />
             <Button
-              label="Commit on a new branch"
+              label={t("git.commitNewBranch")}
               icon="arrow.branch"
               tone="text"
               fullWidth

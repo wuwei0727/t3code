@@ -1,3 +1,4 @@
+import { currentTranslator } from "../../i18n/currentLanguage";
 import * as Dialog from "../../components/ui/Dialog";
 import Constants from "expo-constants";
 import * as Crypto from "expo-crypto";
@@ -234,10 +235,14 @@ function reportRefreshFailure(cause: unknown) {
     cause,
     cause instanceof Error ? cause.cause : null,
   );
-  const error = cause instanceof Error ? cause : new Error("Could not import shared content.");
-  Dialog.alert("Could not import shared content", error.message, [
-    { text: "Dismiss", style: "cancel" },
-    { text: "Retry", onPress: () => void refreshIncomingShares() },
+  const error =
+    cause instanceof Error ? cause : new Error(currentTranslator()("incomingShareUi.fallback"));
+  Dialog.alert(currentTranslator()("incomingShareUi.failed"), error.message, [
+    { text: currentTranslator()("incomingShareUi.dismiss"), style: "cancel" },
+    {
+      text: currentTranslator()("incomingShareUi.retry"),
+      onPress: () => void refreshIncomingShares(),
+    },
   ]);
 }
 
@@ -318,30 +323,39 @@ export const incomingShareImports = makeIncomingShareImports({
     }),
   releaseUnusedAttachments: scheduleUnusedComposerAttachmentCleanup,
   onWarnings: (warnings) => {
-    Dialog.alert("Some shared content was skipped", warnings.join("\n"));
+    Dialog.alert(currentTranslator()("incomingShareUi.skipped"), warnings.join("\n"));
   },
   onImportFailure: (target, error) => {
     Dialog.alert(
-      "Could not import shared content",
-      error instanceof Error ? error.message : "The shared content could not be saved.",
+      currentTranslator()("incomingShareUi.failed"),
+      error instanceof Error ? error.message : currentTranslator()("incomingShareUi.save"),
       [
         {
-          text: "Cancel import",
+          text: currentTranslator()("incomingShareUi.cancel"),
           style: "cancel",
           onPress: () => void incomingShareImports.cancel(target),
         },
-        { text: "Retry", onPress: () => incomingShareImports.retry(target) },
+        {
+          text: currentTranslator()("incomingShareUi.retry"),
+          onPress: () => incomingShareImports.retry(target),
+        },
       ],
       { cancelable: false },
     );
   },
   onCancelFailure: (target, error) => {
     Dialog.alert(
-      "Could not cancel import",
-      error instanceof Error ? error.message : "The shared content could not be restored safely.",
+      currentTranslator()("incomingShareUi.cancelFailed"),
+      error instanceof Error ? error.message : currentTranslator()("incomingShareUi.restore"),
       [
-        { text: "Retry import", onPress: () => incomingShareImports.retry(target) },
-        { text: "Retry cancel", onPress: () => void incomingShareImports.cancel(target) },
+        {
+          text: currentTranslator()("incomingShareUi.retryImport"),
+          onPress: () => incomingShareImports.retry(target),
+        },
+        {
+          text: currentTranslator()("incomingShareUi.retryCancel"),
+          onPress: () => void incomingShareImports.cancel(target),
+        },
       ],
       { cancelable: false },
     );

@@ -8,6 +8,11 @@ const checkout = vi.hoisted(() => ({
   branches: [] as Array<{ name: string; worktreePath: string | null }>,
 }));
 
+vi.mock("../../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("react-native", () => ({
   Platform: { OS: "android" },
   View: ({ children }: { children: ReactNode }) => <div>{children}</div>,

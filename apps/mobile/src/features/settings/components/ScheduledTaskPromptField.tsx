@@ -12,6 +12,7 @@ import {
 } from "../../voice-input/ComposerDictationControl";
 import type { useVoiceInputController } from "../../voice-input/useVoiceInputController";
 import { resolveVoiceComposerPresentation } from "../../voice-input/voiceInputPresentation";
+import { useLanguage } from "../../../i18n/LanguageProvider";
 
 export function ScheduledTaskPromptField(props: {
   readonly value: string;
@@ -21,17 +22,18 @@ export function ScheduledTaskPromptField(props: {
   readonly disabled: boolean;
   readonly voiceInput: ReturnType<typeof useVoiceInputController>;
 }) {
+  const { t, locale } = useLanguage();
   const voice = props.voiceInput;
-  const presentation = resolveVoiceComposerPresentation(voice.state, voice.elapsedSeconds);
+  const presentation = resolveVoiceComposerPresentation(voice.state, voice.elapsedSeconds, locale);
   const showsDictation = presentation.statusKind === "active";
   const showsIdleTrigger = voice.isAvailable && !showsDictation;
 
   return (
     <View className="gap-2 border-t border-border-subtle px-4 py-3">
-      <Text className="text-sm text-foreground-muted">Prompt</Text>
+      <Text className="text-sm text-foreground-muted">{t("scheduledTasks.picker.prompt")}</Text>
       <View className="flex-row items-end">
         <TextInput
-          accessibilityLabel="Prompt"
+          accessibilityLabel={t("scheduledTasks.picker.prompt")}
           value={props.value}
           onChangeText={props.onChange}
           selection={props.selection}
@@ -40,7 +42,7 @@ export function ScheduledTaskPromptField(props: {
           multiline
           scrollEnabled
           textAlignVertical="top"
-          placeholder="What should the agent do each time?"
+          placeholder={t("scheduledTasks.picker.promptPlaceholder")}
           placeholderTextColorClassName="accent-foreground-muted"
           className="max-h-40 min-h-24 min-w-0 flex-1 font-sans text-base text-foreground"
         />

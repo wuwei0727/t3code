@@ -33,6 +33,11 @@ const state = vi.hoisted(() => ({
   afterRequest: undefined as (() => void) | undefined,
 }));
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("react", () => ({
   useCallback: (callback: unknown) => callback,
   useRef: (current: unknown) => ({ current }),

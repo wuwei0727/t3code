@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import * as Dialog from "../../components/ui/Dialog";
 import type {
   EnvironmentId,
@@ -103,6 +105,7 @@ export function resolveComposerMenuSelection(input: {
 }
 
 export function buildComposerSlashCommandItems(input: {
+  readonly translate?: UiTranslator;
   readonly query: string;
   readonly atMessageStart: boolean;
   readonly hasThread: boolean;
@@ -113,6 +116,7 @@ export function buildComposerSlashCommandItems(input: {
   readonly offersSideChat?: boolean;
   readonly selectedProviderStatus: Pick<ServerProvider, "driver" | "slashCommands"> | null;
 }): ComposerCommandItem[] {
+  const t = input.translate ?? makeTranslator("en");
   const query = input.query.toLowerCase();
   const items: ComposerCommandItem[] = "model".includes(query)
     ? [
@@ -121,7 +125,7 @@ export function buildComposerSlashCommandItems(input: {
           type: "slash-command",
           command: "model",
           label: "/model",
-          description: "Switch model",
+          description: t("composerCommandUi.model"),
         },
       ]
     : [];
@@ -131,8 +135,8 @@ export function buildComposerSlashCommandItems(input: {
   if (!input.atMessageStart) return items;
   if (input.offersSideChat) {
     for (const [command, description] of [
-      ["side", "Ask a side question in a new side chat"],
-      ["btw", "Same as /side"],
+      ["side", t("composerCommandUi.side")],
+      ["btw", t("composerCommandUi.btw")],
     ] as const) {
       if (!command.includes(query)) continue;
       items.push({
@@ -150,7 +154,7 @@ export function buildComposerSlashCommandItems(input: {
       type: "slash-command",
       command: "clear",
       label: "/clear",
-      description: "Start a fresh session",
+      description: t("composerCommandUi.fresh"),
     });
   }
   for (const command of input.selectedProviderStatus?.slashCommands ?? []) {
@@ -291,6 +295,7 @@ export function useComposerCommandMenu({
   readonly onFreshSession?: () => void;
   readonly offersSideChat?: boolean;
 }) {
+  const { t } = useLanguage();
   const [localSelection, setLocalSelection] = useState(() => ({
     ownerKey,
     ...composerSelectionAtEnd(draftMessage),
@@ -388,6 +393,7 @@ export function useComposerCommandMenu({
       const q = trigger.query.toLowerCase();
       const visibleSkills = getProviderSkillsForSlashMenu(skills, true);
       const commandItems = buildComposerSlashCommandItems({
+        translate: t,
         query: q,
         atMessageStart: trigger.rangeStart === 0,
         hasThread,
@@ -549,7 +555,7 @@ export function useComposerCommandMenu({
       const existing = getComposerDraftSnapshot(ownerKey).context?.records ?? [];
       const alreadyAttached = existing.some((entry) => entry.contextId === record.contextId);
       if (!alreadyAttached && existing.length >= COMPOSER_CONTEXT_MAX_RECORDS) {
-        Dialog.alert("Too many context items", "Remove some context from the draft and try again.");
+        Dialog.alert(t("composerCommandUi.tooMany"), t("composerCommandUi.remove"));
         return;
       }
       const result = replaceTextRange(
@@ -581,7 +587,7 @@ export function useComposerCommandMenu({
       const existing = getComposerDraftSnapshot(ownerKey).context?.records ?? [];
       const alreadyAttached = existing.some((entry) => entry.contextId === record.contextId);
       if (!alreadyAttached && existing.length >= COMPOSER_CONTEXT_MAX_RECORDS) {
-        Dialog.alert("Too many context items", "Remove some context from the draft and try again.");
+        Dialog.alert(t("composerCommandUi.tooMany"), t("composerCommandUi.remove"));
         return;
       }
       const result = replaceTextRange(
@@ -613,7 +619,7 @@ export function useComposerCommandMenu({
         (getComposerDraftSnapshot(ownerKey).context?.records.length ?? 0) >=
         COMPOSER_CONTEXT_MAX_RECORDS
       ) {
-        Dialog.alert("Too many context items", "Remove some context from the draft and try again.");
+        Dialog.alert(t("composerCommandUi.tooMany"), t("composerCommandUi.remove"));
         return;
       }
       const result = replaceTextRange(
@@ -667,7 +673,7 @@ export function useComposerCommandMenu({
     error:
       trigger?.kind === "pull-request"
         ? pullRequestProjectId === null || pullRequestRepository === null
-          ? "Pull requests are unavailable for this project."
+          ? t("composerCommandUi.unavailable")
           : pullRequestSearch.error
         : null,
     onSelect,

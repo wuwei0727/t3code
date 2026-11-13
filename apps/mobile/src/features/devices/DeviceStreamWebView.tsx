@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
 import { Button } from "../../components/ui/Button";
 import deviceStreamScript from "@t3tools/mobile-device-stream";
 import {
@@ -39,12 +41,19 @@ export function DeviceStreamWebView({
   ref,
   ...props
 }: DeviceStreamConfiguration & NativeStreamBridge) {
+  const { t } = useLanguage();
   const [attempt, setAttempt] = useState(0);
   const processRetried = useRef(false);
   const configuration = JSON.stringify({
     access: props.access,
     platform: props.platform,
     deviceId: props.deviceId,
+    ui: {
+      screenLabel: t(
+        props.platform === "ios" ? "deviceStream.iosScreen" : "deviceStream.androidScreen",
+      ),
+      reconnecting: t("deviceStream.controlsReconnecting"),
+    },
     ...(props.serveSimOnly ? { serveSimOnly: true } : {}),
     colors: props.colors,
   });
@@ -94,6 +103,7 @@ function DeviceStreamDocumentView({
   readonly onStreaming: () => void;
   readonly onRecoverProcess: () => boolean;
 }) {
+  const { t } = useLanguage();
   const webView = useRef<WebView<object>>(null);
   const active = useRef(false);
   const failed = useRef(false);
@@ -114,9 +124,7 @@ function DeviceStreamDocumentView({
     setError(message);
     setStatus("error");
   };
-  const bootstrapTimedOut = useEffectEvent(() =>
-    fail("Device viewer could not start. Reconnect to try again."),
-  );
+  const bootstrapTimedOut = useEffectEvent(() => fail(t("deviceStream.start")));
   const resetInput = useEffectEvent(() => void onInputConnected(false));
   // The stream lives exactly as long as this view.
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- starts the bootstrap timeout and stops the WebView device stream when this view unmounts
@@ -151,7 +159,7 @@ function DeviceStreamDocumentView({
   const processTerminated = () => {
     if (!active.current || failed.current) return;
     void onInputConnected(false);
-    if (!onRecoverProcess()) fail("Device viewer stopped. Reconnect to try again.");
+    if (!onRecoverProcess()) fail(t("deviceStream.stopped"));
   };
   return (
     <View className="flex-1" style={{ backgroundColor: background }}>
@@ -166,8 +174,8 @@ function DeviceStreamDocumentView({
         contentInsetAdjustmentBehavior="never"
         setSupportMultipleWindows={false}
         style={{ flex: 1, backgroundColor: background }}
-        onError={() => fail("Device viewer could not load. Reconnect to try again.")}
-        onHttpError={() => fail("Device viewer could not load. Reconnect to try again.")}
+        onError={() => fail(t("deviceStream.load"))}
+        onHttpError={() => fail(t("deviceStream.load"))}
         onContentProcessDidTerminate={processTerminated}
         onRenderProcessGone={processTerminated}
         onShouldStartLoadWithRequest={(request) =>
@@ -181,7 +189,12 @@ function DeviceStreamDocumentView({
           else if (message?.type === "retry") onRetry();
           else if (message?.type === "status") {
             clearBootstrapTimer();
-            if (message.status === "error") fail(message.detail ?? "Device stream failed.");
+            if (message.status === "error")
+              fail(
+                message.detail === undefined
+                  ? t("deviceStream.failed")
+                  : appErrorText(message.detail, t),
+              );
             else {
               setStatus(message.status);
               if (message.status === "streaming") onStreaming();
@@ -199,11 +212,11 @@ function DeviceStreamDocumentView({
             accessibilityLiveRegion="polite"
             className="text-center text-sm text-foreground-muted"
           >
-            {status === "error" ? error : "Connecting to device..."}
+            {status === "error" ? error : t("deviceStream.connecting")}
           </AppText>
           {status === "error" ? (
             <View className="items-center">
-              <Button label="Reconnect" tone="secondary" onPress={onRetry} />
+              <Button label={t("deviceStream.reconnect")} tone="secondary" onPress={onRetry} />
             </View>
           ) : null}
         </View>

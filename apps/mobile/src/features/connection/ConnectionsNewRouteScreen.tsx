@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { ListRow } from "../../components/ui/ListRow";
 import * as Dialog from "../../components/ui/Dialog";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
@@ -62,6 +63,7 @@ function PairingForm({
   readonly routePairingUrl: string;
   readonly routeFor: EnvironmentId | undefined;
 }) {
+  const { t } = useLanguage();
   const { connectionPairingUrl, onChangeConnectionPairingUrl, onConnectPress } =
     useRemoteConnections();
   const navigation = useNavigation();
@@ -112,14 +114,10 @@ function PairingForm({
       return;
     }
     if (permission.canAskAgain) return;
-    Dialog.alert(
-      "Camera access needed",
-      "Camera access was denied for this app. Open Settings to enable it.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Open Settings", onPress: () => void Linking.openSettings() },
-      ],
-    );
+    Dialog.alert(t("pairingCamera.camera"), t("pairingCamera.denied"), [
+      { text: t("pairingCamera.cancel"), style: "cancel" },
+      { text: t("pairingCamera.settings"), onPress: () => void Linking.openSettings() },
+    ]);
   };
 
   const handleQrScan = ({ data }: { readonly data: string }) => {
@@ -140,8 +138,8 @@ function PairingForm({
     } catch (error) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Dialog.alert(
-        "Invalid QR code",
-        error instanceof Error ? error.message : "Scanned QR code was not recognized.",
+        t("pairingCamera.invalid"),
+        error instanceof Error ? error.message : t("pairingCamera.unknown"),
       );
       setTimeout(() => {
         setScannerLocked(false);
@@ -176,10 +174,10 @@ function PairingForm({
 
   return (
     <SettingsScreen
-      title="Add environment"
+      title={t("connection.add")}
       actions={[
         {
-          accessibilityLabel: connecting ? "Connecting" : "Add environment",
+          accessibilityLabel: connecting ? t("connection.connecting") : t("connection.add"),
           loading: connecting,
           icon: "checkmark",
           tintColor: headerIconColor,
@@ -212,7 +210,9 @@ function PairingForm({
           />
 
           <View collapsable={false} className="gap-2">
-            <Text className="px-4 text-sm font-t3-medium text-foreground-muted">Or enter it</Text>
+            <Text className="px-4 text-sm font-t3-medium text-foreground-muted">
+              {t("connection.enter")}
+            </Text>
             <View
               collapsable={false}
               className={cn(
@@ -221,7 +221,7 @@ function PairingForm({
               )}
             >
               <PairingInputRow
-                label="Address"
+                label={t("connection.address")}
                 keyboardType="url"
                 placeholder="192.168.1.100:3773"
                 value={hostInput}
@@ -229,8 +229,8 @@ function PairingForm({
               />
               <View className="ml-4 border-t border-border-subtle" />
               <PairingInputRow
-                label="Code"
-                placeholder="Pairing code"
+                label={t("connection.code")}
+                placeholder={t("connection.pairingCode")}
                 returnKeyType="go"
                 value={codeInput}
                 onChangeText={handleCodeChange}
@@ -246,8 +246,7 @@ function PairingForm({
                 pairingConnectionError ? "text-danger-foreground" : "text-foreground-muted",
               )}
             >
-              {pairingConnectionError ??
-                "For machines on your local network or tailnet. The machine keeps its own provider credentials."}
+              {pairingConnectionError ?? t("connection.localHint")}
             </Text>
           </View>
 
@@ -268,11 +267,12 @@ function PairingScanCard(props: {
   readonly onScan: (result: { readonly data: string }) => void;
   readonly onScanPress: () => void;
 }) {
+  const { t } = useLanguage();
   const light = useAppearancePreferences().themeAppearance === "light";
   return (
     <Pressable
       accessibilityRole={props.cameraActive ? undefined : "button"}
-      accessibilityLabel={props.cameraActive ? undefined : "Scan QR code"}
+      accessibilityLabel={props.cameraActive ? undefined : t("connection.scan")}
       disabled={props.cameraActive}
       onPress={props.onScanPress}
       className={cn(
@@ -337,13 +337,13 @@ function PairingScanCard(props: {
               <Text
                 className={cn("font-t3-medium text-sm", light ? "text-black/70" : "text-white/80")}
               >
-                Tap to scan
+                {t("connection.tapScan")}
               </Text>
             </>
           )}
         </View>
         <Text className={cn("text-center text-sm", light ? "text-black/70" : "text-white/80")}>
-          Scan the code from t3 pair or desktop Connections settings
+          {t("connection.scanHint")}
         </Text>
       </View>
     </Pressable>
@@ -351,6 +351,7 @@ function PairingScanCard(props: {
 }
 
 function T3ConnectSection() {
+  const { t } = useLanguage();
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const navigation = useNavigation();
   const { connectedEnvironments, onSetEnvironmentEnabled, onRemoveEnvironmentPress } =
@@ -363,7 +364,7 @@ function T3ConnectSection() {
   return (
     <View collapsable={false} className="gap-2">
       <Text className="px-4 text-sm font-t3-medium text-foreground-muted">
-        Or use the managed relay
+        {t("connection.managed")}
       </Text>
       {isSignedIn ? (
         <CloudEnvironmentRows
@@ -374,8 +375,8 @@ function T3ConnectSection() {
         />
       ) : (
         <ListRow
-          label="Sign in to T3 Connect"
-          description="Reach your machines from anywhere, no network setup."
+          label={t("connection.signIn")}
+          description={t("connection.relayHint")}
           disabled={!isLoaded}
           onPress={() => navigation.navigate("SettingsAuth")}
         />

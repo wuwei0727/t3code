@@ -1,3 +1,4 @@
+import { useLanguage } from "../i18n/LanguageProvider";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
 import { View } from "react-native";
@@ -6,13 +7,18 @@ import { AppText as Text } from "./ui/AppText";
 import { T3_CODE_BRAND_MARK_SOURCE } from "./brandAssets";
 
 const appVariant = Constants.expoConfig?.extra?.appVariant;
-const DEFAULT_STAGE_LABEL =
-  appVariant === "development" ? "Dev" : appVariant === "preview" ? "Preview" : "Beta";
+const defaultStageKey =
+  appVariant === "development"
+    ? "brandUi.dev"
+    : appVariant === "preview"
+      ? "brandUi.preview"
+      : "brandUi.beta";
 
 export function BrandMark(props: { readonly compact?: boolean; readonly stageLabel?: string }) {
+  const { t } = useLanguage();
   const compact = props.compact ?? false;
   const iconSize = compact ? 32 : 44;
-  const stageLabel = props.stageLabel ?? DEFAULT_STAGE_LABEL;
+  const stageLabel = props.stageLabel ?? t(defaultStageKey);
 
   return (
     <View className="flex-row items-center gap-3">
@@ -35,9 +41,7 @@ export function BrandMark(props: { readonly compact?: boolean; readonly stageLab
           </View>
         </View>
         {!compact ? (
-          <Text className="text-xs font-medium text-foreground-muted">
-            Mobile control surface for your live coding environments
-          </Text>
+          <Text className="text-xs font-medium text-foreground-muted">{t("brandUi.detail")}</Text>
         ) : null}
       </View>
     </View>

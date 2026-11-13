@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "status": "partial-acceptance-external-prerequisites-remain",
+  "complete": false,
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "date": "2026-11-12",
+  "device": {
+    "hostId": "local",
+    "id": "emulator-5554",
+    "platform": "Android emulator",
+    "abi": "x86_64",
+    "physicalDevice": false
+  },
+  "apkUnderTest": {
+    "versionName": "2.3.0-zh.6",
+    "versionCode": 6,
+    "applicationId": "io.github.wuwei0727.t3code.zh",
+    "sha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+    "path": ".t3/artifacts/community-v6-final/t3code-zh-2.3.0-zh.6-x86_64.apk",
+    "finalCandidate": true
+  },
+  "signing": {
+    "previousVersion": "2.3.0-zh.5",
+    "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+    "matchesPrevious": true
+  },
+  "verified": [
+    {
+      "item": "v5 to v6 overwrite installation",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/install.log",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Standalone launch and retained conversation list / Simplified Chinese preference",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/home-zh.png",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Select English, restart and retain English",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/appearance-en-after-relaunch.txt",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Follow system after explicit English follows current Chinese system locale",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/appearance-follow-system-zh.txt",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Existing direct connection retained and reconnected to isolated backend",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/settings-environments-snapshot.txt",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Account/login entry and Chinese native Clerk sign-in page; back navigation",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/auth-native-zh.png",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Send Chinese message from mobile on existing Replay thread and verify persisted message",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/thread-after-mobile-send.json",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "CLI-to-mobile live update on same thread without reopening it",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/thread-after-desktop-send.png",
+      "limitation": "Server CLI used; desktop UI and a real second machine are not verified",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Question selection and submit; backend completes with pendingRequestCount zero",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/question-after.json",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Approval-required runtime selection, allow-once approval and completed run with pendingRequestCount zero",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/approval-after.json",
+      "scope": "Free Replay write approval fixture; actual command displayed verbatim; no real paid provider",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Automatic reconnect after isolated backend stop/restart, and subsequent CLI message received on existing mobile thread",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6/reconnect-round2-after-message.png",
+      "scope": "Round 2: no app restart, navigation, tap or text input between backend restart and receipt; only Device screenshot observation. Round 1 wait-for-stable command stalled and was not used as acceptance proof.",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "Large system font (accessibility-medium) home and long Chinese voice page, including lower content after scrolling",
+      "result": "passed in selected layouts",
+      "evidence": ".t3/acceptance-v6/voice-large-font-lower.png",
+      "limitations": "One 1080x2400 emulator only; does not establish all device sizes or every screen at large font",
+      "candidateSha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8"
+    },
+    {
+      "item": "File list, README preview, file operation menu; preserve file name and original body",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/file-actions-zh.png",
+      "candidateSha256": "0eb53a78c722315e54992da70ddf678c0dd1db31354ff22e0d6e2e7375391d1a",
+      "scope": "Read-only fixture file, not every supported preview format"
+    },
+    {
+      "item": "Native Markdown copy/wrap/table accessibility and composer/provider option labels",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/provider-reasoning-options-zh.png",
+      "candidateSha256": "0eb53a78c722315e54992da70ddf678c0dd1db31354ff22e0d6e2e7375391d1a",
+      "scope": "Copied original code verified; model names unchanged; previewed provider options then cancelled"
+    },
+    {
+      "item": "Theme/channel/setup guidance/task context device-found copy rechecked",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/settings-about.png",
+      "candidateSha256": "0eb53a78c722315e54992da70ddf678c0dd1db31354ff22e0d6e2e7375391d1a",
+      "scope": "Includes theme appearance suffix, Preview/Nightly badges, Add Project CLI guidance and scheduled task base branch"
+    },
+    {
+      "item": "Repeated English restart persistence and follow Chinese system language",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/final-english-after-relaunch.png",
+      "candidateSha256": "d09b33a98a8824717535fe0ec2d6a657f4fd54d83788223c866de252500a23ba",
+      "scope": "Explicit Chinese restored afterwards"
+    },
+    {
+      "item": "Repeated mobile question answer; completed with zero pending requests",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/final-question-server.json",
+      "candidateSha256": "d09b33a98a8824717535fe0ec2d6a657f4fd54d83788223c866de252500a23ba",
+      "scope": "Free Replay fixture; question text and choices remain model content"
+    },
+    {
+      "item": "Select, import and send a text attachment; server bytes match original SHA-256",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/final-attachment-hashes.json",
+      "candidateSha256": "d09b33a98a8824717535fe0ec2d6a657f4fd54d83788223c866de252500a23ba",
+      "scope": "One 89-byte UTF-8 TXT fixture; no real-provider interpretation or other media format acceptance claim"
+    },
+    {
+      "item": "Offline outbox enqueue, edit and automatic delivery after backend returns",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/final-offline-queue-delivered-server.json",
+      "candidateSha256": "d09b33a98a8824717535fe0ec2d6a657f4fd54d83788223c866de252500a23ba",
+      "scope": "No app navigation/relaunch after backend restart; upstream exponential retry reaches 5-minute maximum, so initial recovery wait was not counted as failure. Edited content preserved."
+    },
+    {
+      "item": "Latest APK overwrite installation, standalone restart and retained Chinese/data",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/latest-home-zh.png",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "No Metro; original fixed certificate retained"
+    },
+    {
+      "item": "Latest APK Chinese relative times and 24-hour message timestamps",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/latest-thread-zh.png",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "Homepage 分/时 and message 11:20 / 11:30 observed; no AM/PM in Chinese timestamps"
+    },
+    {
+      "item": "Latest APK source-control menu no longer mixes English article with Chinese",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/latest-git-menu.txt",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "Create PR disabled without origin; did not commit/push/create PR"
+    },
+    {
+      "item": "Latest APK mobile continuation saved verbatim to same server thread",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/latest-mobile-server.json",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "Original English model-id and src/Example.ts preserved; free Replay"
+    },
+    {
+      "item": "Latest APK CLI message arrives live on existing mobile thread",
+      "result": "passed within stated scope",
+      "evidence": ".t3/acceptance-v6/latest-live-update.png",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "CLI on this host, not desktop UI or a second physical computer"
+    },
+    {
+      "item": "Latest native Clerk sign-in page visibly Chinese",
+      "result": "passed for page display only",
+      "candidateSha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "evidence": ".t3/acceptance-v6/latest-auth-native-zh.png",
+      "scope": "No account value supplied; no real authentication, callback or relay claim"
+    }
+  ],
+  "deviceFindings": [
+    {
+      "item": "Theme mode accessibility suffix appearance",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Home Nightly channel badge and About Preview label",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Add Project server-provided CLI installation guidance",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Scheduled task / new task branch and workspace generated labels",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Composer model accessibility label; native Markdown copy/wrap/table/list labels",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Provider option labels/effort summaries and approval-kind / full-access override explanations",
+      "fix": "implemented and rechecked in v6 candidate; see verified rows and candidate hashes"
+    },
+    {
+      "item": "Relative-time locale omitted in home list and AM/PM observed in Chinese message timestamp",
+      "fix": "Regression assertion failed before fix; 79 focused tests passed after fix; latest APK displays Chinese units and 24-hour timestamps."
+    }
+  ],
+  "remaining": [
+    "Actual push delivery: no default Firebase options configured for this package; own matching Firebase client and relay sender required",
+    "Physical ARM phone installation/startup/upgrade and additional small-screen/font layouts",
+    "Real desktop/web UI or second-computer synchronization; current cross-client evidence uses CLI on isolated backend",
+    "Context-specific actions requiring hosted repository/PR data, real provider/tool integration or device hardware; not exhaustively executed",
+    "Final maintainer translation review and protected GitHub workflow execution; no public release authorized",
+    "Specific third-party SSO callback variants were not separately observed"
+  ],
+  "notes": [
+    "28 Settings route screenshots plus Add Project/Connections and context-dependent routes captured; captures are not a claim that every action or UI state was executed.",
+    "All APKs in artifacts/community-v6-final contain 4041 current Chinese resource literals and required public Connect config; this is packaging evidence, not authentication or exhaustive localization proof.",
+    "Native notification tests: 108 on API24/26/33/36, zero failures; actual Firebase delivery remains unavailable.",
+    "Latest candidate successfully relaunched; earlier AgentDevice close process remained running error recovered by the advised --debug retry. No adb UI automation used.",
+    "Free Replay only; no translation API calls, paid provider turns, repository push, PR creation or public release.",
+    "Overall acceptance remains incomplete because the remaining entries lack execution evidence."
+  ],
+  "updatedAt": "2026-11-12T11:39:49.170Z",
+  "candidateHistory": [
+    {
+      "sha256": "cbdb160eedc4a1e8a7b586d3703b71119a77f14643d0f352bffb809ab3cc5fe8",
+      "scope": "Initial v6: language, direct connection, mobile/CLI synchronization, questions/approval, short reconnect and selected large-font layouts."
+    },
+    {
+      "sha256": "0eb53a78c722315e54992da70ddf678c0dd1db31354ff22e0d6e2e7375391d1a",
+      "scope": "Device-found brand/theme/CLI guidance/task context/native Markdown/provider-option copy fixes."
+    },
+    {
+      "sha256": "d09b33a98a8824717535fe0ec2d6a657f4fd54d83788223c866de252500a23ba",
+      "path": ".t3/acceptance-v6/signed-before-time-fix/t3code-zh-2.3.0-zh.6-x86_64.apk",
+      "scope": "Native notification resource changes; repeated language/restart/question, file import/send, offline outbox edit/delivery. Relative-time label omission then discovered."
+    },
+    {
+      "sha256": "40bbc389fdf4dd95055081b75d92fe7afa6965396564802cb72a0da6c6a1eec7",
+      "scope": "Latest delivered build includes relative-time locale propagation and explicit Chinese 24-hour format; installed and rechecked below."
+    }
+  ],
+  "authTestAccess": {
+    "status": "User completed sign-in on device; authenticated profile, registered server and relaunch persistence observed",
+    "credentialsCollected": false,
+    "method": "User confirmed email verification code or email/password; third-party SSO unverified"
+  },
+  "workflowVerification": {
+    "actionlint": "1.7.12 passed for all four community workflows; shellcheck/pyflakes integrations not run",
+    "nativeTranslationStaging": "Simulated changed native Chinese resources were rejected/unstaged before fix; now both exact generated XML paths allowed and staged; Kotlin source remains forbidden",
+    "githubExecution": "not run",
+    "apiCalls": 0
+  },
+  "teardown": {
+    "isolatedServer": "stopped; port 16418 no listener",
+    "deviceAutomation": "closed; Device panel detached without shutting down emulator",
+    "data": "Retained existing test connection, fixtures and APK data; no destructive cleanup"
+  },
+  "postLogin": {
+    "date": "2026-11-12T13:00:12.494Z",
+    "account": "Authenticated native profile, account-management and security UI opened; no account edits",
+    "connection": "Real computer discovered and enabled; only T3 Connect route shown as in use",
+    "sameConversation": "Opened the current maintenance conversation and saw historical messages plus live assistant updates",
+    "mobileSend": "Explicit mobile test marker received in this active maintenance task through T3 Connect",
+    "persistence": "App restart retained authenticated profile and active cloud connection",
+    "notifications": "Android notification permission granted; generic device registration accepted, but no Firebase app ID/sender resources in APK. Delivery not verified.",
+    "findings": [
+      "Provider updated. status not localized",
+      "Device preview button/count and embedded viewer copy missing translations",
+      "Permission success dialog overstated push readiness"
+    ],
+    "fixTarget": "v7 source; build and installed-APK recheck in progress",
+    "isolatedConnection": "Disabled the stopped task-local direct connection; retained its data. Real cloud environment remains enabled.",
+    "permissionCopy": "Source now states notification permission granted instead of asserting working push delivery; registration/auth behavior unchanged. Awaiting v7 on-device check."
+  }
+}

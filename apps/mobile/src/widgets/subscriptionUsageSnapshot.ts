@@ -1,3 +1,6 @@
+import type { UiLocale } from "../i18n/locale";
+import { makeTranslator } from "../i18n/translator";
+import { localizeUsageText } from "../features/usage/usageLimitPresentation";
 import {
   collectLimitAccounts,
   collectLimitPools,
@@ -10,6 +13,15 @@ import type { WidgetTheme } from "./widgetTheme";
 
 export interface SubscriptionUsageSnapshot {
   theme?: WidgetTheme;
+  locale?: UiLocale;
+  labels?: {
+    connect: string;
+    refresh: string;
+    left: string;
+    more: string;
+    asOf: string;
+    tap: string;
+  };
   url?: string;
   checkedAt: number;
   providers: Array<{
@@ -54,7 +66,9 @@ function subscriptionUsageProps(
   now: number,
   configuredDrivers: ReadonlySet<string>,
   maxWindowsPerProvider: number,
+  locale: UiLocale,
 ): SubscriptionUsageSnapshot {
+  const t = makeTranslator(locale);
   const pools = collectLimitPools(accounts, now);
   const checked = accounts
     .filter((account) => account.driver === "codex" || account.driver === "claudeAgent")
@@ -72,7 +86,7 @@ function subscriptionUsageProps(
         if (!pool)
           return {
             name,
-            detail: "No limits available",
+            detail: t("usageWidget.none"),
             windows: [],
             expiresAt: 0,
             totalWindows: 0,
@@ -101,27 +115,28 @@ function subscriptionUsageProps(
         return {
           name,
           detail: !fresh
-            ? "Open T3 to refresh"
+            ? t("usageWidget.refresh")
             : pool.accounts.length > 1
-              ? `${pool.accounts.length} accounts · pooled`
-              : "Subscription remaining",
+              ? t("usageWidget.accounts", { count: pool.accounts.length })
+              : t("usageWidget.remaining"),
           expiresAt: fresh ? expiresAt : 0,
           totalWindows: fresh ? pool.windows.length : 0,
           windows: fresh
             ? selectedWindows.map((window) => ({
                 kind: window.kind,
-                label: window.label,
+                label: localizeUsageText(window.label, t),
                 remaining: Math.round(window.remainingPercent),
                 reset: window.resets[0]
-                  ? `${isUpcoming(window.resets[0]) ? "Next reset" : "Reset"} ${new Date(
-                      window.resets[0].at,
-                    ).toLocaleString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}`
-                  : "Reset time unavailable",
+                  ? t(
+                      isUpcoming(window.resets[0]) ? "usageWidget.nextReset" : "usageWidget.reset",
+                      {
+                        date: new Date(window.resets[0].at).toLocaleString(
+                          locale === "en" ? undefined : locale,
+                          { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" },
+                        ),
+                      },
+                    )
+                  : t("usageWidget.noReset"),
               }))
             : [],
         };
@@ -133,6 +148,7 @@ export function buildSubscriptionUsageSnapshot(
   presentations: LimitPresentations,
   url: string,
   maxWindowsPerProvider = 6,
+  locale: UiLocale = "en",
 ): SubscriptionUsageSnapshot {
   const configuredDrivers = new Set(
     [...presentations.values()].flatMap((presentation) =>
@@ -153,6 +169,7 @@ export function buildSubscriptionUsageSnapshot(
       0,
       configuredDrivers,
       maxWindowsPerProvider,
+      locale,
     ),
     url,
   };
@@ -168,7 +185,12 @@ export function subscriptionUsageTimeline(snapshot: SubscriptionUsageSnapshot, n
       ...snapshot,
       providers: snapshot.providers.map((provider) =>
         provider.windows.length > 0 && provider.expiresAt <= date
-          ? { ...provider, detail: "Open T3 to refresh", windows: [], totalWindows: 0 }
+          ? {
+              ...provider,
+              detail: snapshot.labels?.refresh ?? "Open T3 to refresh",
+              windows: [],
+              totalWindows: 0,
+            }
           : provider,
       ),
     },

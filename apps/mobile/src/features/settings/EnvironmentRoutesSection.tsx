@@ -1,3 +1,9 @@
+import {
+  localizedAuthScopeOptions,
+  localizedConnectionRouteLabel,
+  sessionPermissionsText,
+} from "../connection/connectionSettingsPresentation";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Button } from "../../components/ui/Button";
 import * as Dialog from "../../components/ui/Dialog";
 import { useAtomValue } from "@effect/atom-react";
@@ -7,16 +13,11 @@ import {
   connectionRouteAddress,
   connectionRouteId,
   connectionRouteKind,
-  connectionRouteLabel,
   connectionRoutes,
   isLearned,
   pendingRouteOrder,
 } from "@t3tools/client-runtime/connection";
 import { type EnvironmentId, sessionGrantsScope } from "@t3tools/contracts";
-import {
-  AUTH_SCOPE_OPTIONS,
-  sessionPermissionsUnavailableMessage,
-} from "@t3tools/shared/authScopeOptions";
 import { AsyncResult } from "effect/reactivity";
 import * as Option from "effect/Option";
 import { useState } from "react";
@@ -57,6 +58,7 @@ export function EnvironmentRoutesSection({
   readonly connected: boolean;
   readonly onAddRoute: () => void;
 }) {
+  const { t, locale } = useLanguage();
   const entry = useAtomValue(environmentCatalog.catalogValueAtom).entries.get(environmentId);
   const prepared = useAtomValue(environmentSession.preparedConnectionValueAtom(environmentId));
   const sessionResult = useAtomValue(environmentSession.sessionStateAtom(environmentId));
@@ -112,12 +114,12 @@ export function EnvironmentRoutesSection({
   };
   const confirmRemove = (route: ConnectionRoute) =>
     Dialog.alert(
-      `Remove ${connectionRouteLabel(route)}?`,
+      t("environmentRoutes.removeTitle", { route: localizedConnectionRouteLabel(route, locale) }),
       connectionRouteAddress(route) ?? undefined,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("environmentRoutes.cancel"), style: "cancel" },
         {
-          text: "Remove",
+          text: t("environmentRoutes.remove"),
           style: "destructive",
           onPress: () =>
             void removeRoute({ environmentId, routeId: connectionRouteId(route.target) }),
@@ -130,11 +132,11 @@ export function EnvironmentRoutesSection({
 
   return (
     <SettingsSection
-      title="Routes"
+      title={t("environmentRoutes.title")}
       trailing={
         routes.length > 1 ? (
           <Button
-            label={editing ? "Done" : "Edit"}
+            label={editing ? t("environmentRoutes.done") : t("environmentRoutes.edit")}
             tone="text"
             onPress={() => setEditing((value) => !value)}
           />
@@ -143,7 +145,7 @@ export function EnvironmentRoutesSection({
     >
       <SettingsActionRow
         icon="checkmark.circle"
-        label="Your permissions"
+        label={t("environmentRoutes.permissions")}
         onPress={() => setPermissionsOpen((open) => !open)}
       />
       {permissionsOpen ? (
@@ -154,18 +156,20 @@ export function EnvironmentRoutesSection({
           session?.authenticated ? (
             <>
               <Text className="text-sm text-foreground-muted">
-                Applies to the route marked In use. Other routes may have different permissions and
-                have not been checked.
+                {t("environmentRoutes.permissionHint")}
               </Text>
-              {AUTH_SCOPE_OPTIONS.map(({ scope, title }) => (
+              {localizedAuthScopeOptions(locale).map(({ scope, title }) => (
                 <Text key={scope} className="text-sm text-foreground">
-                  {title}: {sessionGrantsScope(session, scope) ? "Allowed" : "Not granted"}
+                  {title}:{" "}
+                  {sessionGrantsScope(session, scope)
+                    ? t("environmentRoutes.allowed")
+                    : t("environmentRoutes.notGranted")}
                 </Text>
               ))}
             </>
           ) : (
             <Text className="text-sm text-foreground-muted">
-              {sessionPermissionsUnavailableMessage({
+              {sessionPermissionsText(locale, {
                 connected: activeRouteId !== null,
                 failed: sessionResult._tag === "Failure",
                 rejected:
@@ -218,7 +222,7 @@ export function EnvironmentRoutesSection({
           />
         );
       })}
-      <SettingsActionRow icon="plus" label="Add route" onPress={onAddRoute} />
+      <SettingsActionRow icon="plus" label={t("environmentRoutes.add")} onPress={onAddRoute} />
     </SettingsSection>
   );
 }
@@ -238,8 +242,9 @@ function RouteRow(props: {
   readonly onStep: (direction: "up" | "down") => void;
   readonly onRemove: (() => void) | undefined;
 }) {
+  const { t, locale } = useLanguage();
   const { route, lifted, offset } = props;
-  const label = connectionRouteLabel(route);
+  const label = localizedConnectionRouteLabel(route, locale);
   const address = connectionRouteAddress(route);
   const style = useAnimatedStyle(() => ({
     transform: [
@@ -260,7 +265,7 @@ function RouteRow(props: {
       {props.editing && props.onRemove ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Remove ${label} route`}
+          accessibilityLabel={t("environmentRoutes.removeRoute", { route: label })}
           hitSlop={8}
           onPress={props.onRemove}
           className="active:opacity-70"
@@ -280,9 +285,9 @@ function RouteRow(props: {
         accessibilityLabel={[
           label,
           address,
-          isLearned(route) ? "Found automatically" : null,
-          props.inUse ? "In use" : null,
-          `Route ${props.position} of ${props.count}`,
+          isLearned(route) ? t("environmentRoutes.found") : null,
+          props.inUse ? t("environmentRoutes.inUse") : null,
+          t("environmentRoutes.position", { position: props.position, count: props.count }),
         ]
           .filter((part) => part !== null)
           .join(", ")}
@@ -305,12 +310,16 @@ function RouteRow(props: {
               {label}
             </Text>
             {props.inUse ? (
-              <StatusPill {...connectionTone("connected")} label="In use" size="compact" />
+              <StatusPill
+                {...connectionTone("connected", t)}
+                label={t("environmentRoutes.inUse")}
+                size="compact"
+              />
             ) : null}
           </View>
           {address !== null ? (
             <Text numberOfLines={1} className="text-sm text-foreground-muted">
-              {isLearned(route) ? `${address} · found automatically` : address}
+              {isLearned(route) ? t("environmentRoutes.foundAddress", { address }) : address}
             </Text>
           ) : null}
         </View>

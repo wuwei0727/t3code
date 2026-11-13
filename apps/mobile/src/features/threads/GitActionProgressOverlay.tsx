@@ -1,3 +1,6 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
+import { localizeGitUiText } from "./git/gitPresentation";
 import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
 import Animated, { FadeIn, FadeOut, ReduceMotion } from "react-native-reanimated";
 import { Toast } from "../../components/ui/Toast";
@@ -10,7 +13,12 @@ export function GitActionProgressOverlay(props: {
   readonly onDismiss: () => void;
   readonly onOpenPullRequest?: (url: string) => Promise<boolean>;
 }) {
+  const { t, locale } = useLanguage();
   const { progress, onDismiss } = props;
+  const pulled = progress.label ? /^Pulled latest on (.+)$/.exec(progress.label) : null;
+  const label = pulled
+    ? t("gitProgress.pulled", { branch: pulled[1]! })
+    : localizeGitUiText(progress.label ?? "Source control", locale);
   const openPullRequest = props.onOpenPullRequest;
   const top = useBarInset() + 8;
   const handlePress = () => {
@@ -37,8 +45,8 @@ export function GitActionProgressOverlay(props: {
     >
       <Toast
         singleLine
-        message={progress.label ?? "Source control"}
-        description={progress.description ?? undefined}
+        message={label}
+        description={progress.description ? appErrorText(progress.description, t) : undefined}
         tone={
           progress.phase === "error"
             ? "danger"
@@ -47,7 +55,7 @@ export function GitActionProgressOverlay(props: {
               : "default"
         }
         busy={progress.phase === "running"}
-        action={progress.prUrl ? { label: "View", onPress: handlePress } : undefined}
+        action={progress.prUrl ? { label: t("gitProgress.view"), onPress: handlePress } : undefined}
       />
     </Animated.View>
   );

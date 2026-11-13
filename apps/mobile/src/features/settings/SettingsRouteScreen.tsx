@@ -4,7 +4,7 @@ import {
 } from "../layout/workspace/navigation-tab-order";
 import {
   NAVIGATION_TAB_ICONS,
-  WORKSPACE_TAB_LABELS,
+  useWorkspaceTabLabels,
   useNavigationTabOrder,
   useHiddenNavigationTabs,
 } from "../layout/workspace/navigation-tabs";
@@ -33,6 +33,7 @@ import { useSettingsEnvironmentMenu } from "./components/SettingsEnvironmentFilt
 import { useSettingsEnvironmentFilter } from "./settings-environment-filter";
 import { filterSettingsSections } from "./settings-search";
 import { usePaneRole } from "../../components/ui/Pane";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 export function SettingsRouteScreen() {
   const list = useSettingsListPlacement();
@@ -73,13 +74,14 @@ export function SettingsListScreen(props: {
   readonly sidebar: boolean;
   readonly selected: string | null;
 }) {
+  const { t } = useLanguage();
   const workspace = useWorkspaceTabs();
   const environmentMenu = useSettingsEnvironmentMenu();
   return (
     <SettingsSidebarContext value={props.sidebar ? { selected: props.selected } : null}>
       <View className="flex-1 bg-screen">
         <SettingsScreen
-          title="Settings"
+          title={t("settings.title")}
           workspaceRoot={props.sidebar}
           menus={[environmentMenu]}
           search={
@@ -88,7 +90,7 @@ export function SettingsListScreen(props: {
                   value: workspace.state.tabs.settings.query,
                   onChangeText: (query) =>
                     workspace.dispatch({ type: "query", tab: "settings", query }),
-                  placeholder: "Search settings",
+                  placeholder: t("settings.search"),
                 }
               : undefined
           }
@@ -108,15 +110,16 @@ interface SettingsListSection {
 }
 
 function ConfiguredSettingsRouteScreen() {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const { user } = useUser();
   const { savedConnectionsById } = useSavedRemoteConnections();
   const accountLabel = !isLoaded
-    ? "Checking"
+    ? t("settings.checking")
     : !isSignedIn
-      ? "Sign in"
-      : (user?.primaryEmailAddress?.emailAddress ?? "Signed in");
+      ? t("settings.signIn")
+      : (user?.primaryEmailAddress?.emailAddress ?? t("settings.signedIn"));
 
   return (
     <SettingsList
@@ -124,16 +127,16 @@ function ConfiguredSettingsRouteScreen() {
         {
           id: "account",
           icon: "person.crop.circle",
-          label: "T3 Account",
+          label: t("settings.account"),
           value: accountLabel,
           disabled: !isLoaded,
           onPress: () => navigation.navigate("SettingsAuth"),
         },
-        environmentsRow(Object.keys(savedConnectionsById).length),
+        environmentsRow(Object.keys(savedConnectionsById).length, t("connection.environments")),
         {
           id: "SettingsNotifications",
           icon: "bell.badge",
-          label: "Notifications",
+          label: t("settings.notifications"),
           target: "SettingsNotifications",
         },
       ]}
@@ -142,15 +145,22 @@ function ConfiguredSettingsRouteScreen() {
 }
 
 function LocalSettingsRouteScreen() {
+  const { t } = useLanguage();
   const { savedConnectionsById } = useSavedRemoteConnections();
-  return <SettingsList connections={[environmentsRow(Object.keys(savedConnectionsById).length)]} />;
+  return (
+    <SettingsList
+      connections={[
+        environmentsRow(Object.keys(savedConnectionsById).length, t("connection.environments")),
+      ]}
+    />
+  );
 }
 
-function environmentsRow(count: number): SettingsListRow {
+function environmentsRow(count: number, label: string): SettingsListRow {
   return {
     id: "SettingsEnvironments",
     icon: "desktopcomputer",
-    label: "Environments",
+    label,
     value: `${count}`,
     valuePosition: "trailing",
     target: "SettingsEnvironments",
@@ -158,6 +168,7 @@ function environmentsRow(count: number): SettingsListRow {
 }
 
 function SettingsList(props: { readonly connections: readonly SettingsListRow[] }) {
+  const { t } = useLanguage();
   // UIKit's scroll-edge material takes the scroll view's own color; like the chat list, match
   // the sidebar's surface so the bar doesn't darken over content at rest.
   // Grouped cards only lift off the screen surface; the drawer is as dark as they are.
@@ -170,7 +181,11 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
   const overflowRows = useOverflowRows();
   const indexSections = useSettingsIndexSections();
   const sections = filterSettingsSections(
-    [{ rows: overflowRows }, { title: "Connections", rows: props.connections }, ...indexSections],
+    [
+      { rows: overflowRows },
+      { title: t("settings.connections"), rows: props.connections },
+      ...indexSections,
+    ],
     query,
   );
 
@@ -202,8 +217,8 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
         ) : (
           <EmptyState
             variant="plain"
-            title="No results"
-            detail={`No settings match “${query.trim()}”.`}
+            title={t("settings.noResults")}
+            detail={t("settings.noMatch", { query: query.trim() })}
           />
         )}
       </ScrollView>
@@ -212,6 +227,7 @@ function SettingsList(props: { readonly connections: readonly SettingsListRow[] 
 }
 
 function useSettingsIndexSections(): SettingsListSection[] {
+  const { t } = useLanguage();
   const { selectedTargets, projectGroups, selectedProjectKey } = useSettingsEnvironmentFilter();
   const noServerTargets = selectedTargets.length === 0;
   const selectedProject = projectGroups.find((group) => group.key === selectedProjectKey);
@@ -227,7 +243,7 @@ function useSettingsIndexSections(): SettingsListSection[] {
           representative: scopedProjectMembers[0]!,
           members: scopedProjectMembers,
         })
-      : (selectedProject?.label ?? "Unavailable project");
+      : (selectedProject?.label ?? t("settings.unavailableProject"));
   const page = (
     target: SettingsPageTarget,
     icon: SettingsListRow["icon"],
@@ -240,49 +256,54 @@ function useSettingsIndexSections(): SettingsListSection[] {
   return [
     {
       rows: [
-        page("SettingsOrganization", "gearshape", "General"),
-        page("SettingsAppearance", "paintbrush", "Appearance"),
-        page("SettingsFollowUp", "bubble.left.and.bubble.right", "Chat"),
+        page("SettingsOrganization", "gearshape", t("settings.general")),
+        page("SettingsAppearance", "paintbrush", t("settings.appearance")),
+        page("SettingsFollowUp", "bubble.left.and.bubble.right", t("settings.chat")),
         ...(navigationCustomizationAvailable()
-          ? [page("SettingsNavigation", "line.3.horizontal", "Navigation tabs")]
+          ? [page("SettingsNavigation", "line.3.horizontal", t("settings.navigationTabs"))]
           : []),
-        page("SettingsKeyboard", "keyboard", "Keyboard"),
-        page("SettingsVoice", "mic", "Voice"),
+        page("SettingsKeyboard", "keyboard", t("settings.keyboard")),
+        page("SettingsVoice", "mic", t("settings.voice")),
       ],
     },
     {
-      title: "Agents",
+      title: t("settings.agents"),
       rows: [
-        serverPage("SettingsProviderAccounts", "person.crop.circle", "Providers"),
-        serverPage("SettingsThreads", "text.bubble", "Threads"),
-        page("SettingsScheduledTasks", "clock", "Scheduled tasks"),
+        serverPage("SettingsProviderAccounts", "person.crop.circle", t("settings.providers")),
+        serverPage("SettingsThreads", "text.bubble", t("settings.threads")),
+        page("SettingsScheduledTasks", "clock", t("settings.scheduledTasks")),
       ],
     },
     {
-      title: "Code",
+      title: t("settings.code"),
       rows: [
         page(
           "SettingsProjectOverview",
           "folder",
-          "Projects",
+          t("settings.projects"),
           selectedProjectKey !== null ? { value: projectLabel } : undefined,
         ),
-        serverPage("SettingsEnvironmentSourceControl", "arrow.triangle.branch", "Source control"),
-        serverPage("SettingsWorktrees", "square.on.square", "Worktrees"),
+        serverPage(
+          "SettingsEnvironmentSourceControl",
+          "arrow.triangle.branch",
+          t("settings.sourceControl"),
+        ),
+        serverPage("SettingsWorktrees", "square.on.square", t("settings.worktrees")),
       ],
     },
     {
       rows: [
-        serverPage("SettingsEnvironmentMaintenance", "arrow.clockwise", "Maintenance"),
-        page("SettingsLabs", "flask", "Labs"),
-        page("SettingsAbout", "info.circle", "About"),
-        page("SettingsArchive", "archivebox", "Archive"),
+        serverPage("SettingsEnvironmentMaintenance", "arrow.clockwise", t("settings.maintenance")),
+        page("SettingsLabs", "flask", t("settings.labs")),
+        page("SettingsAbout", "info.circle", t("settings.about")),
+        page("SettingsArchive", "archivebox", t("settings.archive")),
       ],
     },
   ];
 }
 
 function useOverflowRows(): SettingsListRow[] {
+  const labels = useWorkspaceTabLabels();
   const order = useNavigationTabOrder();
   const hidden = useHiddenNavigationTabs();
   const { layout } = useAdaptiveWorkspaceLayout();
@@ -292,7 +313,7 @@ function useOverflowRows(): SettingsListRow[] {
   return tabs.map((tab) => ({
     id: tab,
     icon: NAVIGATION_TAB_ICONS[tab],
-    label: WORKSPACE_TAB_LABELS[tab],
+    label: labels[tab],
     onPress: () => selectTab(tab),
   }));
 }

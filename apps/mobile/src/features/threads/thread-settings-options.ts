@@ -1,3 +1,4 @@
+import type { UiTranslator } from "../../i18n/translator";
 import {
   managedRuntimeModeDenial,
   type ManagedPolicySummary,
@@ -84,3 +85,21 @@ export function compatibleRuntimeModeForChoices(
 }
 
 export { selectableProviderOptionChoices as selectableChoices } from "@t3tools/client-runtime/model-traits";
+
+export function localizeRuntimeModeChoice<T extends (typeof RUNTIME_MODE_CHOICES)[number]>(
+  choice: T,
+  t: UiTranslator,
+): T {
+  const keys = {
+    "approval-required": "supervised",
+    "auto-accept-edits": "acceptEdits",
+    auto: "auto",
+    "full-access": "fullAccess",
+  } as const;
+  const key = keys[choice.mode];
+  return {
+    ...choice,
+    label: t(`runtimeMode.${key}.label`),
+    description: t(`runtimeMode.${key}.description`),
+  };
+}

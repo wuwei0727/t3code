@@ -6,8 +6,11 @@ import { vi } from "vite-plus/test";
 const openDatabaseAsync = vi.hoisted(() => vi.fn());
 
 vi.mock("expo-sqlite", () => ({ openDatabaseAsync }));
+vi.mock("expo-secure-store", () => ({}));
 
 import * as MobileDatabase from "./mobile-database";
+import * as MobilePreferences from "./mobile-preferences";
+import * as MobileSecureStorage from "./mobile-secure-storage";
 
 describe("offline pull request cache", () => {
   const environmentId = "cached-environment" as import("@t3tools/contracts").EnvironmentId;
@@ -37,6 +40,32 @@ describe("offline pull request cache", () => {
     openDatabaseAsync.mockResolvedValueOnce(database);
     return sqlite;
   }
+
+  it.effect(
+    "persists UI language across store recreation and rejects unsupported stored values",
+    () =>
+      Effect.scoped(
+        Effect.gen(function* () {
+          yield* Effect.promise(sqliteDatabase);
+          const database = yield* MobileDatabase.make;
+          const store = MobilePreferences.MobilePreferencesStore.pipe(
+            Effect.provide(MobilePreferences.layer),
+            Effect.provideService(MobileDatabase.MobileDatabase, database),
+            Effect.provideService(MobileSecureStorage.MobileSecureStorage, {
+              getItem: () => Effect.succeed(null),
+              setItem: () => Effect.void,
+              removeItem: () => Effect.void,
+            }),
+          );
+          for (const language of ["system", "en", "zh-CN"] as const) {
+            yield* (yield* store).savePatch({ language });
+            expect((yield* (yield* store).load).language).toBe(language);
+          }
+          yield* database.savePreferencesJson('{"language":"unsupported"}', 1);
+          expect((yield* (yield* store).load).language).toBeUndefined();
+        }),
+      ),
+  );
 
   it.effect("restores saved records and clears them with the environment", () =>
     Effect.scoped(

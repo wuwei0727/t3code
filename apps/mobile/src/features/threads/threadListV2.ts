@@ -1,3 +1,4 @@
+import type { UiLocale } from "../../i18n/locale";
 import {
   canSnooze,
   effectiveSnoozed,
@@ -501,6 +502,7 @@ export function threadListV2ListItemsAreEqual(
 function resolveThreadListV2ItemTimeLabel(
   item: ThreadListV2Item,
   showSnoozeWakeLabel: boolean,
+  locale: UiLocale,
 ): string {
   const { thread, variant, snoozed } = item;
   if (showSnoozeWakeLabel) return "";
@@ -515,10 +517,13 @@ function resolveThreadListV2ItemTimeLabel(
     variant === "slim" && !snoozed ? resolveSettledThreadTimestamp(thread) : null;
   return relativeTime(
     settledTimestamp ?? resolveThreadActivityTimestamp(thread) ?? thread.createdAt,
+    undefined,
+    locale,
   );
 }
 
 export function buildThreadListV2ListItems(input: {
+  readonly locale?: UiLocale;
   readonly items: ReadonlyArray<ThreadListV2Item>;
   readonly pendingTasks: ReadonlyArray<PendingNewTask>;
   readonly workingCount?: number;
@@ -559,7 +564,11 @@ export function buildThreadListV2ListItems(input: {
       key: `v2-thread:${item.thread.environmentId}:${item.thread.id}`,
       item,
       snoozeWakeLabelText,
-      timeLabel: resolveThreadListV2ItemTimeLabel(item, snoozeWakeLabelText !== undefined),
+      timeLabel: resolveThreadListV2ItemTimeLabel(
+        item,
+        snoozeWakeLabelText !== undefined,
+        input.locale ?? "en",
+      ),
       snoozePresetMinute,
       showTrailingDivider: false,
       hasQueuedMessages:

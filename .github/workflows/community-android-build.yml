@@ -1,0 +1,176 @@
+name: Community Android Test APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      architecture:
+        description: Android ABI (arm64 for most physical phones)
+        type: choice
+        options: [arm64-v8a, x86_64]
+        default: arm64-v8a
+  workflow_call:
+    inputs:
+      source_ref:
+        description: Exact reviewed translation commit
+        type: string
+        required: true
+      architecture:
+        type: string
+        default: arm64-v8a
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-android-build-${{ inputs.source_ref || github.sha }}-${{ inputs.architecture }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository != 'pingdotgg/t3code' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      CI: "1"
+      APP_VARIANT: preview
+      T3CODE_COMMUNITY_ANDROID: "1"
+      T3CODE_MOBILE_UPDATES_ENABLED: "0"
+      EXPO_NO_DOTENV: "1"
+      EXPO_NO_TYPESCRIPT_SETUP: "1"
+      NODE_OPTIONS: --max-old-space-size=4096
+      T3CODE_CLERK_PUBLISHABLE_KEY: ${{ vars.T3CODE_CLERK_PUBLISHABLE_KEY }}
+      T3CODE_CLERK_JWT_TEMPLATE: ${{ vars.T3CODE_CLERK_JWT_TEMPLATE }}
+      T3CODE_RELAY_URL: ${{ vars.T3CODE_RELAY_URL }}
+    steps:
+      - name: Validate requested source and architecture
+        env:
+          SOURCE_REF: ${{ inputs.source_ref || github.sha }}
+          ARCHITECTURE: ${{ inputs.architecture || 'arm64-v8a' }}
+        run: |
+          [[ "$SOURCE_REF" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          [[ "$ARCHITECTURE" == arm64-v8a || "$ARCHITECTURE" == x86_64 ]] || exit 1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.source_ref || github.sha }}
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb # v1
+        with:
+          version-file: pnpm-workspace.yaml
+          node-version-file: package.json
+          cache: false
+          run-install: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6; same pin as upstream release-desktop
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: community-android-gradle-${{ runner.os }}-${{ inputs.architecture || 'arm64-v8a' }}-${{ hashFiles('pnpm-lock.yaml', 'apps/mobile/app.config.ts', 'apps/mobile/plugins/**', 'scripts/android-community/native-build.init.gradle') }}
+          restore-keys: |
+            community-android-gradle-${{ runner.os }}-${{ inputs.architecture || 'arm64-v8a' }}-
+      - name: Install locked dependencies
+        id: install
+        run: |
+          set -euo pipefail
+          vp install --frozen-lockfile --filter=@t3tools/mobile... --filter=@t3tools/scripts... 2>&1 | tee "$RUNNER_TEMP/community-install.log"
+          git diff --exit-code
+      - name: Validate resources and build provenance
+        id: resources
+        run: |
+          node --test scripts/android-community/maintenance.test.mjs scripts/android-community/clerk-ui.test.mjs
+          node scripts/android-community/translate.mjs --check
+          node scripts/android-community/generate-runtime.mjs --check
+          node scripts/android-community/scan.mjs > "$RUNNER_TEMP/community-ui-inventory.json"
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const state = JSON.parse(readFileSync('community/android/maintenance.json'));
+          if (state.baselineBuild.status !== 'passed' || !/^[a-f0-9]{40}$/.test(state.selectedBaseline?.commit ?? '')) throw new Error('A verified source baseline is required');
+          const code = state.community.versionCode;
+          if (!Number.isInteger(code) || code < 1 || code > 2100000000) throw new Error('Invalid community version code');
+          appendFileSync(process.env.GITHUB_ENV, `T3CODE_COMMUNITY_VERSION_CODE=${code}\n`);
+          NODE
+      - name: Focused mobile tests
+        id: tests
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          vp test run --project unit app.config.test.ts src/i18n/locale.test.ts src/lib/appLinking.test.ts src/features/connection/pairing.test.ts src/persistence/mobile-database.test.ts src/state/preferences.test.ts src/features/observability/observe.test.ts 2>&1 | tee "$RUNNER_TEMP/community-tests.log"
+      - name: Mobile typecheck
+        id: typecheck
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          vp run typecheck 2>&1 | tee "$RUNNER_TEMP/community-typecheck.log"
+      - name: Generate community native project
+        id: prebuild
+        working-directory: apps/mobile
+        run: |
+          set -euo pipefail
+          (cd ../.. && node scripts/android-community/configure-connect.mjs)
+          vp exec expo config --type public --json > "$RUNNER_TEMP/community-expo-config.json"
+          node ../../scripts/android-community/configure-connect.mjs --check-expo-config "$RUNNER_TEMP/community-expo-config.json"
+          vp exec expo prebuild --platform android --no-install 2>&1 | tee "$RUNNER_TEMP/community-prebuild.log"
+      - name: Build unsigned APK without API or signing secrets
+        id: apk
+        working-directory: apps/mobile/android
+        env:
+          ARCHITECTURE: ${{ inputs.architecture || 'arm64-v8a' }}
+        run: |
+          set -euo pipefail
+          ./gradlew :community-clerk-ui:testDebugUnitTest :app:assembleRelease "-PreactNativeArchitectures=$ARCHITECTURE" -Pt3CommunityUnsigned=true \
+            --no-daemon --build-cache --max-workers=2 -Pkotlin.compiler.execution.strategy=in-process \
+            '-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1536m' \
+            --init-script "$GITHUB_WORKSPACE/scripts/android-community/native-build.init.gradle" \
+            2>&1 | tee "$RUNNER_TEMP/community-gradle.log"
+          python3 - <<'PY'
+          import glob, json, zipfile
+          apks = glob.glob('app/build/outputs/apk/release/*unsigned.apk')
+          assert apks, 'No unsigned APK produced'
+          for apk in apks:
+              with zipfile.ZipFile(apk) as archive:
+                  extra = json.loads(archive.read('assets/app.config'))['extra']
+              for value in (extra['clerk']['publishableKey'], extra['clerk']['jwtTemplate'], extra['relay']['url']):
+                  assert isinstance(value, str) and value.strip(), 'Packaged T3 Connect configuration missing'
+          print('Packaged account/Connect configuration verified; login and delivery still require device tests')
+          PY
+          find app/build/outputs/apk/release -name '*unsigned.apk' -exec sha256sum '{}' \; > "$RUNNER_TEMP/community-apk-sha256.txt"
+          test -s "$RUNNER_TEMP/community-apk-sha256.txt"
+      - name: Save actual result
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.apk.outcome }}
+          INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          RESOURCE_OUTCOME: ${{ steps.resources.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          PREBUILD_OUTCOME: ${{ steps.prebuild.outcome }}
+          SOURCE_REF: ${{ inputs.source_ref || github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+          const e = process.env;
+          let upstream = null;
+          try { upstream = JSON.parse(readFileSync('community/android/maintenance.json')).selectedBaseline; } catch {}
+          const checks = { install: e.INSTALL_OUTCOME, resources: e.RESOURCE_OUTCOME, tests: e.TEST_OUTCOME, typecheck: e.TYPECHECK_OUTCOME, prebuild: e.PREBUILD_OUTCOME, build: e.BUILD_OUTCOME };
+          const result = { sourceCommit: e.SOURCE_REF, upstream, checks, build: e.BUILD_OUTCOME, signing: 'unsigned; sign with the retained personal/community key before installing', deviceTests: 'unverified', published: false, runUrl: `${e.GITHUB_SERVER_URL}/${e.GITHUB_REPOSITORY}/actions/runs/${e.GITHUB_RUN_ID}` };
+          writeFileSync(`${e.RUNNER_TEMP}/community-result.json`, JSON.stringify(result, null, 2));
+          appendFileSync(e.GITHUB_STEP_SUMMARY, '```json\n' + JSON.stringify(result, null, 2) + '\n```\n');
+          NODE
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: community-android-${{ inputs.architecture || 'arm64-v8a' }}-${{ github.run_id }}
+          include-hidden-files: true
+          retention-days: 30
+          path: |
+            apps/mobile/android/app/build/outputs/apk/release/*unsigned.apk
+            ${{ runner.temp }}/community-*.log
+            ${{ runner.temp }}/community-result.json
+            ${{ runner.temp }}/community-apk-sha256.txt
+            ${{ runner.temp }}/community-ui-inventory.json
+            .t3/clerk-ui/*/origin.json
+            .t3/clerk-ui/*/LICENSE
+            .t3/clerk-ui/*/build/test-results/testDebugUnitTest/*.xml

@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-12T17:55:12.432586+00:00",
+  "complete": false,
+  "status": "scoped-device-acceptance-passed-stream-failed-overall-incomplete",
+  "versionName": "2.3.0-zh.8",
+  "versionCode": 8,
+  "applicationId": "io.github.wuwei0727.t3code.zh",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "historicalAcceptance": {
+    "record": "community/android/acceptance-v7.json",
+    "scope": "v6 real email login/cloud send; v7 overwrite install/auth retention/cloud status/notification permission/language restart. These are historical, not installed-v8 evidence."
+  },
+  "catalogEntries": 4107,
+  "newEntriesSinceV7": 47,
+  "fullyLocalized": false,
+  "humanReviewed": false,
+  "changes": [
+    "Browser preview button/count and attachment open/share/loading/failure fallback",
+    "Environment machine icon accessibility labels and linked-environment expiry/reachability presentation",
+    "Notification permission requests use current language for existing channel display name; channel ID and permission behavior unchanged",
+    "Search result speaker prefix, workspace close-search, worktree running header and conversation title fallback",
+    "Pull request file counts, guide position, review fallback and outdated badge",
+    "Side chat/workflow accessibility, workflow member locale propagation and known effort/speed labels",
+    "Markdown image fallback/hold/error presentation and MCP app title fallback; actual alt text and diagnostics preserved",
+    "Heuristic scanner reports single-line UI conditional expression snippets for manual review; no automatic source rewriting",
+    "Fix pre-existing localization regression in skipped worktree-stage detail/duration decisions; localize stage accessibility status without modifying protocol values"
+  ],
+  "checks": {
+    "mobileTypecheck": "passed",
+    "targetedLint": "passed",
+    "format": "25 scoped source/script/test files formatted",
+    "cloudLocaleTests": {
+      "files": 9,
+      "passed": 68,
+      "failed": 0,
+      "log": ".t3/acceptance-v7-continued/cloud-locale-tests.log"
+    },
+    "layoutTests": {
+      "files": 3,
+      "passed": 35,
+      "failed": 0,
+      "log": ".t3/acceptance-v7-continued/layout-tests.log",
+      "scope": "Existing pure layout tests; not matched K70 visual captures"
+    },
+    "expressionUiTests": {
+      "files": 3,
+      "passed": 36,
+      "failed": 0,
+      "log": ".t3/acceptance-v7-continued/expression-ui-tests.log",
+      "testSetup": "Existing image tests now use same English translator mock as other component tests; original image assertions retained"
+    },
+    "maintenanceTests": {
+      "passed": 12,
+      "failed": 0,
+      "log": ".t3/acceptance-v7-continued/maintenance-tests.log",
+      "regression": "Conditional UI examples first failed inventory assertion (0 != 2), then passed after scanner change"
+    },
+    "resourceCheck": "Final check passed; no pending/stale/missing; API calls0",
+    "mirrorSource": {
+      "files": 401,
+      "mismatches": []
+    },
+    "bothApkPackaging": "Passed: version8, ABI, same fixed certificate, v2/v3 signatures, native alignment, public Connect config and all4107 current Chinese literals",
+    "runtimeResourceSha256": "ee2607bae212b99e948c9312f132735e0020455a71f1812a944ed6ebc39b365d"
+  },
+  "simulationTarget": {
+    "reportedModel": "Redmi K70",
+    "androidVersion": "16",
+    "pixels": {
+      "width": 1440,
+      "height": 3200
+    },
+    "diagonalInches": 6.67,
+    "osVersion": "3.0.307.0.WNKCNXM.C11",
+    "densityDpi": 560,
+    "matchedVisualAcceptance": true,
+    "status": "Booted API36 Android16 x86_64 1440x3200; v8 installed and visually inspected; 560 DPI is assumed, not verified Redmi logical density",
+    "physicalTesting": "Deferred in response to user preference; no installation requested now",
+    "preset": "community/android/device-profiles/redmi-k70-simulation.json",
+    "densityAssumed": true,
+    "imageVerified": {
+      "size": 1895447397,
+      "sha1": "c6bf44bdcd885bb902b4ba752d111a073ad7a817",
+      "source": "Official Google repository metadata; API36 Google APIs x86_64 revision7"
+    }
+  },
+  "deviceAutomation": {
+    "status": "working through Device panel and returned AgentDevice command",
+    "fallback": "No adb UI, alternate UI driver, or authentication bypass used",
+    "remainingFailure": "Mobile device preview receives no video; Device control and screenshots themselves work"
+  },
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".t3/artifacts/community-v8/t3code-zh-2.3.0-zh.8-arm64-v8a.apk",
+      "sha256": "1c24dcecb52aa43263008b76e5c6145bb7a9551f4b63c0a877d82d9e213e19b4",
+      "sizeBytes": 103092882,
+      "installedAndLaunched": false
+    },
+    {
+      "abi": "x86_64",
+      "path": ".t3/artifacts/community-v8/t3code-zh-2.3.0-zh.8-x86_64.apk",
+      "sha256": "bb66abf594b500b7a7de6b6f11c09e2de8a4351cbb7e0dc377d515505ba604fb",
+      "sizeBytes": 106488334,
+      "installedAndLaunched": true
+    }
+  ],
+  "installedV8": true,
+  "remaining": [
+    "Device preview no-video failure: isolate media transport/decoder path; retest final candidate",
+    "Device preview no-video failure: isolate media transport/decoder path; retest final candidate",
+    "Real Firebase push setup and delivery",
+    "Physical ARM hardware and vendor background/network restrictions",
+    "Independent desktop/web UI and second physical computer sync",
+    "Third-party SSO callback variants",
+    "Context-specific external provider/hosted repository/hardware states",
+    "Maintainer translation review and protected GitHub workflow execution",
+    "Play production-to-source mapping remains unverified"
+  ],
+  "review": {
+    "scope": "Read-only scoped v8 review",
+    "finding": "Translated skipped text was compared against protocol status in two places",
+    "fix": "Protocol decisions compare literal skipped; translated label is used only for display",
+    "regression": {
+      "red": ".t3/acceptance-v7-continued/skipped-stage-red.log",
+      "green": ".t3/acceptance-v7-continued/expression-ui-tests.log",
+      "cases": "Chinese skipped/null detail, raw skipped detail, pending and running checkout percent"
+    },
+    "otherFindings": "No other concrete regression; no notification currentTranslator import cycle found"
+  },
+  "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+  "buildHistory": {
+    "firstArmNative": "29m33s passed before final source freeze",
+    "finalBundleFirstAttempt": "Windows subprocess failed with 0xC0000005; retained log arm-v8-node-crash.log",
+    "retry": "4m1s passed",
+    "finalArm": "3m50s passed; terminology included",
+    "firstX86Native": "7m35s passed",
+    "finalX86": "2m12s passed; terminology included",
+    "packaging": "Working-directory check corrected; interim signed candidates archived before final signing; overwrite refusal preserved"
+  },
+  "deviceAcceptance": {
+    "evidenceDirectory": ".t3/acceptance-v8-device/",
+    "testedApkSha256": "bb66abf594b500b7a7de6b6f11c09e2de8a4351cbb7e0dc377d515505ba604fb",
+    "coldInstall": {
+      "status": "passed",
+      "device": "T3_ZH_K70_API36_1440x3200",
+      "android": 16,
+      "api": 36,
+      "pixels": [1440, 3200],
+      "abi": "x86_64",
+      "evidence": ["installed-version.txt", "android-api.txt", "android-release.txt", "install.log"]
+    },
+    "language": {
+      "status": "passed",
+      "scope": "Explicit English and Chinese selection/relaunch persistence; follow English system; Chinese restored",
+      "evidence": [
+        "english-after-restart.txt",
+        "chinese-after-restart.txt",
+        "follow-system-en.txt",
+        "appearance-zh.png"
+      ]
+    },
+    "layout": {
+      "status": "passed-scoped",
+      "screens": "Appearance settings, native login, settings root and notifications; not all context-specific screens",
+      "fontSettings": [
+        "large (normal/restored)",
+        "extra-extra-extra-large",
+        "accessibility-medium"
+      ],
+      "numericFontScale": "Not measured; named AgentDevice settings must not be represented as exact 1.3/1.5",
+      "evidence": [
+        "appearance-large.png",
+        "auth-large.png",
+        "settings-accessibility.png",
+        "notifications-accessibility.txt"
+      ]
+    },
+    "nativeLoginPage": {
+      "status": "passed-scoped",
+      "scope": "Chinese Clerk email/SSO entry page inspected at enlarged font; no new credentials entered; actual prior user email login preserved"
+    },
+    "isolatedDirectPair": {
+      "status": "passed",
+      "scope": "Manual pairing UI to isolated server port16418; release intentionally ignores dev-only URL credential prefill"
+    },
+    "mobileSend": {
+      "status": "passed",
+      "provider": "free devReplay/showcase",
+      "evidence": ["mobile-send-server.json", "thread-after-mobile.txt"]
+    },
+    "computerLiveReceive": {
+      "status": "passed",
+      "scope": "CLI sent message displayed without reopening conversation",
+      "evidence": ["live-computer-message.png"]
+    },
+    "questionAndApproval": {
+      "status": "passed",
+      "actions": ["Submit selected answer", "Allow once"],
+      "pendingAfter": 0,
+      "provider": "free devReplay",
+      "evidence": [
+        "question-before.txt",
+        "question-selected.png",
+        "question-after-server.json",
+        "approval-before.png",
+        "approval-after-server.json"
+      ]
+    },
+    "offlineQueue": {
+      "status": "passed",
+      "scope": "Stopped only owned isolated server; mobile queued while offline; same app recovered automatically and delivered after restart",
+      "evidence": ["offline-queued.png", "reconnect-server.json", "reconnect-after.png"]
+    },
+    "attachment": {
+      "status": "passed",
+      "bytes": 118,
+      "sha256": "dfa675c6ff7670e2ef94cb854faa00bb66660edca5c8a95c1824d8e7b3e09ba2",
+      "scope": "Native file picker import/send, server bytes identical, preview raw English/Chinese/model-id retained, Chinese file menu",
+      "evidence": ["attachment-hashes.json", "attachment-preview.png", "file-menu.png"]
+    },
+    "upgrade": {
+      "status": "passed",
+      "from": 7,
+      "to": 8,
+      "device": "frostplay x86_64 emulator",
+      "scope": "adb install -r success; native account/manage/security/signout entries retained without login; cloud connection retained",
+      "evidence": [
+        "upgrade-before-version.txt",
+        "upgrade-install.log",
+        "upgrade-after-version.txt"
+      ],
+      "privateEvidence": "Account snapshots excluded from distributable evidence"
+    },
+    "realT3Connect": {
+      "status": "passed",
+      "scope": "Registered real computer connected via sole active T3 Connect path; current conversation history/live updates loaded; mobile steer marker received in this active task",
+      "marker": "【v8 云连接验收】第八版覆盖升级后，从 Android 经 T3 Connect 继续当前会话。",
+      "evidence": ["cloud-route-after-upgrade.txt", "cloud-live-message.png"],
+      "limits": "Does not independently prove a second desktop UI or physical phone"
+    },
+    "devicePreview": {
+      "status": "failed",
+      "observed": "No video received from the device. Reconnect to try again.",
+      "scope": "Chinese viewer/control/menu entry opened; version dialog worked; no rendered video",
+      "diagnosis": "Shared transport source unchanged from baseline; no useful WebView exception in captured logs; root cause unresolved, not attributed to upstream or localization without proof",
+      "localizationGaps": [
+        "Known stream failure message",
+        "Device hub/Agent tools installed/required/running summaries"
+      ],
+      "followup": "Source candidate v9 adds display-only translations; it does not claim to fix media transport"
+    },
+    "notifications": {
+      "status": "delivery-unverified",
+      "scope": "Chinese notification settings inspected; real Firebase push requires matching community Firebase app/sender configuration"
+    }
+  }
+}

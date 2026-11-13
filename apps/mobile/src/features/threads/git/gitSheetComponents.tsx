@@ -1,3 +1,5 @@
+import type { UiLocale } from "../../../i18n/locale";
+import { localizeGitUiText } from "./gitPresentation";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { SymbolView } from "../../../components/ui/AppSymbol";
 import type { ComponentProps } from "react";
@@ -36,33 +38,51 @@ export function statusSummary(
     readonly pr?: { readonly state?: string; readonly number?: number } | null;
     readonly sourceControlProvider?: { readonly kind: string } | null;
   } | null,
+  locale: UiLocale = "en",
 ): string {
   if (!gitStatus) {
-    return "Loading branch status\u2026";
+    return localizeGitUiText("Loading branch status…", locale);
   }
 
   if (!gitStatus.isRepo) {
-    return "Not a git repository";
+    return localizeGitUiText("Not a git repository", locale);
   }
 
   const parts: string[] = [];
   if (gitStatus.hasWorkingTreeChanges) {
     const fileCount = gitStatus.workingTree?.files.length ?? 0;
-    parts.push(`${fileCount} file${fileCount === 1 ? "" : "s"} changed`);
+    parts.push(
+      localizeGitUiText(`${fileCount} file${fileCount === 1 ? "" : "s"} changed`, locale, {
+        count: fileCount,
+      }),
+    );
   } else {
-    parts.push("Clean");
+    parts.push(localizeGitUiText("Clean", locale));
   }
   if ((gitStatus.aheadCount ?? 0) > 0) {
-    parts.push(`${gitStatus.aheadCount} ahead`);
+    parts.push(
+      localizeGitUiText(`${gitStatus.aheadCount} ahead`, locale, {
+        count: gitStatus.aheadCount ?? 0,
+      }),
+    );
   }
   if ((gitStatus.behindCount ?? 0) > 0) {
-    parts.push(`${gitStatus.behindCount} behind`);
+    parts.push(
+      localizeGitUiText(`${gitStatus.behindCount} behind`, locale, {
+        count: gitStatus.behindCount ?? 0,
+      }),
+    );
   }
   if (gitStatus.pr?.state === "open") {
     const { shortLabel } = sourceControlClients.get(
       gitStatus.sourceControlProvider?.kind,
     ).changeRequest;
-    parts.push(`${shortLabel} #${gitStatus.pr.number} open`);
+    parts.push(
+      localizeGitUiText(`${shortLabel} #${gitStatus.pr.number} open`, locale, {
+        request: shortLabel,
+        number: gitStatus.pr.number ?? 0,
+      }),
+    );
   }
 
   return parts.join(" \u00b7 ");

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../../i18n/LanguageProvider";
 import {
   CODE_FONT_SIZE_STEP,
   MAX_CODE_FONT_SIZE,
@@ -13,6 +14,7 @@ import {
 import { FontSizeSliderRow } from "../components/FontSizeSliderRow";
 
 export function CodeAppearanceSection() {
+  const { t } = useLanguage();
   const { isReady, appearance, setCodeFontSize, setCodeWordBreak } = useAppearancePreferences();
   const custom = appearance.isCodeFontSizeCustom;
 
@@ -21,7 +23,7 @@ export function CodeAppearanceSection() {
   };
 
   return (
-    <SettingsSection title="Code & Diffs">
+    <SettingsSection title={t("appearance.codeDiffs")}>
       <CodeAppearancePreview
         fontSize={appearance.codeFontSize}
         wordBreak={appearance.codeWordBreak}
@@ -30,7 +32,7 @@ export function CodeAppearanceSection() {
       <SettingsSwitchRow
         disabled={!isReady}
         icon="chevron.left.forwardslash.chevron.right"
-        label="Custom font size"
+        label={t("appearance.customFont")}
         onValueChange={handleToggleCustom}
         value={custom}
       />
@@ -38,7 +40,7 @@ export function CodeAppearanceSection() {
         <FontSizeSliderRow
           disabled={!isReady}
           icon="textformat.size"
-          label="Font size"
+          label={t("appearance.fontSize")}
           max={MAX_CODE_FONT_SIZE}
           min={MIN_CODE_FONT_SIZE}
           onChange={setCodeFontSize}
@@ -50,7 +52,7 @@ export function CodeAppearanceSection() {
       <SettingsSwitchRow
         disabled={!isReady}
         icon="text.word.spacing"
-        label="Word break"
+        label={t("appearance.wordBreak")}
         onValueChange={setCodeWordBreak}
         value={appearance.codeWordBreak}
       />

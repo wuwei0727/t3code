@@ -1,3 +1,6 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiLocale } from "../../i18n/locale";
+import { localizeChangeRequestTerminology } from "./changeRequestTerminology";
 import {
   sourceControlClients,
   type ChangeRequestTerminology,
@@ -38,30 +41,33 @@ export const MERGE_METHODS = {
 export function pullRequestActionLabel(
   action: PullRequestAction,
   terminology: ChangeRequestTerminology,
+  locale: UiLocale = "en",
 ): string {
+  const t = makeTranslator(locale);
+  const request = localizeChangeRequestTerminology(terminology, locale).singular;
   switch (action) {
     case "merge":
-      return `Merge ${terminology.singular}`;
+      return t("prActions.merge", { request });
     case "ready":
-      return "Mark ready for review";
+      return t("prActions.ready");
     case "draft":
-      return "Convert to draft";
+      return t("prActions.draft");
     case "close":
-      return `Close ${terminology.singular}`;
+      return t("prActions.close", { request });
     case "reopen":
-      return `Reopen ${terminology.singular}`;
+      return t("prActions.reopen", { request });
     case "update-branch":
-      return "Update branch";
+      return t("prActions.updateBranch");
     case "enable-auto-merge":
-      return "Enable auto-merge";
+      return t("prActions.enableAuto");
     case "disable-auto-merge":
-      return "Disable auto-merge";
+      return t("prActions.disableAuto");
     case "revert":
-      return `Create revert ${terminology.singular}`;
+      return t("prActions.revert", { request });
     case "delete-branch":
-      return "Delete branch";
+      return t("prActions.deleteBranch");
     case "approve-workflows":
-      return "Approve workflows";
+      return t("prActions.approveWorkflows");
   }
 }
 
@@ -121,19 +127,30 @@ export function mergeUnavailableReason(
   pr: ActionDetail,
   connectionAllowsWrites: boolean,
   terminology: ChangeRequestTerminology,
+  locale: UiLocale = "en",
 ) {
-  if (pr.state === "merged") return `This ${terminology.singular} has been merged.`;
-  if (pr.state === "closed") return `Reopen this ${terminology.singular} before merging.`;
-  if (!connectionAllowsWrites) return "This environment connection is read-only.";
-  if (!pr.capabilities.actions.includes("merge"))
-    return "This provider does not support merging here.";
-  if (!pr.viewerPermissions.actions.includes("merge"))
-    return `Your account cannot merge this ${terminology.singular}.`;
-  if (pr.isDraft) return "Mark this draft ready for review before merging.";
-  if (pr.mergeability === "conflicting") return "Resolve the branch conflicts before merging.";
-  if (!allowedMergeMethods(pr).length) return "This repository has no available merge methods.";
+  const t = makeTranslator(locale);
+  const request = localizeChangeRequestTerminology(terminology, locale).singular;
+  if (pr.state === "merged") return t("prActions.merged", { request });
+  if (pr.state === "closed") return t("prActions.reopenFirst", { request });
+  if (!connectionAllowsWrites) return t("prActions.readOnly");
+  if (!pr.capabilities.actions.includes("merge")) return t("prActions.unsupported");
+  if (!pr.viewerPermissions.actions.includes("merge")) return t("prActions.denied", { request });
+  if (pr.isDraft) return t("prActions.readyFirst");
+  if (pr.mergeability === "conflicting") return t("prActions.conflicts");
+  if (!allowedMergeMethods(pr).length) return t("prActions.noMethods");
   return null;
 }
 
-export const openOnProviderLabel = (provider: SourceControlProviderKind) =>
-  `Open on ${sourceControlClients.get(provider).label}`;
+export const openOnProviderLabel = (provider: SourceControlProviderKind, locale: UiLocale = "en") =>
+  makeTranslator(locale)("prActions.openProvider", {
+    provider: sourceControlClients.get(provider).label,
+  });
+
+export function mergeMethodPresentation(method: PullRequestMergeMethod, locale: UiLocale = "en") {
+  const t = makeTranslator(locale);
+  return {
+    title: t(`prMerge.method.${method}.title`),
+    description: t(`prMerge.method.${method}.description`),
+  };
+}

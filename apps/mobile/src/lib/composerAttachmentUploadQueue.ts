@@ -76,18 +76,21 @@ export function canUploadComposerAttachment(
   );
 }
 
-export function composerAttachmentUploadBlockReason(input: {
-  readonly environmentId: EnvironmentId;
-  readonly attachments: ReadonlyArray<DraftComposerAttachment>;
-  readonly connected: boolean;
-  readonly serverConfig: UploadServerConfig | null;
-  readonly states: Readonly<Record<string, ComposerAttachmentUploadState>>;
-}): string | null {
+export function composerAttachmentUploadBlockReason(
+  input: {
+    readonly environmentId: EnvironmentId;
+    readonly attachments: ReadonlyArray<DraftComposerAttachment>;
+    readonly connected: boolean;
+    readonly serverConfig: UploadServerConfig | null;
+    readonly states: Readonly<Record<string, ComposerAttachmentUploadState>>;
+  },
+  failedReason = "Retry or remove the failed attachment",
+): string | null {
   if (!input.connected) return null;
   for (const attachment of input.attachments) {
     if (!canUploadComposerAttachment(attachment, input.serverConfig)) continue;
     const state = input.states[composerAttachmentUploadKey(input.environmentId, attachment.id)];
-    if (state?.status === "failed") return "Retry or remove the failed attachment";
+    if (state?.status === "failed") return failedReason;
   }
   return null;
 }

@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import {
   ARCHIVE_ENTRY_MAX_BYTES,
@@ -244,13 +245,14 @@ function ZipTreeRowView(props: {
   readonly onToggle: (path: string) => void;
   readonly onOpen: (entry: ZipEntry) => void;
 }) {
+  const { t } = useLanguage();
   const { node, depth } = props.row;
   const entry = node.entry;
   const folder = entry ? null : zipFolderLabel(node.label);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={entry ? entry.path : `${node.path} folder`}
+      accessibilityLabel={entry ? entry.path : t("zip.folder", { path: node.path })}
       accessibilityState={entry ? undefined : { expanded: !props.collapsed }}
       onPress={() => (entry ? props.onOpen(entry) : props.onToggle(node.path))}
       className="mx-2 h-11 flex-row items-center gap-1.5 rounded-lg pr-2.5 active:bg-subtle"
@@ -283,7 +285,9 @@ function ZipTreeRowView(props: {
         {entry
           ? formatAttachmentSize(entry.sizeBytes)
           : props.collapsed
-            ? `${node.fileCount} ${node.fileCount === 1 ? "file" : "files"}`
+            ? t(node.fileCount === 1 ? "zip.fileCount" : "zip.filesCount", {
+                count: node.fileCount,
+              })
             : ""}
       </Text>
     </Pressable>
@@ -296,6 +300,7 @@ function ZipArchiveHeader(props: {
   readonly onSave: () => void;
   readonly onRemove: (() => void) | null;
 }) {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   return (
     <AppBar
@@ -305,11 +310,11 @@ function ZipArchiveHeader(props: {
         if (navigation.canGoBack()) navigation.goBack();
       }}
       actions={[
-        { accessibilityLabel: "Save ZIP", icon: "square.and.arrow.up", onPress: props.onSave },
+        { accessibilityLabel: t("zip.save"), icon: "square.and.arrow.up", onPress: props.onSave },
         ...(props.onRemove
           ? [
               {
-                accessibilityLabel: "Remove from draft",
+                accessibilityLabel: t("zip.removeDraft"),
                 icon: "trash" as const,
                 onPress: props.onRemove,
                 destructive: true,
@@ -328,25 +333,35 @@ function ZipArchiveProgress(props: {
   readonly timeLeft: string | null;
   readonly onCancel: () => void;
 }) {
+  const { t, locale } = useLanguage();
   const { timeLeft } = props;
+  const estimate = /^About (\d+) (second|seconds|minutes) left$/.exec(timeLeft ?? "");
+  const localizedTimeLeft =
+    locale === "zh-CN" && estimate
+      ? t(estimate[2] === "minutes" ? "zip.minutesLeft" : "zip.secondsLeft", {
+          count: estimate[1]!,
+        })
+      : timeLeft;
   return (
     <View className="flex-1 justify-center gap-3 bg-sheet px-8">
       <Text className="text-xl font-t3-semibold text-foreground">
         {formatAttachmentSize(props.receivedBytes)}
         {props.totalBytes > 0 ? (
           <Text className="text-xl text-foreground-muted">
-            {` of ${formatAttachmentSize(props.totalBytes)}`}
+            {t("zip.total", { size: formatAttachmentSize(props.totalBytes) })}
           </Text>
         ) : null}
       </Text>
       <Progress
         value={props.totalBytes > 0 ? props.receivedBytes / props.totalBytes : undefined}
-        label="ZIP download progress"
+        label={t("zip.progress")}
       />
       <Text className="text-sm text-foreground-muted">
-        {`Downloading the ZIP so its files can be listed.${timeLeft ? ` ${timeLeft} on this connection.` : ""}`}
+        {localizedTimeLeft
+          ? t("zip.downloadingEta", { time: localizedTimeLeft })
+          : t("zip.downloading")}
       </Text>
-      <Button label="Cancel" onPress={props.onCancel} />
+      <Button label={t("zip.cancel")} onPress={props.onCancel} />
     </View>
   );
 }
@@ -356,20 +371,47 @@ function ZipArchiveFailure(props: {
   readonly onRetry: () => void;
   readonly onSave: () => void;
 }) {
+  const { t } = useLanguage();
+  const titles = new Map([
+    [TOO_LARGE.title, t("zip.tooLarge")],
+    [CANCELLED.title, t("zip.cancelled")],
+    [NETWORK.title, t("zip.networkFailed")],
+    ["Couldn't browse this ZIP", t("zip.browseFailed")],
+  ]);
+  const rawDetail = props.failure.detail.endsWith(" " + SAVE_ZIP_HINT)
+    ? props.failure.detail.slice(0, -(SAVE_ZIP_HINT.length + 1))
+    : props.failure.detail;
+  const detail =
+    props.failure.title === TOO_LARGE.title
+      ? t("zip.browseLimit", {
+          size: formatAttachmentSize(ARCHIVE_MAX_BYTES),
+          hint: t("zip.saveHint"),
+        })
+      : props.failure.title === CANCELLED.title
+        ? t("zip.cancelledHelp")
+        : props.failure.title === NETWORK.title
+          ? t("zip.networkHelp")
+          : props.failure.title === "Couldn't browse this ZIP"
+            ? t("zip.detailAndHint", {
+                detail:
+                  rawDetail === "It may be incomplete or damaged." ? t("zip.damaged") : rawDetail,
+                hint: t("zip.saveHint"),
+              })
+            : props.failure.detail;
   return (
     <View className="flex-1 items-center justify-center bg-sheet px-6">
       <EmptyState
         variant="plain"
-        title={props.failure.title}
-        detail={props.failure.detail}
+        title={titles.get(props.failure.title) ?? props.failure.title}
+        detail={detail}
         action={
           <View className="flex-row gap-3">
             {props.failure.retry ? (
-              <Button tone="primary" label="Try again" onPress={props.onRetry} />
+              <Button tone="primary" label={t("zip.retry")} onPress={props.onRetry} />
             ) : null}
             <Button
               tone={props.failure.retry ? "secondary" : "primary"}
-              label="Save ZIP"
+              label={t("zip.save")}
               onPress={props.onSave}
             />
           </View>
@@ -384,6 +426,7 @@ function ZipArchiveList(props: {
   readonly headerInset: number;
   readonly onOpen: (entry: ZipEntry) => void;
 }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set());
   const { archive } = props;
@@ -417,10 +460,12 @@ function ZipArchiveList(props: {
             <View className="h-[38px] flex-row items-center gap-2 rounded-[10px] bg-subtle px-3">
               <SymbolView name="magnifyingglass" size={15} tintColorClassName="accent-icon-muted" />
               <TextInput
-                accessibilityLabel="Filter files in ZIP"
+                accessibilityLabel={t("zip.filter")}
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder={`Filter ${fileCount} ${fileCount === 1 ? "file" : "files"}`}
+                placeholder={t(fileCount === 1 ? "zip.filterFile" : "zip.filterFiles", {
+                  count: fileCount,
+                })}
                 placeholderTextColorClassName="accent-placeholder"
                 cursorColorClassName="accent-focus"
                 className="min-w-0 flex-1 font-sans text-[15px] text-foreground"
@@ -430,7 +475,7 @@ function ZipArchiveList(props: {
               {query ? (
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Clear filter"
+                  accessibilityLabel={t("zip.clearFilter")}
                   hitSlop={10}
                   onPress={() => setQuery("")}
                 >
@@ -456,12 +501,12 @@ function ZipArchiveList(props: {
           query ? (
             <EmptyState
               variant="plain"
-              title={`No files match “${query.trim()}”`}
-              detail="The filter checks file names and folder paths."
-              action={<Button label="Clear filter" onPress={() => setQuery("")} />}
+              title={t("zip.noMatches", { query: query.trim() })}
+              detail={t("zip.filterHelp")}
+              action={<Button label={t("zip.clearFilter")} onPress={() => setQuery("")} />}
             />
           ) : (
-            <EmptyState variant="plain" title="This ZIP is empty" detail="It has no files." />
+            <EmptyState variant="plain" title={t("zip.empty")} detail={t("zip.emptyHelp")} />
           )
         }
       />
@@ -482,6 +527,7 @@ export function ZipArchiveView(props: {
   readonly onSave: () => void;
   readonly onRemove: (() => void) | null;
 }) {
+  const { t } = useLanguage();
   const { state, retry, cancel } = useZipArchive(props);
   const [selection, setSelection] = useState<{
     readonly archive: ZipArchive;
@@ -499,7 +545,7 @@ export function ZipArchiveView(props: {
           name={props.name}
           subtitle={
             archive
-              ? `${archive.fileCount} ${archive.fileCount === 1 ? "file" : "files"}${props.sizeBytes > 0 ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}`
+              ? `${t(archive.fileCount === 1 ? "zip.fileCount" : "zip.filesCount", { count: archive.fileCount })}${props.sizeBytes > 0 ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}`
               : props.subtitle
           }
           onSave={props.onSave}
@@ -519,7 +565,7 @@ export function ZipArchiveView(props: {
         <View className="flex-1" style={{ paddingTop: headerInset }}>
           {state.status === "loading" ? (
             props.isLocal || state.receivedBytes === 0 ? (
-              <FilePreviewLoading message="Opening ZIP..." />
+              <FilePreviewLoading message={t("zip.opening")} />
             ) : (
               <ZipArchiveProgress
                 receivedBytes={state.receivedBytes}
@@ -596,6 +642,7 @@ function ZipEntryView(props: {
   readonly maxAttachmentBytes: number | undefined;
   readonly onBack: () => void;
 }) {
+  const { t } = useLanguage();
   const { entry, draftKey, maxAttachmentBytes } = props;
   const { mimeType } = entry;
   const previewKind = filePreviewKind({ name: entry.name, mimeType });
@@ -668,14 +715,17 @@ function ZipEntryView(props: {
         if (controller.signal.aborted) return;
         setBusy(null);
         if (kind === "attach")
-          Dialog.alert("Added to chat", `${entry.name} is attached to your message.`);
+          Dialog.alert(t("zip.added"), t("zip.attached", { name: entry.name }));
       },
       (cause: unknown) => {
         if (controller.signal.aborted) return;
         setBusy(null);
         Dialog.alert(
-          kind === "save" ? "Could not save file" : "Could not add file to chat",
-          errorMessage(cause, "Please try again."),
+          kind === "save" ? t("zip.saveFailed") : t("zip.attachFailed"),
+          cause instanceof Error &&
+            cause.message === "This message already has as many attachments as it can hold."
+            ? t("zip.tooManyAttachments")
+            : errorMessage(cause, t("zip.tryAgain")),
         );
       },
     );
@@ -720,14 +770,14 @@ function ZipEntryView(props: {
         onBack={props.onBack}
         menus={[
           {
-            title: "File actions",
+            title: t("files.actions"),
             icon: "ellipsis",
             items: [
               ...(renderedMode
                 ? [
                     {
                       id: "toggle-rendered",
-                      title: rendered ? "Show source" : "Show preview",
+                      title: rendered ? t("zip.showSource") : t("zip.showPreview"),
                       icon: rendered ? "doc.text" : "eye",
                       onPress: () => setRendered((value) => !value),
                     },
@@ -737,7 +787,7 @@ function ZipEntryView(props: {
                 ? [
                     {
                       id: "add-to-chat",
-                      title: "Add to chat",
+                      title: t("zip.addToChat"),
                       icon: "plus.bubble",
                       disabled: busy !== null,
                       onPress: addToChat,
@@ -746,7 +796,7 @@ function ZipEntryView(props: {
                 : []),
               {
                 id: "save",
-                title: "Save file",
+                title: t("zip.saveFile"),
                 icon: "square.and.arrow.up",
                 disabled: busy !== null,
                 onPress: save,
@@ -759,10 +809,27 @@ function ZipEntryView(props: {
         <ScrollView contentContainerClassName="flex-grow items-center justify-center px-6">
           <EmptyState
             variant="plain"
-            title={content.title}
-            detail={content.message}
+            title={
+              content.title === "Too big to preview"
+                ? t("zip.tooBig")
+                : content.title === "Couldn't read this file"
+                  ? t("zip.readFailed")
+                  : content.title
+            }
+            detail={
+              tooBig
+                ? t("zip.previewLimit", { size: formatAttachmentSize(ARCHIVE_ENTRY_MAX_BYTES) })
+                : content.message === "Could not read this file."
+                  ? t("zip.readFailedHelp")
+                  : content.message
+            }
             action={
-              <Button tone="primary" label="Save file" loading={busy === "save"} onPress={save} />
+              <Button
+                tone="primary"
+                label={t("zip.saveFile")}
+                loading={busy === "save"}
+                onPress={save}
+              />
             }
           />
         </ScrollView>
@@ -770,9 +837,9 @@ function ZipEntryView(props: {
         // Closing the viewer stays here so Save and Add to chat remain reachable.
         <View className="flex-1 items-center justify-center bg-sheet px-6">
           <EmptyState
-            title={viewerError ? "No preview for this file" : entry.name}
-            detail={viewerError ?? "Open it in the file viewer, save it, or add it to chat."}
-            actionLabel="Open in file viewer"
+            title={viewerError ? t("zip.noPreview") : entry.name}
+            detail={viewerError ?? t("zip.viewerHelp")}
+            actionLabel={t("zip.openViewer")}
             onAction={openViewer}
           />
         </View>

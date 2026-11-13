@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import type { UiTranslator } from "../../i18n/translator";
 import { Button } from "../../components/ui/Button";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import { ConnectionTraceId } from "./ConnectionTraceId";
@@ -10,20 +12,24 @@ import { View } from "react-native";
 
 import { AppText as Text } from "../../components/ui/AppText";
 
-function noticeTitle(phase: EnvironmentConnectionPhase, environmentLabel: string): string {
+function noticeTitle(
+  phase: EnvironmentConnectionPhase,
+  environmentLabel: string,
+  t: UiTranslator,
+): string {
   switch (phase) {
     case "offline":
-      return "You are offline";
+      return t("connection.notice.offline");
     case "connecting":
-      return `Connecting to ${environmentLabel}...`;
+      return t("connection.notice.connecting", { environment: environmentLabel });
     case "reconnecting":
-      return `Reconnecting to ${environmentLabel}...`;
+      return t("connection.notice.reconnecting", { environment: environmentLabel });
     case "unsupported":
-      return "Client not supported";
+      return t("connection.notice.unsupported");
     case "error":
-      return `${environmentLabel} is unavailable`;
+      return t("connection.notice.unavailable", { environment: environmentLabel });
     case "available":
-      return `${environmentLabel} is disconnected`;
+      return t("connection.notice.disconnected", { environment: environmentLabel });
     case "connected":
       return "";
   }
@@ -33,22 +39,23 @@ function noticeDetail(
   phase: EnvironmentConnectionPhase,
   resourceName: string,
   error: string | null,
+  t: UiTranslator,
 ): string {
   if (error) {
-    return phase === "reconnecting" ? `The app will keep retrying automatically. ${error}` : error;
+    return phase === "reconnecting" ? t("connection.notice.autoRetry", { error }) : error;
   }
 
   switch (phase) {
     case "offline":
-      return `Cached data remains available. The ${resourceName} will load when your connection returns.`;
+      return t("connection.notice.cached", { resource: resourceName });
     case "connecting":
     case "reconnecting":
-      return `The ${resourceName} will load as soon as the environment is ready.`;
+      return t("connection.notice.ready", { resource: resourceName });
     case "unsupported":
-      return "Use compatible versions of the app and server to connect.";
+      return t("connection.notice.compatible");
     case "available":
     case "error":
-      return `Reconnect the environment to load the ${resourceName}.`;
+      return t("connection.notice.reconnectResource", { resource: resourceName });
     case "connected":
       return "";
   }
@@ -60,6 +67,15 @@ export function EnvironmentConnectionNotice(props: {
   readonly resourceName: string;
   readonly onRetry: () => void;
 }) {
+  const { t } = useLanguage();
+  const resourceName =
+    props.resourceName === "review"
+      ? t("connection.notice.review")
+      : props.resourceName === "preview"
+        ? t("connection.notice.preview")
+        : props.resourceName === "terminal"
+          ? t("connection.notice.terminal")
+          : props.resourceName;
   const isRetrying =
     props.connection.phase === "connecting" || props.connection.phase === "reconnecting";
 
@@ -78,10 +94,10 @@ export function EnvironmentConnectionNotice(props: {
         )}
 
         <Text className="text-center text-lg font-t3-bold text-foreground">
-          {noticeTitle(props.connection.phase, props.environmentLabel)}
+          {noticeTitle(props.connection.phase, props.environmentLabel, t)}
         </Text>
         <Text className="text-center text-sm leading-normal text-foreground-muted">
-          {noticeDetail(props.connection.phase, props.resourceName, props.connection.error)}
+          {noticeDetail(props.connection.phase, resourceName, props.connection.error, t)}
           {props.connection.traceId ? (
             <ConnectionTraceId traceId={props.connection.traceId} />
           ) : null}
@@ -89,7 +105,7 @@ export function EnvironmentConnectionNotice(props: {
 
         {props.connection.phase !== "offline" && props.connection.phase !== "unsupported" ? (
           <View className="mt-1">
-            <Button label="Retry now" tone="secondary" onPress={props.onRetry} />
+            <Button label={t("connection.notice.retry")} tone="secondary" onPress={props.onRetry} />
           </View>
         ) : null}
       </View>

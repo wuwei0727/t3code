@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Button } from "./Button";
 import * as Dialog from "./Dialog";
 import { createContext, useContext, useEffect, useEffectEvent } from "react";
@@ -29,6 +30,7 @@ function PdfDocumentPreview(props: {
   readonly source: ResolvedFilePreviewDocument;
   readonly onRequestClose: () => void;
 }) {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const media = useMediaActions(props.source.actionsSource);
   const save = media.actions.find((action) => action.id === "save");
@@ -51,7 +53,7 @@ function PdfDocumentPreview(props: {
             save
               ? [
                   {
-                    accessibilityLabel: "Save or share",
+                    accessibilityLabel: t("common.saveShare"),
                     icon: "square.and.arrow.up",
                     disabled: save.disabled,
                     loading: media.sharing,
@@ -72,15 +74,12 @@ function DocumentPreview(props: {
   readonly onRequestClose: () => void;
   readonly onOpenError?: (error: unknown) => void;
 }) {
+  const { t } = useLanguage();
   const { uri, name } = props.source;
   const onRequestClose = useEffectEvent(props.onRequestClose);
   const onOpenError = useEffectEvent((error: unknown) => {
     if (props.onOpenError) props.onOpenError(error);
-    else
-      Dialog.alert(
-        "Could not open document",
-        "A compatible viewer must be installed. Check your connection and try again.",
-      );
+    else Dialog.alert(t("filePreview.openFailed"), t("filePreview.viewerNeeded"));
   });
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- opens the attachment in an external viewer and aborts the open on cleanup
   useEffect(() => {
@@ -109,12 +108,12 @@ function DocumentPreview(props: {
     <Modal transparent animationType="fade" onRequestClose={props.onRequestClose}>
       <View className="flex-1 items-center justify-center bg-backdrop p-6">
         <View className="w-full max-w-sm gap-4 rounded-2xl bg-sheet-solid p-6">
-          <Text className="font-t3-semibold text-foreground">Opening document…</Text>
+          <Text className="font-t3-semibold text-foreground">{t("filePreview.opening")}</Text>
           <Text className="text-foreground-muted" numberOfLines={2}>
-            {name ?? "Document"}
+            {name ?? t("filePreview.document")}
           </Text>
           <View className="items-end">
-            <Button label="Cancel" tone="text" onPress={props.onRequestClose} />
+            <Button label={t("common.cancel")} tone="text" onPress={props.onRequestClose} />
           </View>
         </View>
       </View>
@@ -130,6 +129,7 @@ type ImagePreviewProps = {
 const ImagePreviewContext = createContext<ImagePreviewProps | null>(null);
 
 function ImagePreviewHeader(header: { readonly imageIndex: number }) {
+  const { t } = useLanguage();
   const props = useContext(ImagePreviewContext)!;
   const source = props.source.images[header.imageIndex];
   const insets = useSafeAreaInsets();
@@ -137,9 +137,9 @@ function ImagePreviewHeader(header: { readonly imageIndex: number }) {
   return (
     <View className="bg-black/70" style={{ paddingTop: insets.top }}>
       <MediaPreviewHeader
-        title={source?.name ?? "Image"}
+        title={source?.name ?? t("filePreview.image")}
         media={mediaActions}
-        closeAccessibilityLabel="Close image"
+        closeAccessibilityLabel={t("filePreview.closeImage")}
         onClose={props.onRequestClose}
       />
     </View>

@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -17,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import expo.modules.notifications.service.ExpoFirebaseMessagingService
+import java.util.Locale
 
 class AgentMessagingService : ExpoFirebaseMessagingService() {
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -42,6 +44,14 @@ class AgentActivityExpiryReceiver : BroadcastReceiver() {
 
 /** Handles data pushes natively so delivery does not depend on a running JS bridge. */
 object AgentNotifications {
+  private fun presentationContext(context: Context): Context {
+    val tag = context.getSharedPreferences("t3-community-language", Context.MODE_PRIVATE)
+      .getString("resolvedLocale", null) ?: return context
+    if (tag != "en" && tag != "zh-CN") return context
+    val configuration = Configuration(context.resources.configuration)
+    configuration.setLocale(Locale.forLanguageTag(tag))
+    return context.createConfigurationContext(configuration)
+  }
   private const val STORE = "t3-agent-notifications"
   private const val ACTIVITY_CHANNEL = "agent-activity"
   private const val ALERT_CHANNEL = "agent-alerts"
@@ -76,7 +86,7 @@ object AgentNotifications {
       .putBoolean("enabled", true).putBoolean("ongoing", ongoingEnabled).apply()
     if (ongoingEnabled && !wasEnabled) prefs.edit().putBoolean("dismissed", false).apply()
     if (!ongoingEnabled) cancelActivity(context)
-    channels(context)
+    channels(presentationContext(context))
   }
 
   @Synchronized
@@ -125,10 +135,11 @@ object AgentNotifications {
       data["user_id"] == prefs.getString("userId", null)
     val fresh = System.currentTimeMillis() - updatedAt in -MAX_MESSAGE_AGE_MS..MAX_MESSAGE_AGE_MS
     if (registered && fresh && NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-      channels(context)
+      val displayContext = presentationContext(context)
+      channels(displayContext)
       val scheme = prefs.getString("scheme", "t3code") ?: "t3code"
-      val alerted = showAlert(context, prefs, scheme, data)
-      updateActivity(context, prefs, data, updatedAt, alerted)
+      val alerted = showAlert(displayContext, prefs, scheme, data)
+      updateActivity(displayContext, prefs, data, updatedAt, alerted)
     }
   }
 
@@ -173,9 +184,25 @@ object AgentNotifications {
     data: Map<String, String>,
     alertId: String
   ) {
-    val title = data["alert_title"].orEmpty().take(120)
+    val rawTitle = data["alert_title"].orEmpty().take(120)
+    val grouped = if (data["alert_path"] == "/") {
+      Regex("^([2-5]) agents (need attention|finished)$").matchEntire(rawTitle)
+    } else null
+    val title = grouped?.let {
+      context.getString(
+        if (it.groupValues[2] == "need attention") R.string.t3_notify_agents_need
+        else R.string.t3_notify_agents_finished,
+        it.groupValues[1]
+      )
+    } ?: rawTitle
     // Grouped alerts list up to five 120-character thread titles.
-    val body = data["alert_body"].orEmpty().take(608)
+    val rawBody = data["alert_body"].orEmpty().take(608)
+    val body = if (data["alert_path"]?.startsWith("/threads/") == true) {
+      val status = rawBody.substringBefore(": ")
+      if (ActivityPhase.forStatus(status) != null && rawBody.startsWith("$status: ")) {
+        "${activityLabel(context, status)}: ${rawBody.substringAfter(": ")}"
+      } else rawBody
+    } else rawBody
     val id = alertId.hashCode()
     val group = data["alert_group"]?.takeIf { it.isNotBlank() } ?: ALERT_TAG
     val notification = base(context, ALERT_CHANNEL)
@@ -214,9 +241,10 @@ object AgentNotifications {
    */
   @Synchronized
   fun showcase(context: Context, scheme: String, data: Map<String, String>) {
-    channels(context)
-    data["alert_id"]?.let { postAlert(context, scheme, data, it) }
-    showActivity(context, scheme, data, data["active"] == "true", RUNNING_LIFETIME_MS)
+    val displayContext = presentationContext(context)
+    channels(displayContext)
+    data["alert_id"]?.let { postAlert(displayContext, scheme, data, it) }
+    showActivity(displayContext, scheme, data, data["active"] == "true", RUNNING_LIFETIME_MS)
   }
 
   private fun updateActivity(
@@ -295,7 +323,7 @@ object AgentNotifications {
       Intent(context, AgentActivityDismissReceiver::class.java),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
-    val presentation = ActivityPresentation(data, active)
+    val presentation = ActivityPresentation(data, active, context)
     val openThread = contentIntent(context, scheme, data["activity_path"], ACTIVITY_ID)
     // Retained results still need Android's ongoing flag to remain promoted.
     val ongoing = active || Build.VERSION.SDK_INT >= 36
@@ -311,7 +339,7 @@ object AgentNotifications {
     presentation.applyTo(builder, context)
     val action = presentation.action
     if (action != null && openThread != null) builder.addAction(0, action, openThread)
-    if (ongoing) builder.addAction(0, "Dismiss", dismissIntent)
+    if (ongoing) builder.addAction(0, context.getString(R.string.t3_notify_dismiss), dismissIntent)
     manager(context).notify(ACTIVITY_TAG, ACTIVITY_ID, builder.build())
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
       // Notification timeouts were added in API 26. One inexact alarm also
@@ -347,10 +375,10 @@ object AgentNotifications {
     if (Build.VERSION.SDK_INT >= 26) {
       manager(context).createNotificationChannels(
         listOf(
-          NotificationChannel(ALERT_CHANNEL, "Agent alerts", NotificationManager.IMPORTANCE_HIGH),
+          NotificationChannel(ALERT_CHANNEL, context.getString(R.string.t3_notify_alerts), NotificationManager.IMPORTANCE_HIGH),
           NotificationChannel(
             ACTIVITY_CHANNEL,
-            "Ongoing agent activity",
+            context.getString(R.string.t3_notify_ongoing),
             NotificationManager.IMPORTANCE_LOW
           ),
         )

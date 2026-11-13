@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useIsFocused } from "@react-navigation/native";
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import { useAudioPlayerStatus } from "expo-audio";
@@ -29,6 +30,7 @@ type PreviewProps = {
 };
 
 function FileCardHeader(props: PreviewProps) {
+  const { t } = useLanguage();
   return (
     <Pressable
       accessibilityRole="button"
@@ -45,7 +47,7 @@ function FileCardHeader(props: PreviewProps) {
           {props.source.name}
         </Text>
         <Text className="text-xs text-foreground-muted" numberOfLines={1}>
-          Audio
+          {t("inlineAudio.audio")}
           {props.sizeBytes !== undefined ? ` · ${formatAttachmentSize(props.sizeBytes)}` : ""}
         </Text>
       </View>
@@ -60,6 +62,7 @@ function timestamp(seconds: number) {
 }
 
 function InlineAudio(props: PreviewProps & { readonly resolveUri: () => Promise<string | null> }) {
+  const { t } = useLanguage();
   // An empty source keeps native buffering off until the user explicitly plays.
   const player = usePlaybackAudioPlayer(null);
   const status = useAudioPlayerStatus(player);
@@ -188,7 +191,11 @@ function InlineAudio(props: PreviewProps & { readonly resolveUri: () => Promise<
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
-            playing ? "Pause audio" : error || status.error ? "Retry audio" : "Play audio"
+            playing
+              ? t("inlineAudio.pause")
+              : error || status.error
+                ? t("inlineAudio.retry")
+                : t("inlineAudio.play")
           }
           accessibilityState={{ busy }}
           onPress={toggle}
@@ -210,9 +217,9 @@ function InlineAudio(props: PreviewProps & { readonly resolveUri: () => Promise<
           </View>
           <Text className="text-xs text-foreground-muted" numberOfLines={1}>
             {error || status.error
-              ? "Unavailable · tap play to retry"
+              ? t("inlineAudio.unavailable")
               : busy
-                ? "Loading…"
+                ? t("inlineAudio.loading")
                 : `${timestamp(status.currentTime)} / ${status.isLoaded ? timestamp(status.duration) : "--:--"}`}
           </Text>
         </View>

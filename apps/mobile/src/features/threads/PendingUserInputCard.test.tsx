@@ -13,6 +13,11 @@ const harness = vi.hoisted(() => ({
 
 type Children = { children?: ReactNode };
 
+vi.mock("../../i18n/LanguageProvider", async () => {
+  const { makeTranslator } = await import("../../i18n/translator");
+  return { useLanguage: () => ({ locale: "en", t: makeTranslator("en") }) };
+});
+
 vi.mock("react-native", () => ({
   Platform: { OS: "ios" },
   View: ({ children }: Children) => <div>{children}</div>,

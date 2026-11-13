@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-12",
+  "updatedAt": "2026-11-12T13:43:04.687281+00:00",
+  "complete": false,
+  "status": "partial-acceptance-external-prerequisites-remain",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "versionName": "2.3.0-zh.7",
+  "versionCode": 7,
+  "applicationId": "io.github.wuwei0727.t3code.zh",
+  "device": {
+    "hostId": "local",
+    "id": "emulator-5554",
+    "abi": "x86_64",
+    "physicalDevice": false
+  },
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".t3/artifacts/community-v7/t3code-zh-2.3.0-zh.7-arm64-v8a.apk",
+      "sha256": "1f760ccfa8e1183eb254e17ff5a882a2ca804bbff818c18a034f4e165260c29e"
+    },
+    {
+      "abi": "x86_64",
+      "path": ".t3/artifacts/community-v7/t3code-zh-2.3.0-zh.7-x86_64.apk",
+      "sha256": "3acd5039b2f7d55f24af4de3cc0cf3e9f4bdca7a7ab9c5cef2c79363257ab4a6"
+    }
+  ],
+  "certificateSha256": "520c9d1d3dc2cf8c46dc39626c76e97482fd71f03d3723b6f5207970370a00a5",
+  "historicalAcceptance": {
+    "record": "community/android/acceptance-v6.json",
+    "scope": "Language/system/restart, direct isolated connection, free Replay question/approval, file bytes, short reconnect/offline outbox and selected layouts tested on v6; not all repeated on v7"
+  },
+  "verified": [
+    {
+      "item": "Overwrite install v6 to v7 with retained account, language and data",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6-login/v7-install.log"
+    },
+    {
+      "item": "Standalone v7 launch and authenticated profile without signing in again",
+      "result": "passed",
+      "evidenceScope": "Private profile capture retained locally; excluded from distributable evidence"
+    },
+    {
+      "item": "Real registered computer connected through sole active T3 Connect route",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6-login/v7-active-route.txt"
+    },
+    {
+      "item": "Provider update status rendered 提供方已更新。",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6-login/v7-provider-updated.png"
+    },
+    {
+      "item": "OS notification permission regranted and accurate Chinese permission-only success dialog",
+      "result": "passed",
+      "evidence": ".t3/acceptance-v6-login/v7-notification-permission.png"
+    },
+    {
+      "item": "English selection survives v7 relaunch; restore explicit Simplified Chinese",
+      "result": "passed",
+      "evidence": [
+        ".t3/acceptance-v6-login/v7-english-after-relaunch.txt",
+        ".t3/acceptance-v6-login/v7-chinese-restored.txt"
+      ]
+    }
+  ],
+  "realAccountAcceptance": {
+    "version": "v6 before upgrade; profile/connection retained on v7",
+    "login": "User confirmed email verification code or email/password; third-party SSO unverified; native authenticated profile observed; no credentials collected",
+    "profile": "Chinese account management and security pages opened read-only",
+    "cloud": "Real registered computer discovered, enabled and connected; single T3 Connect route in use",
+    "sameConversation": "Current maintenance conversation history and live assistant updates visible on mobile",
+    "mobileSend": "Mobile steer marker arrived as user message in this active task: 【手机连接验收】这条消息从中文版 Android 经 T3 Connect 发出，继续当前验收。",
+    "restart": "Authenticated profile and cloud connection survived restart and v7 upgrade",
+    "methodConfirmedByUser": "email verification code or email/password"
+  },
+  "localization": {
+    "entries": 4060,
+    "added": 19,
+    "revised": 2,
+    "changes": [
+      "Known provider-maintenance display messages",
+      "Device-preview button/count, embedded viewer accessibility/reconnect/stopped copy",
+      "Notification permission dialog accurately distinguishes permission from push readiness"
+    ],
+    "humanReviewed": false,
+    "fullyLocalized": false,
+    "devicePreview": "Advised debug retry completed successfully; button not present in later current-thread snapshot. Embedded viewer/counted labels not counted as on-device passed."
+  },
+  "checks": {
+    "mobileTypecheck": "passed",
+    "focusedDeviceTests": {
+      "passed": 15,
+      "files": 3
+    },
+    "maintenanceTests": 12,
+    "targetedLint": "passed",
+    "resourceAndTranslationCheck": "passed; no pending/stale/missing; API calls zero",
+    "mirrorSource": {
+      "files": 393,
+      "mismatches": 0
+    },
+    "bothApkPackaging": "Signature, version7, ABI, alignment, public Connect config, all4060 Chinese literals passed",
+    "review": "Independent read-only v7 review found no concrete regression",
+    "nativeNotificationHistory": "108 Robolectric tests API24/26/33/36 passed in v6; not rerun this turn",
+    "githubExecution": "not run"
+  },
+  "remaining": [
+    "Real FCM delivery: APK has no matching Firebase app ID/sender resources; own client and relay sender setup required",
+    "Physical ARM phone installation/startup/upgrade; additional small-screen/font layouts",
+    "Independent desktop/web UI and second physical computer synchronization",
+    "Third-party SSO callback variants not independently exercised",
+    "Context-specific hosted repository/provider/device hardware states; not exhaustively executed",
+    "Final maintainer translation review and protected GitHub workflow execution",
+    "Official Play production-to-source mapping remains unverified"
+  ],
+  "notes": [
+    "No claim that every application state was executed or that all translation coverage is proved by resource counts.",
+    "No paid provider test turn, translation API call, push, PR or public release.",
+    "Isolated direct test connection disabled without deleting data; real cloud connection retained."
+  ],
+  "teardown": {
+    "permission": "Android notification permission restored to allowed",
+    "language": "Explicit Simplified Chinese restored",
+    "connection": "Real account and cloud connection retained; isolated direct fixture connection disabled without deletion",
+    "device": "Device panel retained; automated input stopped after retry error; no emulator shutdown or live server stop"
+  },
+  "physicalDeviceIntake": {
+    "source": "User-provided device-settings screenshot; not an app execution result",
+    "model": "Redmi K70",
+    "certifiedModel": "23113RKC6C",
+    "androidVersion": "16",
+    "osVersion": "3.0.307.0.WNKCNXM.C11",
+    "ram": "16 GB",
+    "display": "3200x1440, 6.67 inch",
+    "apk": "arm64-v8a",
+    "installation": "awaiting user execution",
+    "startup": "unverified",
+    "connection": "unverified",
+    "upgrade": "unverified"
+  },
+  "continuedAcceptance": {
+    "date": "2026-11-12",
+    "cloudLocaleTests": {
+      "passed": 68,
+      "failed": 0,
+      "files": 9,
+      "log": ".t3/acceptance-v7-continued/cloud-locale-tests.log",
+      "scope": "Deep-link routing, language fallback, public cloud configuration, cloud auth, onboarding, environment linking, relay token/layer and DPoP tests; not live SSO or push delivery"
+    },
+    "devicePreview": {
+      "entry": "Observed phone icon in current thread; coordinate tap opened fullscreen WebView and Chinese 正在连接设备... state",
+      "controls": "Not completed; Android fullscreen education overlay remains",
+      "delivery": "Live device stream not verified",
+      "localization": "Loading state visibly Chinese; remaining viewer states and count labels not counted as passed"
+    },
+    "automation": {
+      "status": "stopped after failed advised retry",
+      "firstError": "INVALID_ARGS: Target 知道了 is not a @ref, selector, or x y point; use text= or ref",
+      "retryError": "COMMAND_FAILED: Ref @e1 needs a complete snapshot; current frame only authorizes emitted refs; suggested @e1~s179229",
+      "cause": "Operator used abbreviated ref instead of exact emitted ref",
+      "fallback": "None; no adb UI actions or alternate controller used",
+      "pendingUi": "Android fullscreen education overlay may be manually dismissed by user"
+    },
+    "plannedNotExecuted": [
+      "Account/security language switch while signed in",
+      "Additional v7 cloud restart recovery scenario"
+    ]
+  }
+}

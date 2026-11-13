@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { localizeChangeRequestTerminology } from "../pull-requests/changeRequestTerminology";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/shell";
 import {
   capitalizeTerm,
@@ -63,36 +65,56 @@ export const LinkedPullRequestRow = memo(function LinkedPullRequestRow(props: {
   readonly openPullRequest: (url: string) => Promise<boolean>;
   readonly actions: LinkedPullRequestActions | null;
 }) {
+  const { t, locale } = useLanguage();
   const { link, depth, stack } = props.line;
   const snapshot = link.snapshot;
-  const status = snapshot === null ? null : pullRequestStatus(snapshot);
-  const conflict = snapshot === null ? null : pullRequestConflict(snapshot);
+  const status = snapshot === null ? null : pullRequestStatus(snapshot, locale);
+  const conflict = snapshot === null ? null : pullRequestConflict(snapshot, locale);
   const open = snapshot === null || snapshot.state === "open";
   const checks =
     open && snapshot?.checksState ? pullRequestChecksStatus(snapshot.checksState) : null;
   const review =
     open && snapshot?.reviewDecision
-      ? pullRequestListReviewStatus({
-          reviewDecision: snapshot.reviewDecision,
-          viewerReviewRequested: false,
-        })
+      ? pullRequestListReviewStatus(
+          {
+            reviewDecision: snapshot.reviewDecision,
+            viewerReviewRequested: false,
+          },
+          locale,
+        )
       : null;
   const watching = open && link.watch !== undefined;
   const additions = snapshot?.additions ?? 0;
   const deletions = snapshot?.deletions ?? 0;
-  const { shortLabel, singular } = (
-    sourceControlClients.findByChangeRequestUrl(link.url) ?? sourceControlClients.get(undefined)
-  ).changeRequest;
+  const { shortLabel, singular } = localizeChangeRequestTerminology(
+    (sourceControlClients.findByChangeRequestUrl(link.url) ?? sourceControlClients.get(undefined))
+      .changeRequest,
+    locale,
+  );
   const metaLineHeight = useScaledTextRole("label").lineHeight * useWindowDimensions().fontScale;
   const row = (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${capitalizeTerm(singular)} ${link.number}, ${snapshot?.title ?? "waiting for host state"}${status ? `, ${status.label}` : ""}${conflict ? `, ${conflict.label.toLowerCase()}` : ""}, ${link.repository}${stack ? `, stack of ${stack.size}` : ""}${watching ? ", watching" : ""}${checks ? `, checks ${snapshot?.checksState}` : ""}${review ? `, ${review.accessibleLabel}` : ""}`}
-      accessibilityHint={props.actions ? "Touch and hold for actions." : undefined}
+      accessibilityLabel={t("prList.linkedRow", {
+        request: capitalizeTerm(singular),
+        number: link.number,
+        title: snapshot?.title ?? t("prList.waitingLower"),
+        status: status ? `, ${status.label}` : "",
+        conflict: conflict ? `, ${conflict.label.toLowerCase()}` : "",
+        repository: link.repository,
+        stack: stack ? t("prList.linkedStack", { size: stack.size }) : "",
+        watching: watching ? t("prList.watching") : "",
+        checks: checks && snapshot?.checksState ? t(`prList.checks.${snapshot.checksState}`) : "",
+        review: review ? `, ${review.accessibleLabel}` : "",
+      })}
+      accessibilityHint={props.actions ? t("prList.hold") : undefined}
       onPress={() => {
         void props.openPullRequest(link.url).then((opened) => {
           if (!opened)
-            Dialog.alert(`Unable to open ${shortLabel}`, `The ${singular} could not be opened.`);
+            Dialog.alert(
+              t("git.controls.openFailed", { request: shortLabel }),
+              t("git.controls.openFailedMessage", { request: singular }),
+            );
         });
       }}
       style={{ paddingLeft: 16 + Math.min(depth, 3) * 16 }}
@@ -161,7 +183,7 @@ export const LinkedPullRequestRow = memo(function LinkedPullRequestRow(props: {
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          {snapshot?.title ?? "Waiting for host state"}
+          {snapshot?.title ?? t("prList.waiting")}
         </Text>
       </View>
     </Pressable>

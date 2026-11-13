@@ -12,6 +12,8 @@ import {
 } from "./nativeReviewDiffAdapter";
 import type { ReviewInlineComment } from "./reviewCommentSelection";
 import { buildReviewParsedDiff, type ReviewParsedDiff } from "./reviewModel";
+import { localizeNativeReviewRows } from "./reviewPresentation";
+import { makeTranslator } from "../../i18n/translator";
 
 vi.mock("diff", { spy: true });
 
@@ -240,6 +242,15 @@ describe("getCachedNativeReviewDiffData", () => {
     );
     expect(data.rows.filter((row) => row.kind === "line")).toHaveLength(2);
     expect(data.commentTargetsByRowId.size).toBe(2);
+    const translated = localizeNativeReviewRows(data.rows, makeTranslator("zh-CN"));
+    expect(translated.map((row) => row.id)).toEqual(data.rows.map((row) => row.id));
+    expect(translated.filter((row) => row.kind === "line")).toEqual(
+      data.rows.filter((row) => row.kind === "line"),
+    );
+    if (notice) {
+      expect(translated.find((row) => row.kind === "notice")?.text).not.toBe(notice);
+      expect(data.rows.find((row) => row.kind === "notice")?.text).toBe(notice);
+    }
   });
 
   it("keeps cached IDs and targets local to each parsed section and file layout", () => {

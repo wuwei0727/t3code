@@ -1,0 +1,97 @@
+[
+  {
+    "en": "Thread",
+    "zhCN": "会话",
+    "context": "Durable agent conversation"
+  },
+  {
+    "en": "Workspace",
+    "zhCN": "工作区",
+    "context": "Workspace UI or directory"
+  },
+  {
+    "en": "Worktree",
+    "zhCN": "工作树",
+    "context": "Git worktree"
+  },
+  {
+    "en": "Provider",
+    "zhCN": "提供方",
+    "context": "Agent runtime, not a model ID"
+  },
+  {
+    "en": "Environment",
+    "zhCN": "环境",
+    "context": "Running T3 server and its machine"
+  },
+  {
+    "en": "Project",
+    "zhCN": "项目",
+    "context": "Workspace rooted at a directory"
+  },
+  {
+    "en": "Approval",
+    "zhCN": "审批",
+    "context": "Permission request from an agent"
+  },
+  {
+    "en": "Pull request",
+    "zhCN": "拉取请求",
+    "context": "Source control change proposal; preserve PR identifiers and repository content"
+  },
+  {
+    "en": "Review",
+    "zhCN": "评审",
+    "context": "Pull request code review; distinct from agent permission approval"
+  },
+  {
+    "en": "Open",
+    "zhCN": "打开",
+    "context": "Action to open a file, project or page; never apply this action translation to a pull request status"
+  },
+  {
+    "en": "Open",
+    "zhCN": "开启中",
+    "context": "Pull request state alongside Closed and Merged, including open drafts; not an action and not necessarily ready to merge"
+  },
+  {
+    "en": "Task",
+    "zhCN": "任务",
+    "context": "A unit of work, distinct from a durable thread/conversation"
+  },
+  {
+    "en": "Agent",
+    "zhCN": "智能体",
+    "context": "Coding agent controlled by the user; keep product names unchanged"
+  },
+  {
+    "en": "Draft",
+    "zhCN": "草稿",
+    "context": "Pull request draft status"
+  },
+  {
+    "en": "Checks",
+    "zhCN": "检查",
+    "context": "CI checks on a pull request, distinct from code review and agent permission approvals"
+  },
+  {
+    "en": "Settle",
+    "zhCN": "收起",
+    "context": "Move a stopped thread out of the active list without deleting it"
+  },
+  {
+    "en": "Snooze",
+    "zhCN": "暂停提醒",
+    "context": "Temporarily hide a thread until it wakes"
+  },
+  {
+    "en": "Steer",
+    "zhCN": "调整方向",
+    "context": "Send follow-up instructions to an active agent"
+  },
+  {
+    "en": "Queue",
+    "zhCN": "排队",
+    "context": "Wait for the active turn before sending a follow-up"
+  }
+]

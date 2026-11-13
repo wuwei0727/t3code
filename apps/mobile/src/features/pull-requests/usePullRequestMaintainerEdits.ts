@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomRefresh } from "@effect/atom-react";
 import {
   maintainerEditsChoiceInForce,
@@ -17,6 +18,7 @@ export function usePullRequestMaintainerEdits(
   pr: PullRequestDetail | null,
   canEdit: boolean,
 ) {
+  const { t } = useLanguage();
   const target = pullRequestTarget(params);
   const update = useAtomCommand(composerPullRequests.update, { reportFailure: false });
   const refreshDetail = useAtomRefresh(composerPullRequests.detail(target));
@@ -44,7 +46,7 @@ export function usePullRequestMaintainerEdits(
       setChoice(previousChoice);
       const cause = squashAtomCommandFailure(response);
       Dialog.alert(
-        "Could not save maintainer access",
+        t("prMaintainerSave.failed"),
         cause instanceof Error ? cause.message : "Try again.",
       );
       return;

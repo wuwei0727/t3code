@@ -1,0 +1,2793 @@
+{
+  "schemaVersion": 1,
+  "status": "in-progress",
+  "complete": false,
+  "knownNativeAuthDefect": "v10 defect confirmed; v11 candidate built, callback completion pending; see community/android/auth-acceptance.json",
+  "baseline": "9ef52de2930782e413ca9d2b5fef7500496d7123",
+  "updatedAt": "2026-11-12T19:21:57.226723+00:00",
+  "scope": "All appropriate Android UI; preserve protocol values, logs, code, paths, model IDs, user content and model output.",
+  "resourceEntries": 4151,
+  "resourceValidation": {
+    "mode": "check",
+    "pending": [],
+    "stale": [],
+    "missing": [],
+    "removed": [],
+    "manualReviewRequired": [],
+    "untracked": [],
+    "usage": {
+      "calls": 0,
+      "reservedOutputTokens": 0,
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "totalTokens": 0,
+      "usageComplete": true,
+      "cost": null,
+      "maxCalls": 8,
+      "maxOutputTokens": 16384
+    }
+  },
+  "uiSiteInventory": {
+    "count": 313,
+    "parseErrors": 0,
+    "unclassified": 0,
+    "complete": false,
+    "limitations": "AST static UI-site candidates only; dynamic templates, third-party UI and native resources audited separately. Not a claim of exhaustive localization or runtime acceptance."
+  },
+  "classifiedCandidates": [
+    {
+      "file": "apps/mobile/src/components/BrandMark.tsx",
+      "line": 36,
+      "kind": "jsx-text",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/components/CompactBrandTitle.tsx",
+      "line": 68,
+      "kind": "jsx-text",
+      "text": "Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/components/NewThreadButton.shared.tsx",
+      "line": 16,
+      "kind": "ui-prop",
+      "text": "New thread",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/NewThreadButton.shared.tsx",
+      "line": 35,
+      "kind": "jsx-text",
+      "text": "New thread",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/PdfPreview.tsx",
+      "line": 11,
+      "kind": "ui-prop",
+      "text": "Could not load PDF",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/PdfPreview.tsx",
+      "line": 24,
+      "kind": "ui-prop",
+      "text": "Loading PDF...",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/T3Wordmark.tsx",
+      "line": 15,
+      "kind": "ui-prop",
+      "text": "T3",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/AppBar.tsx",
+      "line": 164,
+      "kind": "ui-prop",
+      "text": "Back",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/AppBar.tsx",
+      "line": 182,
+      "kind": "ui-prop",
+      "text": "New task",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/AppBar.tsx",
+      "line": 183,
+      "kind": "ui-prop",
+      "text": "New task",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/AppBar.tsx",
+      "line": 242,
+      "kind": "ui-prop",
+      "text": "Close inspector",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/FilePreviewModal.tsx",
+      "line": 47,
+      "kind": "dialog",
+      "text": "Could not open preview",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/FilePreviewModal.tsx",
+      "line": 47,
+      "kind": "dialog",
+      "text": "The file could not be loaded. Please try again.",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/components/ui/VideoPreviewModal.tsx",
+      "line": 129,
+      "kind": "dialog",
+      "text": "Could not open video",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/connection/onboarding.ts",
+      "line": 14,
+      "kind": "ui-object",
+      "text": "mobile:connection:connect-pairing-url",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/connection/onboarding.ts",
+      "line": 32,
+      "kind": "ui-object",
+      "text": "mobile:connection:update-bearer",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/connection/platform.ts",
+      "line": 167,
+      "kind": "ui-object",
+      "text": "Sign in to T3 Connect to connect this environment.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/connection/platform.ts",
+      "line": 182,
+      "kind": "ui-object",
+      "text": "The T3 Connect session is unavailable.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/connection/platform.ts",
+      "line": 227,
+      "kind": "ui-object",
+      "text": "SSH environments are only available in the desktop app.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/connection/platform.ts",
+      "line": 235,
+      "kind": "ui-object",
+      "text": "SSH environments are only available in the desktop app.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/features/agent-awareness/remoteRegistration.ts",
+      "line": 500,
+      "kind": "ui-object",
+      "text": "T3 Code",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/agent-awareness/remoteRegistration.ts",
+      "line": 501,
+      "kind": "ui-object",
+      "text": "Agent work in progress",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/cloud-drafts.ts",
+      "line": 24,
+      "kind": "ui-object",
+      "text": "cloud:preserve-drafts-and-remove-environments",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/cloudAccountService.ts",
+      "line": 80,
+      "kind": "ui-object",
+      "text": "cloud account cleanup",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/ConnectOnboardingRouteScreen.tsx",
+      "line": 55,
+      "kind": "ui-object",
+      "text": "connect onboarding opt-out",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/dpop.ts",
+      "line": 163,
+      "kind": "ui-object",
+      "text": "Stored DPoP proof key is invalid.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/dpop.ts",
+      "line": 192,
+      "kind": "ui-object",
+      "text": "Could not sign DPoP proof.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/linkEnvironment.ts",
+      "line": 119,
+      "kind": "ui-object",
+      "text": "Relay URL is not configured.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/linkEnvironment.ts",
+      "line": 137,
+      "kind": "ui-object",
+      "text": "Relay returned credentials for a different environment.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/linkEnvironment.ts",
+      "line": 142,
+      "kind": "ui-object",
+      "text": "Relay returned credentials for a different endpoint provider.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/linkEnvironment.ts",
+      "line": 165,
+      "kind": "ui-object",
+      "text": "Only a locally paired bearer connection can be linked to the cloud.",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/managedRelayState.ts",
+      "line": 28,
+      "kind": "ui-object",
+      "text": "mobile:managed-relay:deregister-environment",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/cloud/T3ConnectProfilePage.tsx",
+      "line": 231,
+      "kind": "ui-object",
+      "text": "Deregister",
+      "disposition": "display-adapter",
+      "reason": "Native menu maps the deregister action title to connectProfile.deregister before rendering."
+    },
+    {
+      "file": "apps/mobile/src/features/connection/CloudEnvironmentRows.tsx",
+      "line": 103,
+      "kind": "jsx-text",
+      "text": "T3 Connect",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/connection/ConnectionEnvironmentRow.tsx",
+      "line": 244,
+      "kind": "ui-prop",
+      "text": "URL",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/development/behavior-probe.ts",
+      "line": 308,
+      "kind": "ui-object",
+      "text": "behavior probe",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 33,
+      "kind": "ui-object",
+      "text": "Overview",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 34,
+      "kind": "ui-object",
+      "text": "Activity",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 53,
+      "kind": "ui-object",
+      "text": "Discard changes?",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 54,
+      "kind": "ui-object",
+      "text": "This example only changes local catalog state.",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 55,
+      "kind": "ui-object",
+      "text": "Discard",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 62,
+      "kind": "ui-prop",
+      "text": "UI components",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 69,
+      "kind": "jsx-text",
+      "text": "Theme preview",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 84,
+      "kind": "ui-object",
+      "text": "Light",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 85,
+      "kind": "ui-object",
+      "text": "Dark",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 94,
+      "kind": "ui-object",
+      "text": "Controls",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 95,
+      "kind": "ui-object",
+      "text": "Forms",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 96,
+      "kind": "ui-object",
+      "text": "Feedback",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 105,
+      "kind": "jsx-text",
+      "text": "Lists and selection",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 117,
+      "kind": "ui-prop",
+      "text": "Projects",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 120,
+      "kind": "ui-prop",
+      "text": "Notifications",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 121,
+      "kind": "ui-prop",
+      "text": "Updates from your active threads",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 125,
+      "kind": "ui-prop",
+      "text": "Selected option",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 128,
+      "kind": "ui-prop",
+      "text": "Discard changes",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 142,
+      "kind": "ui-prop",
+      "text": "Selected filter",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 146,
+      "kind": "ui-prop",
+      "text": "Label",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 147,
+      "kind": "ui-prop",
+      "text": "Disabled",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 152,
+      "kind": "jsx-text",
+      "text": "Buttons",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 154,
+      "kind": "ui-prop",
+      "text": "Primary",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 155,
+      "kind": "ui-prop",
+      "text": "Secondary",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 156,
+      "kind": "ui-prop",
+      "text": "Contrast",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 159,
+      "kind": "ui-prop",
+      "text": "Disabled",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 160,
+      "kind": "ui-prop",
+      "text": "Loading",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 162,
+      "kind": "ui-prop",
+      "text": "Open example sheet",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 173,
+      "kind": "jsx-text",
+      "text": "Forms",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 175,
+      "kind": "ui-prop",
+      "text": "Example name",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 176,
+      "kind": "ui-prop",
+      "text": "Name",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 183,
+      "kind": "ui-prop",
+      "text": "Search examples",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 184,
+      "kind": "ui-prop",
+      "text": "Clear examples search",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 185,
+      "kind": "ui-prop",
+      "text": "Search examples",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 192,
+      "kind": "jsx-text",
+      "text": "Count",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 194,
+      "kind": "ui-prop",
+      "text": "Example count",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 204,
+      "kind": "ui-prop",
+      "text": "Example slider",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 217,
+      "kind": "jsx-text",
+      "text": "Feedback and presentation",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 218,
+      "kind": "ui-prop",
+      "text": "This action could not finish. Try again.",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 219,
+      "kind": "ui-prop",
+      "text": "Show notice",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 221,
+      "kind": "ui-prop",
+      "text": "Sheet",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 222,
+      "kind": "ui-prop",
+      "text": "Dialog",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 224,
+      "kind": "ui-prop",
+      "text": "Alert",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 226,
+      "kind": "dialog",
+      "text": "Example alert",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 226,
+      "kind": "dialog",
+      "text": "Choose an action.",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 230,
+      "kind": "dialog",
+      "text": "More information",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 230,
+      "kind": "dialog",
+      "text": "This second alert stays open.",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 238,
+      "kind": "ui-prop",
+      "text": "Prompt",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 241,
+      "kind": "ui-object",
+      "text": "Rename example",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 243,
+      "kind": "ui-object",
+      "text": "Rename",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 249,
+      "kind": "ui-prop",
+      "text": "Example menu",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 251,
+      "kind": "ui-object",
+      "text": "Copy",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 252,
+      "kind": "ui-object",
+      "text": "Discard",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 258,
+      "kind": "ui-prop",
+      "text": "Menu",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 261,
+      "kind": "ui-prop",
+      "text": "Example upload",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 262,
+      "kind": "ui-prop",
+      "text": "Connecting",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 265,
+      "kind": "ui-prop",
+      "text": "New thread",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 283,
+      "kind": "ui-prop",
+      "text": "Changes are ready to review.",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 287,
+      "kind": "ui-object",
+      "text": "Undo",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 298,
+      "kind": "ui-prop",
+      "text": "Example sheet",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 305,
+      "kind": "ui-prop",
+      "text": "Overview",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/ComponentCatalogScreen.tsx",
+      "line": 310,
+      "kind": "ui-prop",
+      "text": "Activity",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/NativeAppBarExample.android.tsx",
+      "line": 9,
+      "kind": "jsx-text",
+      "text": "Native app bar",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/NativeAppBarExample.android.tsx",
+      "line": 11,
+      "kind": "ui-prop",
+      "text": "Example back",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/development/NativeAppBarExample.android.tsx",
+      "line": 17,
+      "kind": "ui-prop",
+      "text": "Example search",
+      "disposition": "development-only",
+      "reason": "Component catalog and native app-bar examples are behind __DEV__; not registered in this release APK."
+    },
+    {
+      "file": "apps/mobile/src/features/diffs/nativeReviewDiffSurface.ts",
+      "line": 306,
+      "kind": "ui-object",
+      "text": "surface-retry",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/diffs/nativeReviewDiffSurface.ts",
+      "line": 349,
+      "kind": "ui-object",
+      "text": "surface-content-mounted",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/files/AudioFilePreview.tsx",
+      "line": 52,
+      "kind": "ui-prop",
+      "text": "−15s",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/files/AudioFilePreview.tsx",
+      "line": 83,
+      "kind": "ui-prop",
+      "text": "+15s",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/files/preload-workspace-file.ts",
+      "line": 55,
+      "kind": "ui-object",
+      "text": "workspace file preload",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/files/preload-workspace-file.ts",
+      "line": 72,
+      "kind": "ui-object",
+      "text": "workspace source highlight preload",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 79,
+      "kind": "ui-object",
+      "text": "Too large to browse here",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 84,
+      "kind": "ui-object",
+      "text": "Download cancelled",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 85,
+      "kind": "ui-object",
+      "text": "The ZIP wasn't downloaded. Try again to list its files.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 89,
+      "kind": "ui-object",
+      "text": "Couldn't download this ZIP",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 90,
+      "kind": "ui-object",
+      "text": "Check the connection to this environment and try again.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 143,
+      "kind": "ui-object",
+      "text": "Couldn't browse this ZIP",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 658,
+      "kind": "ui-object",
+      "text": "Too big to preview",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/files/ZipArchiveView.tsx",
+      "line": 697,
+      "kind": "ui-object",
+      "text": "Couldn't read this file",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/createWorkspaceStackNavigator.ios.tsx",
+      "line": 478,
+      "kind": "ui-prop",
+      "text": "Resize inspector",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/inspector-host.tsx",
+      "line": 47,
+      "kind": "ui-prop",
+      "text": "The inspector couldn't be displayed",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/native-mail-search-toolbar.ts",
+      "line": 18,
+      "kind": "ui-object",
+      "text": "Search",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/brand-header-options.tsx",
+      "line": 17,
+      "kind": "ui-object",
+      "text": "Threads",
+      "disposition": "android-header-hidden",
+      "reason": "Fallback title is replaced by CompactBrandTitle; Android app bars render their own localized title."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/PullRequestToolbar.android.tsx",
+      "line": 59,
+      "kind": "ui-prop",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/workspace-list-header-items.ts",
+      "line": 61,
+      "kind": "ui-object",
+      "text": "Settings",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/workspace-list-header-items.ts",
+      "line": 62,
+      "kind": "ui-object",
+      "text": "Open settings",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/WorkspaceListHeader.android.tsx",
+      "line": 63,
+      "kind": "ui-prop",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/WorkspaceListHeader.tsx",
+      "line": 37,
+      "kind": "ui-object",
+      "text": "Filter threads",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/WorkspaceListHeader.tsx",
+      "line": 39,
+      "kind": "ui-object",
+      "text": "Thread list options",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/WorkspaceToolbar.tsx",
+      "line": 127,
+      "kind": "ui-prop",
+      "text": "New chat",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace/WorkspaceToolbar.tsx",
+      "line": 204,
+      "kind": "ui-prop",
+      "text": "New chat",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/layout/workspace-inspector-pane.tsx",
+      "line": 102,
+      "kind": "ui-prop",
+      "text": "Resize detail pane",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/projects/AddProjectScreen.tsx",
+      "line": 303,
+      "kind": "ui-prop",
+      "text": "~/projects/my-app",
+      "disposition": "technical-brand-or-data",
+      "reason": "Path placeholder and internal project-unarchive operation label."
+    },
+    {
+      "file": "apps/mobile/src/features/projects/AddProjectScreen.tsx",
+      "line": 751,
+      "kind": "ui-object",
+      "text": "project unarchive",
+      "disposition": "technical-brand-or-data",
+      "reason": "Path placeholder and internal project-unarchive operation label."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 33,
+      "kind": "ui-object",
+      "text": "Squash and merge",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 33,
+      "kind": "ui-object",
+      "text": "Combine the commits into one commit.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 35,
+      "kind": "ui-object",
+      "text": "Create a merge commit",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 36,
+      "kind": "ui-object",
+      "text": "Keep the commits and add a merge commit.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 38,
+      "kind": "ui-object",
+      "text": "Rebase and merge",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestActions.ts",
+      "line": 38,
+      "kind": "ui-object",
+      "text": "Add the commits without a merge commit.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestStatus.ts",
+      "line": 16,
+      "kind": "ui-object",
+      "text": "Open",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestStatus.ts",
+      "line": 23,
+      "kind": "ui-object",
+      "text": "Merged",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestStatus.ts",
+      "line": 30,
+      "kind": "ui-object",
+      "text": "Closed",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/pull-requests/pullRequestStatus.ts",
+      "line": 37,
+      "kind": "ui-object",
+      "text": "Draft",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/review/reviewModel.ts",
+      "line": 273,
+      "kind": "ui-object",
+      "text": "Non-text file",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/review/reviewModel.ts",
+      "line": 274,
+      "kind": "ui-object",
+      "text": "Diff preview is not available for this file format.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/review/reviewModel.ts",
+      "line": 285,
+      "kind": "ui-object",
+      "text": "Large diff",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/review/reviewModel.ts",
+      "line": 286,
+      "kind": "ui-object",
+      "text": "Large diffs are not rendered by default.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/review/reviewModel.ts",
+      "line": 287,
+      "kind": "ui-object",
+      "text": "Load diff",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 62,
+      "kind": "jsx-text",
+      "text": "t3code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 63,
+      "kind": "jsx-text",
+      "text": "git:(",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 64,
+      "kind": "jsx-text",
+      "text": "main",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 67,
+      "kind": "jsx-text",
+      "text": "vpr dev",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 70,
+      "kind": "jsx-text",
+      "text": "VITE v7.1.1",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 71,
+      "kind": "jsx-text",
+      "text": "ready in",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 72,
+      "kind": "jsx-text",
+      "text": "1.24s",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 76,
+      "kind": "jsx-text",
+      "text": "Local:",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 82,
+      "kind": "jsx-text",
+      "text": "✓ 85 passed",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 83,
+      "kind": "jsx-text",
+      "text": "△ 2 warnings",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 84,
+      "kind": "jsx-text",
+      "text": "✗ 0 failed",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/components/AppearancePreviews.tsx",
+      "line": 90,
+      "kind": "jsx-text",
+      "text": "watching for changes",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/AndroidNavigationAppearanceSection.tsx",
+      "line": 15,
+      "kind": "ui-prop",
+      "text": "One UI",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/AndroidNavigationAppearanceSection.tsx",
+      "line": 22,
+      "kind": "ui-prop",
+      "text": "Material",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ThemeAppearanceSection.tsx",
+      "line": 27,
+      "kind": "ui-object",
+      "text": "System",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ThemeAppearanceSection.tsx",
+      "line": 28,
+      "kind": "ui-object",
+      "text": "Light",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ThemeAppearanceSection.tsx",
+      "line": 29,
+      "kind": "ui-object",
+      "text": "Dark",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ToolCallsAppearanceSection.tsx",
+      "line": 16,
+      "kind": "ui-object",
+      "text": "Show all",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ToolCallsAppearanceSection.tsx",
+      "line": 17,
+      "kind": "ui-object",
+      "text": "Hide successful",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ToolCallsAppearanceSection.tsx",
+      "line": 18,
+      "kind": "ui-object",
+      "text": "Hide all",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/appearance/sections/ToolCallsAppearanceSection.tsx",
+      "line": 19,
+      "kind": "ui-object",
+      "text": "Zen",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/environmentUpdateCheck.ts",
+      "line": 47,
+      "kind": "ui-object",
+      "text": "Checking for updates timed out. Try again.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/OutdatedServerUpdateSection.tsx",
+      "line": 80,
+      "kind": "ui-prop",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsAuthRouteScreen.tsx",
+      "line": 17,
+      "kind": "ui-object",
+      "text": "T3 Connect",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsEnvironmentDetailRouteScreen.tsx",
+      "line": 240,
+      "kind": "ui-prop",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsFollowUpRouteScreen.tsx",
+      "line": 18,
+      "kind": "ui-object",
+      "text": "settings.followUp.queue",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsFollowUpRouteScreen.tsx",
+      "line": 19,
+      "kind": "ui-object",
+      "text": "settings.followUp.queueDescription",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsFollowUpRouteScreen.tsx",
+      "line": 23,
+      "kind": "ui-object",
+      "text": "settings.followUp.steer",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsFollowUpRouteScreen.tsx",
+      "line": 24,
+      "kind": "ui-object",
+      "text": "settings.followUp.steerDescription",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsKeyboardRouteScreen.tsx",
+      "line": 20,
+      "kind": "ui-object",
+      "text": "settings.keyboard.send",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsKeyboardRouteScreen.tsx",
+      "line": 21,
+      "kind": "ui-object",
+      "text": "settings.keyboard.sendDescription",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsKeyboardRouteScreen.tsx",
+      "line": 25,
+      "kind": "ui-object",
+      "text": "settings.keyboard.newline",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsKeyboardRouteScreen.tsx",
+      "line": 26,
+      "kind": "ui-object",
+      "text": "settings.keyboard.newlineDescription",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsNotificationsRouteScreen.tsx",
+      "line": 72,
+      "kind": "ui-object",
+      "text": "mobile:notification-permission",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsNotificationsRouteScreen.tsx",
+      "line": 78,
+      "kind": "ui-object",
+      "text": "notification permission refresh",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsNotificationsRouteScreen.tsx",
+      "line": 378,
+      "kind": "ui-object",
+      "text": "live activity disable token lookup",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsNotificationsRouteScreen.tsx",
+      "line": 399,
+      "kind": "ui-object",
+      "text": "live activity disable",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 20,
+      "kind": "ui-object",
+      "text": "settings.grouping.repository",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 21,
+      "kind": "ui-object",
+      "text": "settings.grouping.repositoryHelp",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 25,
+      "kind": "ui-object",
+      "text": "settings.grouping.repositoryPath",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 26,
+      "kind": "ui-object",
+      "text": "settings.grouping.repositoryPathHelp",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 30,
+      "kind": "ui-object",
+      "text": "settings.grouping.separate",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectGroupingRouteScreen.tsx",
+      "line": 31,
+      "kind": "ui-object",
+      "text": "settings.grouping.separateHelp",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectOverviewRouteScreen.tsx",
+      "line": 154,
+      "kind": "ui-object",
+      "text": "project name update",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsProjectOverviewRouteScreen.tsx",
+      "line": 158,
+      "kind": "ui-object",
+      "text": "project update",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsRouteScreen.logic.ts",
+      "line": 7,
+      "kind": "ui-object",
+      "text": "Unavailable on this platform",
+      "disposition": "unsupported-platform",
+      "reason": "Fallback only for platforms other than Android/iOS; Android returns supported with no subtitle."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 320,
+      "kind": "ui-prop",
+      "text": "body.action",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 708,
+      "kind": "ui-object",
+      "text": "scheduled task upsert",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1254,
+      "kind": "ui-prop",
+      "text": "{{headers.delivery-id}}",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1267,
+      "kind": "ui-prop",
+      "text": "{{body.id}}",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1369,
+      "kind": "ui-object",
+      "text": "scheduled task rotate webhook token",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1475,
+      "kind": "ui-object",
+      "text": "scheduled task enabled",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1479,
+      "kind": "ui-object",
+      "text": "scheduled task run",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsScheduledTasksRouteScreen.tsx",
+      "line": 1483,
+      "kind": "ui-object",
+      "text": "scheduled task delete",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsVoiceRouteScreen.tsx",
+      "line": 61,
+      "kind": "ui-object",
+      "text": "mobile:microphone-permission",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/SettingsVoiceRouteScreen.tsx",
+      "line": 108,
+      "kind": "ui-object",
+      "text": "CarPlay",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/useSettingsWriter.ts",
+      "line": 16,
+      "kind": "ui-object",
+      "text": "environment settings update",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/settings/VoiceModelSection.tsx",
+      "line": 159,
+      "kind": "jsx-text",
+      "text": "s",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/showcase/showcaseAgentActivity.ts",
+      "line": 70,
+      "kind": "ui-object",
+      "text": "T3 Code",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/showcase/showcaseAgentActivity.ts",
+      "line": 71,
+      "kind": "ui-object",
+      "text": "Agent work in progress",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/features/showcase/showcaseEnvironmentRows.ts",
+      "line": 57,
+      "kind": "ui-object",
+      "text": "Pocket Pi",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/NativeTerminalSurface.tsx",
+      "line": 194,
+      "kind": "jsx-text",
+      "text": "Ctrl-C",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 552,
+      "kind": "ui-object",
+      "text": "cmd",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 553,
+      "kind": "ui-object",
+      "text": "ctrl",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 556,
+      "kind": "ui-object",
+      "text": "ctrl",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 557,
+      "kind": "ui-object",
+      "text": "alt",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 565,
+      "kind": "ui-object",
+      "text": "esc",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/terminal/ThreadTerminalRouteScreen.tsx",
+      "line": 567,
+      "kind": "ui-object",
+      "text": "tab",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ComposerCommandPopover.tsx",
+      "line": 213,
+      "kind": "jsx-text",
+      "text": "skill:",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/draft-thread-shell.ts",
+      "line": 27,
+      "kind": "ui-object",
+      "text": "New thread",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/git/GitBranchesSheet.tsx",
+      "line": 94,
+      "kind": "ui-prop",
+      "text": "feature/mobile-polish",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/git/GitBranchesSheet.tsx",
+      "line": 125,
+      "kind": "ui-prop",
+      "text": "main",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/git/GitBranchesSheet.tsx",
+      "line": 135,
+      "kind": "ui-prop",
+      "text": "feature/mobile-thread",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/LinkRequestCard.tsx",
+      "line": 143,
+      "kind": "ui-object",
+      "text": "decline link request",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/LinkRequestCard.tsx",
+      "line": 247,
+      "kind": "ui-object",
+      "text": "answer link request",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 331,
+      "kind": "ui-object",
+      "text": "This app cannot call that tool.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 344,
+      "kind": "ui-object",
+      "text": "Declined by the user.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 372,
+      "kind": "ui-object",
+      "text": "Declined by the user.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 375,
+      "kind": "ui-object",
+      "text": "The link could not be opened.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 387,
+      "kind": "ui-object",
+      "text": "Declined by the user.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 458,
+      "kind": "ui-object",
+      "text": "Declined by the user.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/McpAppWebView.tsx",
+      "line": 488,
+      "kind": "ui-object",
+      "text": "Sharing is not available on this device.",
+      "disposition": "external-protocol-error",
+      "reason": "MCP bridge error responses go back to the tool/app protocol. Preserve them; localized permission/confirmation UI is separate."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/SecretRequestCard.tsx",
+      "line": 90,
+      "kind": "ui-object",
+      "text": "answer secret request",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 101,
+      "kind": "ui-object",
+      "text": "threadList.approval",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 107,
+      "kind": "ui-object",
+      "text": "threadList.input",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 113,
+      "kind": "ui-object",
+      "text": "threadList.request",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 131,
+      "kind": "ui-object",
+      "text": "threadList.failed",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 137,
+      "kind": "ui-object",
+      "text": "threadList.limited",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-list-v2-items.tsx",
+      "line": 144,
+      "kind": "ui-object",
+      "text": "threadList.done",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 15,
+      "kind": "ui-object",
+      "text": "Supervised",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 16,
+      "kind": "ui-object",
+      "text": "Ask before commands and file changes.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 20,
+      "kind": "ui-object",
+      "text": "Auto-accept edits",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 21,
+      "kind": "ui-object",
+      "text": "Auto-approve edits, ask before other actions.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 25,
+      "kind": "ui-object",
+      "text": "Auto",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 26,
+      "kind": "ui-object",
+      "text": "Supported providers approve routine actions; others still ask.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 30,
+      "kind": "ui-object",
+      "text": "Full access",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-settings-options.ts",
+      "line": 31,
+      "kind": "ui-object",
+      "text": "Allow commands and edits without prompts.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/thread-work-log.tsx",
+      "line": 1021,
+      "kind": "jsx-text",
+      "text": "exit",
+      "disposition": "technical-brand-or-data",
+      "reason": "Process exit-code label; code/status value remains original."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadDetailScreen.tsx",
+      "line": 761,
+      "kind": "dialog",
+      "text": "Pi",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/threadListV2.ts",
+      "line": 157,
+      "kind": "ui-object",
+      "text": "More",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/threadListV2.ts",
+      "line": 164,
+      "kind": "ui-object",
+      "text": "Arrange",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadRouteScreen.tsx",
+      "line": 388,
+      "kind": "ui-object",
+      "text": "resume queue",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadRouteScreen.tsx",
+      "line": 392,
+      "kind": "ui-object",
+      "text": "continue thread",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadRouteScreen.tsx",
+      "line": 396,
+      "kind": "ui-object",
+      "text": "set thread runtime mode",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadRouteScreen.tsx",
+      "line": 400,
+      "kind": "ui-object",
+      "text": "set thread interaction mode",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/ThreadRouteScreen.tsx",
+      "line": 404,
+      "kind": "ui-object",
+      "text": "load earlier thread history",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/useStartSideChat.ts",
+      "line": 58,
+      "kind": "ui-object",
+      "text": "Side chat",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/threads/workSummaryCatalog.ts",
+      "line": 185,
+      "kind": "ui-object",
+      "text": "workSummaryUi.noun1",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/triage/useStartTriage.ts",
+      "line": 112,
+      "kind": "ui-object",
+      "text": "Triage",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/features/updates/app-updates.ts",
+      "line": 379,
+      "kind": "dialog",
+      "text": "Update ready",
+      "disposition": "disabled-community-ota",
+      "reason": "Community build disables Expo OTA; this upstream automatic-update confirmation is unreachable."
+    },
+    {
+      "file": "apps/mobile/src/features/updates/app-updates.ts",
+      "line": 380,
+      "kind": "dialog",
+      "text": "A new version has been downloaded and installs automatically the next time you leave the app. Install it now instead?",
+      "disposition": "disabled-community-ota",
+      "reason": "Community build disables Expo OTA; this upstream automatic-update confirmation is unreachable."
+    },
+    {
+      "file": "apps/mobile/src/features/updates/app-updates.ts",
+      "line": 459,
+      "kind": "ui-object",
+      "text": "app update check",
+      "disposition": "disabled-community-ota",
+      "reason": "Community build disables Expo OTA; this upstream automatic-update confirmation is unreachable."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 64,
+      "kind": "ui-object",
+      "text": "usage.cost",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 65,
+      "kind": "ui-object",
+      "text": "usage.tokens",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 66,
+      "kind": "ui-object",
+      "text": "usage.limits",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 70,
+      "kind": "ui-object",
+      "text": "usage.h24",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 70,
+      "kind": "ui-object",
+      "text": "usage.past24",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 71,
+      "kind": "ui-object",
+      "text": "usage.d7",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 71,
+      "kind": "ui-object",
+      "text": "usage.past7",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 72,
+      "kind": "ui-object",
+      "text": "usage.d30",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 72,
+      "kind": "ui-object",
+      "text": "usage.past30",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 73,
+      "kind": "ui-object",
+      "text": "usage.d90",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/usage/UsageRouteScreen.tsx",
+      "line": 73,
+      "kind": "ui-object",
+      "text": "usage.past90",
+      "disposition": "localization-key",
+      "reason": "Candidate is a localization key, translated at render; it is not visible English copy."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/environmentTranscriber.ts",
+      "line": 22,
+      "kind": "ui-object",
+      "text": "Your transcription choice changed.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/environmentTranscriber.ts",
+      "line": 44,
+      "kind": "ui-object",
+      "text": "This recording couldn’t be read. Try recording again.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/voiceDestination.ts",
+      "line": 127,
+      "kind": "ui-object",
+      "text": "Your transcription choice changed.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/voiceDestination.ts",
+      "line": 158,
+      "kind": "ui-object",
+      "text": "Install a transcription model for this environment in Settings → Voice, then try again.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/voiceDestination.ts",
+      "line": 175,
+      "kind": "ui-object",
+      "text": "Update T3 Code to transcribe on an environment.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/features/voice-input/VoiceInputProvider.tsx",
+      "line": 62,
+      "kind": "ui-object",
+      "text": "mobile:voice-input:transcriber",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/lib/authClientMetadata.ts",
+      "line": 10,
+      "kind": "ui-object",
+      "text": "T3 Code Mobile",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/lib/mobileTheme.ts",
+      "line": 29,
+      "kind": "ui-object",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/lib/mobileTheme.ts",
+      "line": 30,
+      "kind": "ui-object",
+      "text": "Material You",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/lib/threadActivity.ts",
+      "line": 1346,
+      "kind": "ui-object",
+      "text": "Earlier work",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/lib/typography.ts",
+      "line": 26,
+      "kind": "ui-object",
+      "text": "text-xs",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/lib/typography.ts",
+      "line": 30,
+      "kind": "ui-object",
+      "text": "text-xl",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/native/MermaidCodeBlock.tsx",
+      "line": 60,
+      "kind": "ui-object",
+      "text": "The diagram renderer failed to load.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/native/MermaidCodeBlock.tsx",
+      "line": 80,
+      "kind": "ui-object",
+      "text": "The diagram renderer failed to load.",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/native/MermaidCodeBlock.tsx",
+      "line": 199,
+      "kind": "ui-prop",
+      "text": "Mermaid",
+      "disposition": "display-adapter",
+      "reason": "Raw source values remain for state/protocol or caching; localized presentation uses explicit catalog/labels. Custom content remains unchanged."
+    },
+    {
+      "file": "apps/mobile/src/native/V5StackHeader.ios.tsx",
+      "line": 249,
+      "kind": "ui-object",
+      "text": "New task",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/native/V5StackHeader.ios.tsx",
+      "line": 270,
+      "kind": "ui-object",
+      "text": "Dismiss keyboard",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/native/voiceTranscription.ios.ts",
+      "line": 62,
+      "kind": "ui-object",
+      "text": "Voice transcription requires a supported device with iOS 26 or later.",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/native/voiceTranscription.ios.ts",
+      "line": 123,
+      "kind": "ui-object",
+      "text": "Voice transcription does not support any of your languages.",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 166,
+      "kind": "ui-object",
+      "text": "Settings",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 487,
+      "kind": "ui-object",
+      "text": "UI components",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 561,
+      "kind": "ui-object",
+      "text": "Choose project",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 566,
+      "kind": "ui-object",
+      "text": "Environment",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 571,
+      "kind": "ui-object",
+      "text": "Branch",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 577,
+      "kind": "ui-object",
+      "text": "Add project",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 651,
+      "kind": "ui-object",
+      "text": "Files",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 713,
+      "kind": "ui-object",
+      "text": "Legal",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 719,
+      "kind": "ui-object",
+      "text": "Set up T3 Connect",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 728,
+      "kind": "ui-object",
+      "text": "Environments",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/Stack.tsx",
+      "line": 733,
+      "kind": "ui-object",
+      "text": "Add Environment",
+      "disposition": "android-header-hidden",
+      "reason": "Native route title metadata; Android route options hide these headers and screens supply localized app bars. Screen registrations retained."
+    },
+    {
+      "file": "apps/mobile/src/state/assets.ts",
+      "line": 182,
+      "kind": "ui-object",
+      "text": "Reconnect to this environment and try again.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/attachments.ts",
+      "line": 24,
+      "kind": "ui-object",
+      "text": "This connection cannot change attachments.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/queued-run-edit.ts",
+      "line": 41,
+      "kind": "ui-object",
+      "text": "mobile-queued-run-edits",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/state/thread-model-selection.ts",
+      "line": 42,
+      "kind": "ui-object",
+      "text": "change model",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/state/use-selected-thread-git-actions.ts",
+      "line": 103,
+      "kind": "ui-object",
+      "text": "This connection cannot update the thread's branch.",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/use-selected-thread-git-actions.ts",
+      "line": 144,
+      "kind": "ui-object",
+      "text": "Refreshing source control status",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/use-selected-thread-git-actions.ts",
+      "line": 204,
+      "kind": "ui-object",
+      "text": "Git action failed",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/use-selected-thread-git-actions.ts",
+      "line": 220,
+      "kind": "ui-object",
+      "text": "Git action failed",
+      "disposition": "app-error-presentation",
+      "reason": "Known application errors are translated at error presentation; original state/cause remains unchanged. Unknown diagnostics remain raw. Runtime coverage is limited to the acceptance record."
+    },
+    {
+      "file": "apps/mobile/src/state/use-thread-composer-state.ts",
+      "line": 217,
+      "kind": "ui-object",
+      "text": "edit queued message",
+      "disposition": "diagnostic-or-instrumentation",
+      "reason": "Diagnostic operation label, raw security/protocol error, webhook expression or logging context. Preserve source/log values; surrounding UI has localized headings."
+    },
+    {
+      "file": "apps/mobile/src/widgets/agentActivityWidgetTimeline.ts",
+      "line": 19,
+      "kind": "ui-object",
+      "text": "T3 Code",
+      "disposition": "technical-brand-or-data",
+      "reason": "Brand, code/CLI sample, protocol identifier, unit or user/server title. Preserve original text; do not translate model output or existing records."
+    },
+    {
+      "file": "apps/mobile/src/widgets/SubscriptionUsage.tsx",
+      "line": 59,
+      "kind": "ui-object",
+      "text": "Open T3 to connect",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/widgets/SubscriptionUsage.tsx",
+      "line": 60,
+      "kind": "ui-object",
+      "text": "Open T3 to connect",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/widgets/SubscriptionUsage.tsx",
+      "line": 215,
+      "kind": "jsx-text",
+      "text": "% left",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/widgets/SubscriptionUsage.tsx",
+      "line": 233,
+      "kind": "jsx-text",
+      "text": "more in T3",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    },
+    {
+      "file": "apps/mobile/src/widgets/SubscriptionUsage.tsx",
+      "line": 255,
+      "kind": "jsx-text",
+      "text": "No subscription limits available.",
+      "disposition": "ios-only",
+      "reason": "Android platform implementation overrides this file, or this uses the iOS native inspector/SwiftUI/Live Activity path. Android implementation reviewed separately."
+    }
+  ],
+  "entryPointAudit": {
+    "files": 320,
+    "screens": 88,
+    "reviewedFindings": 10,
+    "unresolvedFindings": 0,
+    "evidence": ".t3/acceptance-v6/entry-point-audit.json",
+    "limitations": [
+      "Checks stable object IDs, switch cases, navigation targets, handler counts and screen registrations; cannot establish runtime behavior or exhaustive semantic parity.",
+      "Changes to label/description fields, callbacks, shared state and native code require source review and real device acceptance."
+    ]
+  },
+  "buildSourceComparison": {
+    "files": 390,
+    "mismatches": 0
+  },
+  "verification": {
+    "mobileTypecheck": {
+      "status": "passed",
+      "log": ".t3/localization-typecheck.log"
+    },
+    "maintenanceTests": {
+      "passed": 12,
+      "failed": 0
+    },
+    "nativeNotificationTests": {
+      "passed": 108,
+      "failed": 0,
+      "sdk": [24, 26, 33, 36],
+      "scope": "Robolectric unit tests; not actual FCM delivery"
+    },
+    "focusedMobileTests": {
+      "passed": 42,
+      "failed": 0,
+      "files": 4,
+      "log": ".t3/localization-final-errors-tests.log",
+      "scope": "Dialog, attachment document presentation, selected-thread Git actions and new-task context; earlier focused suites recorded separately"
+    },
+    "deviceAcceptance": "community/android/acceptance-v10.json",
+    "timeRegression": {
+      "passed": 79,
+      "failed": 0,
+      "files": 3,
+      "redLog": ".t3/localization-time-regression-red.log",
+      "greenLog": ".t3/localization-time-regression-green.log",
+      "scope": "Existing read-row test reproduced English relative time in Chinese mode before fix; current timestamps and Chinese relative labels rechecked on emulator"
+    },
+    "resourceReferenceCheck": {
+      "literalReferences": 3326,
+      "missing": 0,
+      "scope": "Literal t calls only; dynamic keys audited separately"
+    },
+    "v7": {
+      "mobileTypecheck": "passed",
+      "focusedDeviceTests": {
+        "passed": 15,
+        "files": 3
+      },
+      "maintenanceTests": 12,
+      "targetedLint": "passed",
+      "resourceAndTranslationCheck": "passed; no pending/stale/missing; API calls zero",
+      "mirrorSource": {
+        "files": 393,
+        "mismatches": 0
+      },
+      "bothApkPackaging": "Signature, version7, ABI, alignment, public Connect config, all4060 Chinese literals passed",
+      "review": "Independent read-only v7 review found no concrete regression",
+      "nativeNotificationHistory": "108 Robolectric tests API24/26/33/36 passed in v6; not rerun this turn",
+      "githubExecution": "not run"
+    },
+    "sourceV8": {
+      "mobileTypecheck": "passed",
+      "targetedLint": "passed",
+      "format": "25 scoped source/script/test files formatted",
+      "cloudLocaleTests": {
+        "files": 9,
+        "passed": 68,
+        "failed": 0,
+        "log": ".t3/acceptance-v7-continued/cloud-locale-tests.log"
+      },
+      "layoutTests": {
+        "files": 3,
+        "passed": 35,
+        "failed": 0,
+        "log": ".t3/acceptance-v7-continued/layout-tests.log",
+        "scope": "Existing pure layout tests; not matched K70 visual captures"
+      },
+      "expressionUiTests": {
+        "files": 3,
+        "passed": 36,
+        "failed": 0,
+        "log": ".t3/acceptance-v7-continued/expression-ui-tests.log",
+        "testSetup": "Existing image tests now use same English translator mock as other component tests; original image assertions retained"
+      },
+      "maintenanceTests": {
+        "passed": 12,
+        "failed": 0,
+        "log": ".t3/acceptance-v7-continued/maintenance-tests.log",
+        "regression": "Conditional UI examples first failed inventory assertion (0 != 2), then passed after scanner change"
+      },
+      "resourceCheck": "Final check passed; no pending/stale/missing; API calls0",
+      "mirrorSource": {
+        "files": 401,
+        "mismatches": []
+      },
+      "bothApkPackaging": "Passed: version8, ABI, same fixed certificate, v2/v3 signatures, native alignment, public Connect config and all4107 current Chinese literals",
+      "runtimeResourceSha256": "ee2607bae212b99e948c9312f132735e0020455a71f1812a944ed6ebc39b365d"
+    },
+    "sourceV8Review": {
+      "scope": "Read-only scoped v8 review",
+      "finding": "Translated skipped text was compared against protocol status in two places",
+      "fix": "Protocol decisions compare literal skipped; translated label is used only for display",
+      "regression": {
+        "red": ".t3/acceptance-v7-continued/skipped-stage-red.log",
+        "green": ".t3/acceptance-v7-continued/expression-ui-tests.log",
+        "cases": "Chinese skipped/null detail, raw skipped detail, pending and running checkout percent"
+      },
+      "otherFindings": "No other concrete regression; no notification currentTranslator import cycle found"
+    },
+    "sourceV9": {
+      "targetedTests": {
+        "passed": 38,
+        "failed": 0,
+        "files": 5,
+        "log": ".t3/acceptance-v8-device/device-source-tests.log"
+      },
+      "mobileTypecheck": "passed",
+      "lint": "passed for four changed mobile files",
+      "resourceCheck": {
+        "mode": "check",
+        "pending": [],
+        "stale": [],
+        "missing": [],
+        "removed": [],
+        "manualReviewRequired": [],
+        "untracked": [],
+        "usage": {
+          "calls": 0,
+          "reservedOutputTokens": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "totalTokens": 0,
+          "usageComplete": true,
+          "cost": null,
+          "maxCalls": 8,
+          "maxOutputTokens": 16384
+        }
+      },
+      "review": "Independent scoped review: no concrete issues in stream/version changes; PDF display fallback added afterward",
+      "sharedStreamTests": {
+        "passed": 16,
+        "failed": 0,
+        "log": ".t3/acceptance-v8-device/shared-stream-tests.log"
+      },
+      "mirrorSource": {
+        "files": 401,
+        "mismatches": [],
+        "temporaryDiagnosticRestored": true
+      },
+      "bothApkPackaging": "version9/ABI/fixed certificate/v2-v3 signatures/Connect config/all4120 current Chinese literals passed",
+      "runtimeResourceSha256": "fb7289bb05244a209608161a3218db951d5bdc50a69a9f62c695c0ade4300649"
+    },
+    "sourceV10": {
+      "mobileTests": {
+        "passed": 38,
+        "failed": 0,
+        "files": 5,
+        "log": ".t3/acceptance-v10-device/mobile-tests.log"
+      },
+      "sharedStreamTests": {
+        "passed": 18,
+        "failed": 0,
+        "files": 2,
+        "red": ".t3/acceptance-v9-device/android-queue-red.log",
+        "green": ".t3/acceptance-v9-device/android-queue-green.log"
+      },
+      "buildInputs": {
+        "red": ".t3/acceptance-v9-device/shared-input-red.log",
+        "green": ".t3/acceptance-v9-device/shared-input-green.log",
+        "redReason": "Shared device stream source missing from release bundle inputs",
+        "behaviorEvidence": "Shared-source-only change initially produced identical diagnostic APK SHA256; after input fix bundle regenerated and APK changed"
+      },
+      "mobileTypecheck": "passed",
+      "clientRuntimeTypecheck": "passed",
+      "targetedLint": "passed",
+      "maintenanceTests": {
+        "passed": 12,
+        "failed": 0,
+        "log": ".t3/acceptance-v9-device/maintenance-tests.log"
+      },
+      "resources": {
+        "mode": "check",
+        "pending": [],
+        "stale": [],
+        "missing": [],
+        "removed": [],
+        "manualReviewRequired": [],
+        "untracked": [],
+        "usage": {
+          "calls": 0,
+          "reservedOutputTokens": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "totalTokens": 0,
+          "usageComplete": true,
+          "cost": null,
+          "maxCalls": 8,
+          "maxOutputTokens": 16384
+        }
+      },
+      "review": "Independent scoped queue/keyframe/late-output review: no concrete findings; mobile host-label adapter additionally preserves remote/user names in existing test",
+      "mirrorSource": {
+        "files": 405,
+        "mismatches": [],
+        "temporaryDiagnosticRestored": true
+      },
+      "bothApkPackaging": "version10/ABI/fixed certificate/v2-v3 signatures/Connect config/all4125 current Chinese literals passed; actual embedded device script matches generated script; no temporary diagnostics",
+      "runtimeResourceSha256": "93f569fc523687a599ef4837c52cb49160044ace164c32f3d1a8a2b8fb2f3bed",
+      "errorPayloads": {
+        "knownCodecPreserved": true,
+        "multilineDiagnosticPreserved": true,
+        "unknownLogUnchanged": true
+      }
+    }
+  },
+  "remaining": [
+    "Own Firebase configuration and real push delivery",
+    "Physical ARM device, additional small-screen layouts and real desktop/second-computer UI",
+    "Context-dependent UI requiring real provider, hosted repository, account or external integration data",
+    "Specific third-party SSO callbacks and other viewer platforms/host types; final10 Android cross-emulator cloud picture/reload/Home already passed"
+  ],
+  "notes": [
+    "No claim that all application states were executed. Static candidate classification does not establish exhaustive translation coverage.",
+    "Current translations are agent-authored drafts, not maintainer humanReviewed translations.",
+    "No paid provider turns, translation API calls, PR push or public release in this acceptance run.",
+    "v8 matched Android16 simulation, language/restart, direct send/receive/question/approval/offline queue/attachment and7-to8 retained-auth real cloud roundtrip passed. Device preview no-video failed and exposed two additional presentation gaps; v9 source adds13 keys, build/acceptance pending.",
+    "Final signed version10 (no diagnostic code) passed API35/36 install/update, locale persistence/layout, real cloud same-conversation send and cross-emulator video/reload/Home. Actual push, SSO variants, physical/vendor behavior and protected GitHub execution remain unverified.",
+    "v12 adds24 missing Clerk Chinese resources; Last used badge visibly verified as 上次使用; four-provider callback acceptance remains recorded under v11."
+  ],
+  "authTestAccess": {
+    "status": "User completed native sign-in; real cloud route and same-conversation mobile send observed",
+    "credentialsCollected": false,
+    "method": "User confirmed email verification code or email/password; third-party SSO unverified"
+  },
+  "workflowVerification": {
+    "actionlint": "1.7.12 passed for all four community workflows; shellcheck/pyflakes integrations not run",
+    "nativeTranslationStaging": "Simulated changed native Chinese resources were rejected/unstaged before fix; now both exact generated XML paths allowed and staged; Kotlin source remains forbidden",
+    "githubExecution": "not run",
+    "apiCalls": 0
+  },
+  "currentSourceCandidate": "community/android/acceptance-v13.json"
+}

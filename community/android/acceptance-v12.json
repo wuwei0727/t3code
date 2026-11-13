@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "versionName": "2.3.0-zh.12",
+  "versionCode": 12,
+  "status": "both-apks-signed-api36-upgrade-localization-cloud-roundtrip-passed",
+  "complete": false,
+  "changes": [
+    "24 missing Clerk Android Chinese strings added via central translation catalog",
+    "Includes last-used badge, password visibility, new-device and biometric prompts"
+  ],
+  "resourceEntries": 4150,
+  "verification": {
+    "translationCheck": "passed; no pending, missing or stale translations",
+    "scriptTests": {
+      "passed": 15,
+      "failed": 0
+    },
+    "preparedClerkResources": "all English string resource names have Chinese entries",
+    "apkPackaging": "both ABIs version12 fixed certificate,4150 catalog strings,native24 resource names,Chinese badge and stream script verified",
+    "deviceUpgrade": "API36 version11-to12 install -r passed; Apple account retained after relaunch; then explicitly signed out to inspect login badge",
+    "runtimeChineseBadge": "passed; actual sign-in page shows 上次使用",
+    "nativeUnitTests": {
+      "passed": 2,
+      "failed": 0
+    },
+    "t3Connect": {
+      "registeredComputerObserved": true,
+      "cloudRouteConnected": true,
+      "legacyDirectRouteDisabled": true,
+      "conversationListLoaded": true,
+      "currentMaintenanceConversationOpened": true,
+      "historicalMessagesVisible": true,
+      "liveAssistantUpdatesVisible": true,
+      "mobileSendMarkerReceivedInCurrentThread": true,
+      "marker": "【v12 云连接复验】第十二版通过 T3 Connect 打开当前会话，发送这条验收消息。",
+      "sendMethod": "Agent entered test marker and pressed Adjust direction in native client during active acceptance turn",
+      "accountEmailStored": false
+    },
+    "cloudReconnect": {
+      "networkDisabled": "Wi-Fi and mobile data disabled through device tool",
+      "offlineMessage": "shown Pending before network restoration",
+      "networkRestored": "Wi-Fi and mobile data enabled",
+      "markerReceivedInCurrentThread": true,
+      "pendingCleared": true,
+      "missedAssistantUpdatesVisibleAfterReconnect": true,
+      "marker": "【v12 断线重连验收】离线时提交，恢复 T3 Connect 后自动送达。"
+    },
+    "approvals": {
+      "device": "API36 x86_64 emulator",
+      "provider": "isolated free Replay approval fixture",
+      "allowOnce": "UI action completed; server run4 completed and returned fixture result",
+      "reject": "UI action completed; server run5 completed with no approved fixture result",
+      "pendingRequestCountAfterEach": 0
+    }
+  },
+  "previousAcceptance": "community/android/acceptance-v11.json",
+  "remaining": [
+    "Official app coexistence callback routing",
+    "Physical ARM device, real push and GitHub Actions execution",
+    "Observed English relay discovery timeout on v12; source correction underway, replacement APK required"
+  ],
+  "artifacts": [
+    {
+      "file": "t3code-zh-2.3.0-zh.12-arm64-v8a.apk",
+      "sha256": "b0b950e071af1adb93cd069587e3e46ed92f711fbf2f0bdfea7624540832e507",
+      "sizeBytes": 103113455
+    },
+    {
+      "file": "t3code-zh-2.3.0-zh.12-x86_64.apk",
+      "sha256": "fed48bd3b01d75ac43e6e028e818927b6fa914f6c02996c8648960d59d8fa1a4",
+      "sizeBytes": 106508907
+    }
+  ]
+}

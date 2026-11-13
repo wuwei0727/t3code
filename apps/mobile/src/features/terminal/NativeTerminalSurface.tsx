@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import type { TerminalGrid, TerminalOutputState } from "@t3tools/client-runtime/state/terminal";
 import { memo, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
 import {
@@ -83,6 +84,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface({
   ref,
   ...props
 }: ReadyTerminalSurfaceProps) {
+  const { t } = useLanguage();
   const fontSize = props.fontSize ?? MOBILE_TYPOGRAPHY.label.fontSize;
   const inputRef = useRef<TextInputInstance>(null);
   const { themeAppearance, themeId } = useAppearancePreferences();
@@ -160,7 +162,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface({
           autoCorrect={false}
           blurOnSubmit={false}
           editable={props.isRunning && !props.readOnly}
-          placeholder="type and press return"
+          placeholder={t("terminalFallback.placeholder")}
           placeholderTextColor={theme.mutedForeground}
           returnKeyType="send"
           className="text-sm"

@@ -360,25 +360,40 @@ function searchTargetName(value: string | undefined): string | undefined {
 
 export function formatSearchToolLabel(
   data: Record<string, unknown> | undefined,
+  display?: (
+    template:
+      | "Searched {{query}} in {{target}}"
+      | "Searched files {{glob}} in {{target}}"
+      | "Searched files {{glob}}"
+      | "Searched {{query}}"
+      | "Searched in {{target}}",
+    parameters: Readonly<Record<string, string>>,
+  ) => string,
 ): string | undefined {
   const input = searchInputRecord(data);
   const query = firstInputString(input, SEARCH_QUERY_KEYS);
   const glob = firstInputString(input, SEARCH_GLOB_KEYS);
   const target = searchTargetName(firstInputString(input, SEARCH_TARGET_KEYS));
   if (query && target) {
-    return `Searched ${query} in ${target}`;
+    return (
+      display?.("Searched {{query}} in {{target}}", { query, target }) ??
+      `Searched ${query} in ${target}`
+    );
   }
   if (glob && target) {
-    return `Searched files ${glob} in ${target}`;
+    return (
+      display?.("Searched files {{glob}} in {{target}}", { glob, target }) ??
+      `Searched files ${glob} in ${target}`
+    );
   }
   if (glob) {
-    return `Searched files ${glob}`;
+    return display?.("Searched files {{glob}}", { glob }) ?? `Searched files ${glob}`;
   }
   if (query) {
-    return `Searched ${query}`;
+    return display?.("Searched {{query}}", { query }) ?? `Searched ${query}`;
   }
   if (target) {
-    return `Searched in ${target}`;
+    return display?.("Searched in {{target}}", { target }) ?? `Searched in ${target}`;
   }
   return undefined;
 }

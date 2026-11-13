@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import * as Dialog from "../../components/ui/Dialog";
 import { useRememberThreadProject } from "./useRememberThreadProject";
 import { useOpenPullRequest } from "../../native/useOpenPullRequest";
@@ -134,13 +135,14 @@ function firstRouteParam(value: string | string[] | undefined): string | null {
 const InspectorHeaderShownContext = createContext(false);
 
 function ThreadRouteFallbackLayout(props: { readonly children: ReactNode }) {
+  const { t } = useLanguage();
   const goBack = useWorkspaceBackNavigation("threads");
   const inspectorHeaderShown = use(InspectorHeaderShownContext);
   return (
     <ThreadScreenFallback
       header={
         inspectorHeaderShown ? undefined : (
-          <AppBar title="Thread" onBackToList={goBack} hideBottomBorder />
+          <AppBar title={t("threadHeader.title")} onBackToList={goBack} hideBottomBorder />
         )
       }
     >
@@ -150,9 +152,10 @@ function ThreadRouteFallbackLayout(props: { readonly children: ReactNode }) {
 }
 
 function OpeningThreadLoadingScreen() {
+  const { t } = useLanguage();
   return (
     <ThreadRouteFallbackLayout>
-      <LoadingScreen message="Opening thread…" messagePlacement="above-spinner" embedded />
+      <LoadingScreen message={t("threadRoute.opening")} messagePlacement="above-spinner" embedded />
     </ThreadRouteFallbackLayout>
   );
 }
@@ -175,6 +178,7 @@ function ThreadUnavailableScreen(props: {
   readonly actionLabel: string;
   readonly onAction: () => void;
 }) {
+  const { t } = useLanguage();
   return (
     <ThreadRouteFallbackLayout>
       <ScrollView
@@ -188,8 +192,8 @@ function ThreadUnavailableScreen(props: {
         className="bg-screen flex-1 android:bg-transparent"
       >
         <EmptyState
-          title="Thread unavailable"
-          detail="This thread is not available in the current mobile snapshot."
+          title={t("threadRoute.unavailable")}
+          detail={t("threadRoute.snapshotMissing")}
           actionLabel={props.actionLabel}
           onAction={props.onAction}
         />
@@ -239,6 +243,7 @@ export function ThreadRouteScreen(props: ThreadRouteScreenProps) {
 }
 
 function LiveThreadRouteController(props: ThreadRouteScreenProps) {
+  const { t } = useLanguage();
   useAndroidWorkspaceBack("threads");
   const connectionsReady = useConnectionsReady();
   const { connectionState } = useRemoteConnectionStatus();
@@ -274,7 +279,7 @@ function LiveThreadRouteController(props: ThreadRouteScreenProps) {
     props.inspectorPresentation ? (
       <InspectorHeaderShownContext value>
         <ThreadInspectorHeader
-          title={selectedThread?.title ?? "Thread"}
+          title={selectedThread?.title ?? t("threadHeader.title")}
           {...props.inspectorPresentation}
         />
         {content}
@@ -328,7 +333,7 @@ function LiveThreadRouteController(props: ThreadRouteScreenProps) {
   return withInspectorHeader(
     <ThreadUnavailableScreen
       actionLabel={
-        routeEnvironmentRuntime === null ? "Manage environments" : "Reconnect environment"
+        routeEnvironmentRuntime === null ? t("threadRoute.manage") : t("threadRoute.reconnect")
       }
       onAction={() => {
         if (routeEnvironmentRuntime !== null) {
@@ -346,6 +351,7 @@ function ThreadRouteContent(
     readonly selectedThreadDetailState: ReturnType<typeof useSelectedThreadDetailState>;
   },
 ) {
+  const { t } = useLanguage();
   const { layout, showInspector, toggleAuxiliaryPane } = useAdaptiveWorkspaceLayout();
   const { connectionState } = useRemoteConnectionStatus();
   const { onReconnectEnvironment } = useRemoteConnections();
@@ -675,8 +681,8 @@ function ThreadRouteContent(
     if (result._tag === "Failure" && !isAtomCommandInterrupted(result)) {
       const error = squashAtomCommandFailure(result);
       Dialog.alert(
-        "Could not resume thread",
-        error instanceof Error ? error.message : "Try again.",
+        t("threadRoute.resumeFailed"),
+        error instanceof Error ? error.message : t("threadRoute.retry"),
       );
     }
   };
@@ -812,7 +818,7 @@ function ThreadRouteContent(
       await recoverFailedThreadDraft(creation);
     } catch (error) {
       Dialog.alert(
-        "Could not restore draft",
+        t("threadRoute.restoreFailed"),
         error instanceof Error ? error.message : String(error),
       );
       return;
@@ -937,6 +943,7 @@ function ThreadRouteContent(
     creationState !== null
       ? { kind: "ready" as const }
       : projectThreadContentPresentation({
+          translate: t,
           hasDetail: selectedThreadDetail !== null,
           detailError: Option.getOrNull(selectedThreadDetailState.error),
           detailDeleted: selectedThreadDetailState.status === "deleted",
@@ -970,7 +977,7 @@ function ThreadRouteContent(
           selectedThread={selectedThreadWithDraftSettings ?? selectedThread}
           selectedThreadDetailRef={selectedThreadDetailRef}
           contentPresentation={contentPresentation}
-          screenTone={connectionTone(routeConnectionState)}
+          screenTone={connectionTone(routeConnectionState, t)}
           connectionError={routeConnectionError}
           environmentLabel={selectedEnvironmentConnection?.environmentLabel ?? null}
           feedbackSubmissions={composer.feedbackSubmissions}

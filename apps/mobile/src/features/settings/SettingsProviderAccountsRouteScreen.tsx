@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import * as Dialog from "../../components/ui/Dialog";
 import {
   isAtomCommandInterrupted,
@@ -36,13 +37,14 @@ import { CLAUDE_DRIVER } from "./claude-accounts";
 import { useSettingsEnvironmentFilter, type SettingsTarget } from "./settings-environment-filter";
 
 export function SettingsProviderAccountsRouteScreen() {
+  const { t } = useLanguage();
   const environmentMenu = useSettingsEnvironmentMenu();
   const { selectedTargets } = useSettingsEnvironmentFilter();
   const permittedEnvironments = useEnvironmentsWithScope(selectedTargets, AuthProvidersManageScope);
   const providersByEnvironment = useAtomValue(environmentPresentations.providersByEnvironmentAtom);
   const insets = useSafeAreaInsets();
   return (
-    <SettingsScreen title="Providers" menus={[environmentMenu]}>
+    <SettingsScreen title={t("providerAccounts.title")} menus={[environmentMenu]}>
       <ScreenScrollView
         className="flex-1"
         contentInsetAdjustmentBehavior="automatic"
@@ -50,15 +52,15 @@ export function SettingsProviderAccountsRouteScreen() {
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
         {selectedTargets.length === 0 ? (
-          <Text className="text-foreground-muted">Select a connected environment.</Text>
+          <Text className="text-foreground-muted">{t("providerAccounts.selectEnvironment")}</Text>
         ) : (
           selectedTargets.map((environment) => (
             <SettingsSection key={environment.environmentId} title={environment.label}>
               {!permittedEnvironments.has(environment.environmentId) ? (
                 <View className="gap-1 p-4">
-                  <Text className="text-base text-foreground">Limited permissions</Text>
+                  <Text className="text-base text-foreground">{t("providerAccounts.limited")}</Text>
                   <Text className="text-sm text-foreground-muted">
-                    {`This session can view ${environment.label}'s providers but can't change their settings.`}
+                    {t("providerAccounts.limitedHelp", { environment: environment.label })}
                   </Text>
                 </View>
               ) : (
@@ -82,6 +84,7 @@ function EnvironmentProviders({
   readonly environment: SettingsTarget;
   readonly providers: ReadonlyArray<ServerProvider>;
 }) {
+  const { t } = useLanguage();
   const accounts = providers.filter(canManageProvider);
   // Claude has no in-app sign-in; each account is its own instance on a signed-in config folder.
   const claudeAccounts = providers.filter(
@@ -102,9 +105,7 @@ function EnvironmentProviders({
         />
       ))}
       {accounts.length === 0 ? (
-        <Text className="p-4 text-foreground-muted">
-          Configure a provider with in-app sign-in in web or desktop Settings.
-        </Text>
+        <Text className="p-4 text-foreground-muted">{t("providerAccounts.configure")}</Text>
       ) : null}
       {claudeAccounts.map((provider) => (
         <ClaudeAccount key={provider.instanceId} environment={environment} provider={provider} />
@@ -139,6 +140,7 @@ function ProviderAccount({
   readonly provider: ServerProvider;
   readonly divider: boolean;
 }) {
+  const { t } = useLanguage();
   const environmentId = environment.environmentId;
   const instanceId = provider.instanceId;
   const target = { environmentId, input: { instanceId } };
@@ -195,7 +197,7 @@ function ProviderAccount({
     if (result._tag === "Success") return true;
     if (!isAtomCommandInterrupted(result)) {
       const failure = squashAtomCommandFailure(result);
-      setError(failure instanceof Error ? failure.message : "Could not update provider sign-in.");
+      setError(failure instanceof Error ? failure.message : t("providerAccounts.updateFailed"));
     }
     return false;
   }
@@ -247,18 +249,18 @@ function ProviderAccount({
     active || state?.phase === "failed" || state?.phase === "cancelled"
       ? state.message
       : !provider.enabled
-        ? "Turned off"
+        ? t("providerAccounts.off")
         : signedIn
-          ? "Signed in"
+          ? t("providerAccounts.signedIn")
           : isDiscovering
-            ? "Discovering sign-in methods…"
+            ? t("providerAccounts.discovering")
             : needsExternalSetup
-              ? "No in-app sign-in advertised. Follow the provider's docs to finish setup."
+              ? t("providerAccounts.externalSetup")
               : !provider.installed
-                ? "Not installed"
+                ? t("providerAccounts.notInstalled")
                 : usesCredentials
-                  ? "Connect to load models"
-                  : "Not signed in";
+                  ? t("providerAccounts.connectModels")
+                  : t("providerAccounts.signedOut");
   // A provider with several sign-in methods picks one from a menu on the same control.
   const methodActions: MenuAction[] = methods.map((method) => ({
     id: `method:${method.id}`,
@@ -269,7 +271,7 @@ function ProviderAccount({
     ? [
         {
           id: "remove",
-          title: "Remove incomplete connection",
+          title: t("providerAccounts.removeIncomplete"),
           attributes: { disabled: disabled || active || !canRemoveMethod },
           subactions: removableMethods.map((method) => ({
             id: `remove:${method.id}`,
@@ -284,12 +286,12 @@ function ProviderAccount({
   }
   function signOut() {
     Dialog.alert(
-      "Sign out?",
-      `Running threads sharing this sign-in on ${environment.label} will stop. Thread history is kept.`,
+      t("providerAccounts.signOutConfirm"),
+      t("providerAccounts.signOutHelp", { environment: environment.label }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("providerAccounts.cancel"), style: "cancel" },
         {
-          text: "Sign out",
+          text: t("providerAccounts.signOut"),
           style: "destructive",
           onPress: () => {
             void run(() => logout(target));
@@ -316,7 +318,7 @@ function ProviderAccount({
       ? [
           {
             id: "change",
-            title: "Change account",
+            title: t("providerAccounts.changeAccount"),
             image: "person.crop.circle",
             attributes: { disabled: signInDisabled },
             ...(methodActions.length > 1
@@ -334,7 +336,7 @@ function ProviderAccount({
       ? [
           {
             id: "signOut",
-            title: "Sign out",
+            title: t("providerAccounts.signOut"),
             image: "rectangle.portrait.and.arrow.right",
             attributes: { destructive: true, disabled: disabled || state === null },
           },
@@ -348,18 +350,18 @@ function ProviderAccount({
   ) : needsExternalSetup && provider.setup?.documentationUrl ? (
     <ControlPill
       variant="pill"
-      label="Docs"
+      label={t("providerAccounts.docs")}
       onPress={() => {
         void Linking.openURL(provider.setup!.documentationUrl!).catch(() =>
-          setError("Could not open the provider docs."),
+          setError(t("providerAccounts.docsFailed")),
         );
       }}
     />
   ) : active && state?.flowId ? (
     <ControlPill
       variant="pill"
-      label="Cancel"
-      accessibilityLabel={`Cancel ${name} sign-in`}
+      label={t("providerAccounts.cancel")}
+      accessibilityLabel={t("providerAccounts.cancelSignIn", { name })}
       disabled={disabled}
       onPress={() => {
         void run(() => cancel({ environmentId, input: { instanceId, flowId: state.flowId! } }));
@@ -369,29 +371,40 @@ function ProviderAccount({
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`${name} account options`}
+      accessibilityLabel={t("providerAccounts.accountOptions", { name })}
       title={name}
       actions={accountActions}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
     >
-      <ControlPill icon="ellipsis" accessibilityLabel={`${name} account options`} />
+      <ControlPill
+        icon="ellipsis"
+        accessibilityLabel={t("providerAccounts.accountOptions", { name })}
+      />
     </Menu>
   ) : canSignIn && !signedIn && methodActions.length > 1 && !signInDisabled ? (
     <Menu
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`Sign in to ${name}`}
-      title="Sign in with"
+      accessibilityLabel={t("providerAccounts.signInTo", { name })}
+      title={t("providerAccounts.signInWith")}
       actions={[...methodActions, ...removeActions]}
       onPressAction={({ nativeEvent }) => onMenuAction(nativeEvent.event)}
     >
-      <ControlPill variant="primary" label="Sign in" accessibilityLabel={`Sign in to ${name}`} />
+      <ControlPill
+        variant="primary"
+        label={t("providerAccounts.signIn")}
+        accessibilityLabel={t("providerAccounts.signInTo", { name })}
+      />
     </Menu>
   ) : canSignIn && !signedIn ? (
     <ControlPill
       variant="primary"
-      label={usesCredentials ? "Connect" : "Sign in"}
-      accessibilityLabel={usesCredentials ? `Connect to ${name}` : `Sign in to ${name}`}
+      label={usesCredentials ? t("providerAccounts.connect") : t("providerAccounts.signIn")}
+      accessibilityLabel={
+        usesCredentials
+          ? t("providerAccounts.connectTo", { name })
+          : t("providerAccounts.signInTo", { name })
+      }
       disabled={signInDisabled}
       onPress={() => startSignIn()}
     />
@@ -417,7 +430,7 @@ function ProviderAccount({
         <View className="gap-2 px-4 pb-3">
           {interaction?.type === "deviceCode" ? (
             <Text selectable className="text-foreground">
-              Enter code {interaction.userCode} on the sign-in page.
+              {t("providerAccounts.enterCode", { code: interaction.userCode })}
             </Text>
           ) : null}
           {interaction?.type === "terminal" ? (
@@ -427,10 +440,10 @@ function ProviderAccount({
                   {interaction.output.replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, "")}
                 </Text>
               </ScrollView>
-              {field("input", "Terminal response", true)}
+              {field("input", t("providerAccounts.terminalResponse"), true)}
               <SettingsActionRow
                 icon="arrow.up"
-                label="Send response"
+                label={t("providerAccounts.sendResponse")}
                 disabled={disabled}
                 onPress={() => {
                   void send({ type: "terminal", data: `${values.input ?? ""}\r` }).then((sent) => {
@@ -447,7 +460,7 @@ function ProviderAccount({
               ))}
               <SettingsActionRow
                 icon="person.crop.circle"
-                label="Connect"
+                label={t("providerAccounts.connect")}
                 disabled={disabled}
                 onPress={() => {
                   void send({ type: "credentials", values }).then((sent) => {
@@ -459,10 +472,10 @@ function ProviderAccount({
           ) : null}
           {showCallback ? (
             <>
-              {field("callback", "Final localhost URL", false)}
+              {field("callback", t("providerAccounts.finalUrl"), false)}
               <SettingsActionRow
                 icon="arrow.right"
-                label="Continue"
+                label={t("providerAccounts.continue")}
                 disabled={disabled || !values.callback?.trim()}
                 onPress={() => {
                   if (!state?.flowId) return;
@@ -488,7 +501,7 @@ function ProviderAccount({
       {url ? (
         <SettingsActionRow
           icon="globe"
-          label="Open sign-in page"
+          label={t("providerAccounts.openSignIn")}
           disabled={disabled}
           onPress={() => {
             void (async () => {
@@ -499,7 +512,7 @@ function ProviderAccount({
               )
                 return;
               await Linking.openURL(url);
-            })().catch(() => setError("Could not open the sign-in page."));
+            })().catch(() => setError(t("providerAccounts.openFailed")));
           }}
         />
       ) : null}
@@ -516,6 +529,7 @@ function ProviderAccountSummary({
   readonly status: string | null | undefined;
   readonly email: string | undefined;
 }) {
+  const { t } = useLanguage();
   const [revealed, setRevealed] = useState(false);
   const content = (
     <>
@@ -542,7 +556,9 @@ function ProviderAccountSummary({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={[name, status, revealed ? email : null].filter(Boolean).join(", ")}
-      accessibilityHint={revealed ? "Hides the account email" : "Reveals the account email"}
+      accessibilityHint={
+        revealed ? t("providerAccounts.hideEmail") : t("providerAccounts.showEmail")
+      }
       onPress={() => setRevealed((value) => !value)}
       className="min-w-0 shrink grow gap-0.5"
     >

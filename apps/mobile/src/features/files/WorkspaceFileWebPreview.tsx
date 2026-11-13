@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -14,13 +15,15 @@ import { isPdfPreviewUri } from "../../lib/pdfPreview";
 import { useContentTopInset } from "../../components/ui/useBarInset";
 
 export function WorkspaceFileWebPreview(props: { readonly uri: string | null }) {
+  const { t } = useLanguage();
   if (props.uri === null) {
-    return <FilePreviewLoading message="Preparing preview..." background="card" />;
+    return <FilePreviewLoading message={t("files.surfaces.preparing")} background="card" />;
   }
   return <DocumentWebPreview key={props.uri} uri={props.uri} />;
 }
 
 function DocumentWebPreview(props: { readonly uri: string }) {
+  const { t } = useLanguage();
   const headerInset = useContentTopInset();
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -46,7 +49,7 @@ function DocumentWebPreview(props: { readonly uri: string }) {
           <PdfPreview key={linkedPdf} uri={linkedPdf} />
           <SafeAreaView edges={["bottom"]} className="border-t border-border px-4 py-2">
             <ControlPill
-              label="Back to document"
+              label={t("files.surfaces.backToDocument")}
               variant="pill"
               onPress={() => setLinkedPdf(null)}
             />
@@ -82,7 +85,7 @@ function DocumentWebPreview(props: { readonly uri: string }) {
           }}
           onError={(event) => {
             setLoadProgress(0);
-            setLoadError(event.nativeEvent.description || "The file could not be rendered.");
+            setLoadError(event.nativeEvent.description || t("files.surfaces.renderFailed"));
           }}
           renderLoading={() => (
             <View className="absolute inset-0 items-center justify-center bg-card">
@@ -95,7 +98,9 @@ function DocumentWebPreview(props: { readonly uri: string }) {
           {loadProgress > 0 && loadProgress < 1 ? <LoadingStrip progress={loadProgress} /> : null}
           {loadError ? (
             <View className="border-b border-border bg-card px-4 py-2">
-              <Text className="text-xs font-t3-bold text-foreground">Preview failed</Text>
+              <Text className="text-xs font-t3-bold text-foreground">
+                {t("files.surfaces.previewFailed")}
+              </Text>
               <Text className="mt-0.5 text-xs leading-snug text-foreground-muted">{loadError}</Text>
             </View>
           ) : null}

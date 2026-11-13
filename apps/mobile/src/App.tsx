@@ -97,6 +97,7 @@ import { pruneNewTaskBranchCheckouts } from "./features/threads/NewTaskDraftRout
 import { installAppUpdateChecks } from "./features/updates/app-updates";
 
 import "../global.css";
+import { LanguageProvider } from "./i18n/LanguageProvider";
 
 if (process.env.EXPO_PUBLIC_SHOWCASE === "1") {
   prepareNativeShowcaseCapture();
@@ -218,11 +219,13 @@ function SplashScreenCoordinator() {
 export default function App() {
   return (
     <RegistryContext.Provider value={appAtomRegistry}>
-      <CloudAuthProvider>
-        <AppearancePreferencesProvider>
-          <AppContent />
-        </AppearancePreferencesProvider>
-      </CloudAuthProvider>
+      <LanguageProvider>
+        <CloudAuthProvider>
+          <AppearancePreferencesProvider>
+            <AppContent />
+          </AppearancePreferencesProvider>
+        </CloudAuthProvider>
+      </LanguageProvider>
     </RegistryContext.Provider>
   );
 }

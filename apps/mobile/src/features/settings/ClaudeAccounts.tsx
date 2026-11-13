@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import type { MenuAction } from "@react-native-menu/menu";
 import {
   isAtomCommandInterrupted,
@@ -28,6 +29,7 @@ import {
 import type { SettingsTarget } from "./settings-environment-filter";
 
 function useProviderInstanceMutation(environment: SettingsTarget) {
+  const { t } = useLanguage();
   const mutate = useAtomCommand(serverEnvironment.mutateProviderInstance, {
     reportFailure: false,
     reportDefect: false,
@@ -49,7 +51,7 @@ function useProviderInstanceMutation(environment: SettingsTarget) {
     if (result._tag === "Success") return true;
     if (!isAtomCommandInterrupted(result)) {
       const failure = squashAtomCommandFailure(result);
-      setError(failure instanceof Error ? failure.message : "Could not save the Claude account.");
+      setError(failure instanceof Error ? failure.message : t("claudeAccounts.saveFailed"));
     }
     return false;
   }
@@ -63,19 +65,20 @@ export function ClaudeAccount({
   readonly environment: SettingsTarget;
   readonly provider: ServerProvider;
 }) {
+  const { t } = useLanguage();
   const [editing, setEditing] = useState(false);
   const { run, pending, error } = useProviderInstanceMutation(environment);
   const instance = environment.serverConfig.settings.providerInstances[provider.instanceId];
   const configDir = claudeConfigDir(instance);
   const name = provider.displayName ?? "Claude";
   const status = !provider.enabled
-    ? "Turned off"
+    ? t("providerAccounts.off")
     : provider.auth.status === "authenticated"
-      ? "Signed in"
+      ? t("providerAccounts.signedIn")
       : provider.auth.status === "unauthenticated"
-        ? "Not signed in"
+        ? t("providerAccounts.signedOut")
         : !provider.installed
-          ? "Not installed"
+          ? t("providerAccounts.notInstalled")
           : null;
   const removable =
     provider.instanceId !== DEFAULT_CLAUDE_INSTANCE_ID &&
@@ -84,12 +87,12 @@ export function ClaudeAccount({
       `providerInstances.${provider.instanceId}`,
     );
   const actions: MenuAction[] = [
-    { id: "edit", title: "Edit", image: "pencil" },
+    { id: "edit", title: t("claudeAccounts.edit"), image: "pencil" },
     ...(removable
       ? [
           {
             id: "remove",
-            title: "Remove",
+            title: t("claudeAccounts.remove"),
             image: "trash",
             attributes: { destructive: true },
           } satisfies MenuAction,
@@ -98,12 +101,12 @@ export function ClaudeAccount({
   ];
   function remove() {
     Dialog.alert(
-      `Remove ${name}?`,
-      `It leaves the model picker on ${environment.label}. The config folder and its sign-in stay on the server.`,
+      t("claudeAccounts.removeConfirm", { name }),
+      t("claudeAccounts.removeHelp", { environment: environment.label }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("providerAccounts.cancel"), style: "cancel" },
         {
-          text: "Remove",
+          text: t("claudeAccounts.remove"),
           style: "destructive",
           onPress: () => {
             void run({ operation: "remove", instanceId: provider.instanceId });
@@ -120,14 +123,14 @@ export function ClaudeAccount({
             {name}
           </Text>
           <Text textRole="footnote" className="text-foreground-muted" numberOfLines={2}>
-            {[status, configDir || "Default config folder"].filter(Boolean).join(" · ")}
+            {[status, configDir || t("claudeAccounts.defaultFolder")].filter(Boolean).join(" · ")}
           </Text>
         </View>
         {editing ? null : (
           <Menu
             accessible
             accessibilityRole="button"
-            accessibilityLabel={`${name} options`}
+            accessibilityLabel={t("claudeAccounts.options", { name })}
             title={name}
             actions={actions}
             onPressAction={({ nativeEvent }) => {
@@ -138,7 +141,7 @@ export function ClaudeAccount({
           >
             <ControlPill
               icon="ellipsis"
-              accessibilityLabel={`${name} options`}
+              accessibilityLabel={t("claudeAccounts.options", { name })}
               disabled={pending}
             />
           </Menu>
@@ -161,6 +164,7 @@ export function ClaudeAccount({
 }
 
 export function AddClaudeAccount({ environment }: { readonly environment: SettingsTarget }) {
+  const { t } = useLanguage();
   const [adding, setAdding] = useState(false);
   return (
     <View className="border-t border-border-subtle">
@@ -174,8 +178,8 @@ export function AddClaudeAccount({ environment }: { readonly environment: Settin
       ) : (
         <ListActionRow
           icon="plus"
-          label="Add Claude account"
-          description="Use a Claude config folder that is already signed in on this server."
+          label={t("claudeAccounts.addAccount")}
+          description={t("claudeAccounts.addHelp")}
           onPress={() => setAdding(true)}
         />
       )}
@@ -194,6 +198,7 @@ function ClaudeAccountForm({
   readonly initial: ClaudeAccountDraft;
   readonly onDone: () => void;
 }) {
+  const { t } = useLanguage();
   const [draft, setDraft] = useState(initial);
   const { run, pending, error, setError } = useProviderInstanceMutation(environment);
   function save() {
@@ -204,7 +209,18 @@ function ClaudeAccountForm({
       draft,
     });
     if ("error" in plan) {
-      setError(plan.error);
+      setError(
+        plan.error === "Enter a name for this account."
+          ? t("claudeAccounts.nameRequired")
+          : plan.error === "Enter the Claude config folder this account is signed in with."
+            ? t("claudeAccounts.folderRequired")
+            : environment.serverConfig.managedPolicy &&
+                plan.error === `Managed by ${environment.serverConfig.managedPolicy.organization}.`
+              ? t("claudeAccounts.managed", {
+                  organization: environment.serverConfig.managedPolicy.organization,
+                })
+              : plan.error,
+      );
       return;
     }
     void run(plan.mutation).then((saved) => {
@@ -229,20 +245,25 @@ function ClaudeAccountForm({
   return (
     <View className="gap-2 px-4 py-3">
       <Text textRole="footnote" className="text-foreground-muted">
-        {`Point at a CLAUDE_CONFIG_DIR folder on ${environment.label} where Claude Code is already signed in. Sign in there with the Claude CLI first.`}
+        {t("claudeAccounts.folderHelp", { environment: environment.label })}
       </Text>
-      {field("name", "Account name", "Name, e.g. Work")}
-      {field("configDir", "Claude config folder", "Config folder, e.g. ~/.claude-work")}
+      {field("name", t("claudeAccounts.name"), t("claudeAccounts.nameExample"))}
+      {field("configDir", t("claudeAccounts.folder"), t("claudeAccounts.folderExample"))}
       {error ? (
         <Text accessibilityRole="alert" className="text-danger-foreground">
           {error}
         </Text>
       ) : null}
       <View className="flex-row justify-end gap-2">
-        <ControlPill variant="pill" label="Cancel" disabled={pending} onPress={onDone} />
+        <ControlPill
+          variant="pill"
+          label={t("providerAccounts.cancel")}
+          disabled={pending}
+          onPress={onDone}
+        />
         <ControlPill
           variant="primary"
-          label={instanceId === null ? "Add" : "Save"}
+          label={instanceId === null ? t("claudeAccounts.add") : t("claudeAccounts.save")}
           disabled={pending}
           onPress={save}
         />

@@ -1,3 +1,5 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { appErrorText } from "../../i18n/appErrorPresentation";
 import { useAtom, useAtomValue } from "@effect/atom-react";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import type { EnvironmentId } from "@t3tools/contracts";
@@ -28,6 +30,7 @@ export function OutdatedServerUpdateSection({
   readonly environmentId: EnvironmentId;
   readonly label: string;
 }) {
+  const { t } = useLanguage();
   const describe = useAtomCommand(describeOutdatedServer, { reportFailure: false });
   const update = useAtomCommand(updateOutdatedServer, { reportFailure: false });
   const state = useAtomValue(serverEnvironment.updateStateAtom(environmentId));
@@ -36,7 +39,8 @@ export function OutdatedServerUpdateSection({
   const checking = checkResult.waiting;
   // Starting an update replaces a failed check's message with the update's own state.
   const [checkErrorDismissed, setCheckErrorDismissed] = useState(false);
-  const error = checkErrorDismissed ? null : releaseCheckError(checkResult);
+  const checkError = checkErrorDismissed ? null : releaseCheckError(checkResult);
+  const error = checkError ? appErrorText(checkError, t) : null;
   const busy = checking || state.status === "running";
 
   function check() {
@@ -53,12 +57,12 @@ export function OutdatedServerUpdateSection({
     const targetVersion = release?.targetVersion;
     if (busy || !release || !targetVersion) return;
     Dialog.alert(
-      `Update ${label}?`,
-      `Install T3 Code ${targetVersion}. T3 Code restarts on that machine and reconnects. Running threads may be interrupted.`,
+      t("outdatedServer.updateTitle", { environment: label }),
+      t("outdatedServer.confirmation", { version: targetVersion }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("outdatedServer.cancel"), style: "cancel" },
         {
-          text: "Update",
+          text: t("outdatedServer.update"),
           onPress: () => {
             setCheckErrorDismissed(true);
             void update({
@@ -76,20 +80,22 @@ export function OutdatedServerUpdateSection({
     <SettingsSection title="T3 Code">
       <View className="gap-1 p-4">
         <Text className="text-base text-foreground">
-          {release ? `Version ${release.fromVersion}` : "Update required"}
+          {release
+            ? t("outdatedServer.version", { version: release.fromVersion })
+            : t("outdatedServer.required")}
         </Text>
         <Text className="text-sm text-foreground-muted">
           {state.status === "running"
             ? state.stage === "resuming"
-              ? "Restarting and reconnecting…"
+              ? t("outdatedServer.restarting")
               : state.stage === "installing"
-                ? "Installing update…"
-                : "Downloading update…"
+                ? t("outdatedServer.installing")
+                : t("outdatedServer.downloading")
             : release
               ? release.targetVersion
-                ? `Version ${release.targetVersion} is available.`
-                : "No newer version is available yet."
-              : "This app needs a newer version of T3 Code on this machine."}
+                ? t("outdatedServer.available", { version: release.targetVersion })
+                : t("outdatedServer.noNewer")
+              : t("outdatedServer.needsNewer")}
         </Text>
         {error || state.status === "failed" ? (
           <Text selectable accessibilityRole="alert" className="text-sm text-danger-foreground">
@@ -99,7 +105,7 @@ export function OutdatedServerUpdateSection({
       </View>
       <SettingsActionRow
         icon="arrow.clockwise"
-        label="Check for updates"
+        label={t("outdatedServer.check")}
         disabled={busy}
         loading={checking}
         onPress={check}
@@ -107,7 +113,11 @@ export function OutdatedServerUpdateSection({
       {release?.targetVersion ? (
         <SettingsActionRow
           icon="arrow.up.circle"
-          label={state.status === "failed" ? "Retry update" : `Update to ${release.targetVersion}`}
+          label={
+            state.status === "failed"
+              ? t("outdatedServer.retry")
+              : t("outdatedServer.updateVersion", { version: release.targetVersion })
+          }
           disabled={busy}
           loading={state.status === "running"}
           onPress={requestUpdate}

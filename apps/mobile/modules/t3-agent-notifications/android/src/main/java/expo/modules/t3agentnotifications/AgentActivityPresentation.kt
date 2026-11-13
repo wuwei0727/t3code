@@ -11,6 +11,29 @@ import androidx.core.content.ContextCompat
 
 internal data class ActivityRow(val status: String, val title: String, val project: String)
 
+internal fun activityLabel(context: Context?, label: String): String {
+  val resource = when (label) {
+    "Connecting" -> R.string.t3_notify_connecting
+    "Starting" -> R.string.t3_notify_starting
+    "Working" -> R.string.t3_notify_working
+    "Open" -> R.string.t3_notify_open
+    "Approval" -> R.string.t3_notify_approval
+    "Approval needed" -> R.string.t3_notify_approval_needed
+    "Approve" -> R.string.t3_notify_approve
+    "Input" -> R.string.t3_notify_input
+    "Question for you" -> R.string.t3_notify_question
+    "Answer" -> R.string.t3_notify_answer
+    "Waiting" -> R.string.t3_notify_waiting
+    "Waiting for an update" -> R.string.t3_notify_waiting_update
+    "Done" -> R.string.t3_notify_done
+    "Finished" -> R.string.t3_notify_finished
+    "Failed" -> R.string.t3_notify_failed
+    "Active" -> R.string.t3_notify_active
+    else -> null
+  }
+  return if (context != null && resource != null) context.getString(resource) else label
+}
+
 internal enum class ActivityPhase(
   val status: String,
   val heading: String,
@@ -86,7 +109,13 @@ internal fun activityPhase(data: Map<String, String>, rows: List<ActivityRow>): 
     else -> rows.firstOrNull()?.let { ActivityPhase.forStatus(it.status) }
   }
 
-internal class ActivityPresentation(data: Map<String, String>, private val active: Boolean) {
+internal class ActivityPresentation(
+  data: Map<String, String>,
+  private val active: Boolean,
+  private val localizedContext: Context? = null
+) {
+  private fun text(resource: Int, fallback: String, vararg arguments: Any): String =
+    localizedContext?.getString(resource, *arguments) ?: fallback
   private val rows = activityRows(data)
   private val hero = rows.firstOrNull()
   val phase = activityPhase(data, rows)
@@ -104,25 +133,25 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
 
   val summary = when {
     hero == null -> data["activity_title"]?.takeIf { it.isNotBlank() }?.take(120)
-      ?: "Agent activity"
+      ?: text(R.string.t3_notify_activity, "Agent activity")
     rows.size == 1 -> hero.title
-    attentionCount == 1 -> "1 needs you"
-    attentionCount > 1 -> "$attentionCount need you"
-    activeCount > 0 && failedCount > 0 -> "$failedCount failed"
-    activeCount > 0 -> "$activeCount working"
-    failedCount > 0 -> "Finished, $failedCount failed"
-    else -> "All finished"
+    attentionCount == 1 -> text(R.string.t3_notify_one_needs, "1 needs you")
+    attentionCount > 1 -> text(R.string.t3_notify_needs, "$attentionCount need you", attentionCount)
+    activeCount > 0 && failedCount > 0 -> text(R.string.t3_notify_failed_count, "$failedCount failed", failedCount)
+    activeCount > 0 -> text(R.string.t3_notify_working_count, "$activeCount working", activeCount)
+    failedCount > 0 -> text(R.string.t3_notify_finished_failed, "Finished, $failedCount failed", failedCount)
+    else -> text(R.string.t3_notify_all_finished, "All finished")
   }
 
   val chip = when {
-    !active -> if (phase == ActivityPhase.FAILED) "Failed" else "Done"
-    phase == null -> data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: "Active"
+    !active -> activityLabel(localizedContext, if (phase == ActivityPhase.FAILED) "Failed" else "Done")
+    phase == null -> data["activity_chip"]?.takeIf { it.isNotBlank() }?.take(7) ?: activityLabel(localizedContext, "Active")
     phase == ActivityPhase.RUNNING && activeCount > 1 ->
-      "${if (activeCount > 9) "9+" else activeCount} live"
-    else -> phase.chip
+      text(R.string.t3_notify_live, "${if (activeCount > 9) "9+" else activeCount} live", if (activeCount > 9) "9+" else activeCount)
+    else -> activityLabel(localizedContext, phase.chip)
   }
 
-  val action = if (active) phase?.action ?: "Open" else null
+  val action = if (active) activityLabel(localizedContext, phase?.action ?: "Open") else null
 
   fun applyTo(builder: NotificationCompat.Builder, context: Context) {
     val tint = phase?.let { ContextCompat.getColor(context, it.color) }
@@ -136,7 +165,7 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
       builder.setSubText(
         listOfNotNull(
           hero!!.project.takeIf { singleProject && it.isNotBlank() },
-          if (activeCount > 0) "$activeCount active" else "$threadCount threads"
+          if (activeCount > 0) context.getString(R.string.t3_notify_active_count, activeCount) else context.getString(R.string.t3_notify_thread_count, threadCount)
         ).joinToString(" · ")
       )
     }
@@ -164,7 +193,7 @@ internal class ActivityPresentation(data: Map<String, String>, private val activ
     SpannableStringBuilder().apply {
       val status = ActivityPhase.forStatus(row.status)
       val color = ContextCompat.getColor(context, status?.color ?: R.color.agent_activity_waiting)
-      append(tinted(row.status, color, bold = true))
+      append(tinted(if (status == null) row.status else activityLabel(context, status.status), color, bold = true))
       append(" ").append(row.title)
       // Promoted cards drop text color, so the separator has to do the work of the dimming.
       if (trailing.isNotBlank()) {

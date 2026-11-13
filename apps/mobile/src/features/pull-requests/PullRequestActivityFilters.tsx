@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { Pressable, View } from "react-native";
 import { AppText as Text } from "../../components/ui/AppText";
 import { SymbolView } from "../../components/ui/AppSymbol";
@@ -13,15 +14,16 @@ export function PullRequestActivityFilters({
   readonly onChange: (value: ActivityFilter) => void;
   readonly hiddenCount: number;
 }) {
+  const { t } = useLanguage();
   const kinds = [
-    { id: "all", title: "All activity" },
-    { id: "comments", title: "Comments" },
-    { id: "commits", title: "Commits" },
+    { id: "all", title: t("prActivityFilters.all") },
+    { id: "comments", title: t("prActivityFilters.comments") },
+    { id: "commits", title: t("prActivityFilters.commits") },
   ] as const;
   return (
     <View className="mb-4 flex-row items-center justify-between gap-3">
       <Menu
-        title="Activity"
+        title={t("prActivityFilters.activity")}
         actions={kinds.map((kind) => ({ ...kind, state: value.kind === kind.id ? "on" : "off" }))}
         onPressAction={({ nativeEvent }) => {
           const kind = kinds.find((item) => item.id === nativeEvent.event);
@@ -30,7 +32,9 @@ export function PullRequestActivityFilters({
       >
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Activity type, ${kinds.find((kind) => kind.id === value.kind)?.title}`}
+          accessibilityLabel={t("prActivityFilters.type", {
+            type: kinds.find((kind) => kind.id === value.kind)?.title ?? "",
+          })}
           className="min-h-11 flex-row items-center gap-2 active:opacity-60"
         >
           <Text className="text-sm font-t3-semibold">
@@ -41,12 +45,12 @@ export function PullRequestActivityFilters({
       </Menu>
       <View className="flex-row items-center gap-3">
         <Menu
-          title="Show in activity"
+          title={t("prActivityFilters.show")}
           actions={[
-            { id: "bots", title: "Bot comments", state: value.bots ? "on" : "off" },
+            { id: "bots", title: t("prActivityFilters.bots"), state: value.bots ? "on" : "off" },
             {
               id: "resolved",
-              title: "Resolved or dismissed",
+              title: t("prActivityFilters.resolved"),
               state: value.resolved ? "on" : "off",
             },
           ]}
@@ -57,11 +61,13 @@ export function PullRequestActivityFilters({
         >
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`Filter activity, ${hiddenCount} hidden`}
+            accessibilityLabel={t("prActivityFilters.filter", { count: hiddenCount })}
             className="min-h-11 flex-row items-center gap-1.5 active:opacity-60"
           >
             {hiddenCount > 0 ? (
-              <Text className="text-xs text-foreground-muted">{hiddenCount} hidden</Text>
+              <Text className="text-xs text-foreground-muted">
+                {t("prActivityFilters.hidden", { count: hiddenCount })}
+              </Text>
             ) : null}
             <SymbolView
               name="line.3.horizontal.decrease"
@@ -72,7 +78,11 @@ export function PullRequestActivityFilters({
         </Menu>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={value.newestFirst ? "Newest first" : "Oldest first"}
+          accessibilityLabel={
+            value.newestFirst
+              ? t("prActivityFilters.newestFirst")
+              : t("prActivityFilters.oldestFirst")
+          }
           onPress={() => onChange({ ...value, newestFirst: !value.newestFirst })}
           className="h-11 flex-row items-center gap-1 active:opacity-60"
         >
@@ -82,7 +92,7 @@ export function PullRequestActivityFilters({
             tintColorClassName="accent-icon-muted"
           />
           <Text className="text-xs text-foreground-muted">
-            {value.newestFirst ? "Newest" : "Oldest"}
+            {value.newestFirst ? t("prActivityFilters.newest") : t("prActivityFilters.oldest")}
           </Text>
         </Pressable>
       </View>

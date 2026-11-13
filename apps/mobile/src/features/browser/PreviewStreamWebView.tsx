@@ -1,9 +1,10 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { makeTranslator, type UiTranslator } from "../../i18n/translator";
 import { Button } from "../../components/ui/Button";
 import { AppActivityIndicator } from "../../components/ui/AppActivityIndicator";
 import * as Dialog from "../../components/ui/Dialog";
 import previewStreamScript from "@t3tools/mobile-preview-stream";
 import {
-  previewStreamControlLabel,
   previewStreamHostSetupMessage,
   type PreviewStreamControl,
   type PreviewStreamDownload,
@@ -89,11 +90,11 @@ async function sendFilesToPage(chooser: PreviewStreamFileChooser, pick: boolean)
   if (!response.ok) throw new Error((await response.text()) || "The upload was refused.");
 }
 
-function offerDownload(download: PreviewStreamDownload) {
-  Dialog.alert(`Downloaded ${download.fileName}`, undefined, [
-    { text: "Not now", style: "cancel" },
+function offerDownload(download: PreviewStreamDownload, t: UiTranslator) {
+  Dialog.alert(t("previewStream.downloaded", { name: download.fileName }), undefined, [
+    { text: t("previewStream.notNow"), style: "cancel" },
     {
-      text: "Save or share",
+      text: t("previewStream.save"),
       onPress: () =>
         void downloadAndShareAttachment({
           url: download.url,
@@ -101,7 +102,7 @@ function offerDownload(download: PreviewStreamDownload) {
           signal: new AbortController().signal,
         }).catch((cause: unknown) =>
           Dialog.alert(
-            "Could not save the download",
+            t("previewStream.saveFailed"),
             cause instanceof Error ? cause.message : undefined,
           ),
         ),
@@ -118,6 +119,7 @@ export function PreviewStreamWebView(
       readonly paused?: boolean;
     },
 ) {
+  const { t } = useLanguage();
   const { access, error, refresh, retryAfter } = usePreviewStreamAccess(props.environmentId);
   if (access && !props.paused) {
     return (
@@ -146,11 +148,11 @@ export function PreviewStreamWebView(
               error ? "text-center text-sm text-foreground-muted" : "text-sm text-foreground-muted"
             }
           >
-            {error || "Connecting to browser..."}
+            {error || t("previewStream.connecting")}
           </AppText>
           {error && (
             <View className="items-center">
-              <Button label="Retry" tone="secondary" onPress={refresh} />
+              <Button label={t("previewStream.retry")} tone="secondary" onPress={refresh} />
             </View>
           )}
         </>
@@ -233,6 +235,7 @@ function PreviewStreamDocumentView({
   readonly onStreaming: () => void;
   readonly onRecoverProcess: () => boolean;
 }) {
+  const { t } = useLanguage();
   const webView = useRef<WebView<object>>(null);
   const active = useRef(false);
   const failed = useRef(false);
@@ -251,7 +254,7 @@ function PreviewStreamDocumentView({
     setFileChooser(null);
     void sendFilesToPage(chooser, pick).catch((cause: unknown) =>
       Dialog.alert(
-        "Could not send the files to the page",
+        t("previewStream.filesFailed"),
         cause instanceof Error ? cause.message : undefined,
       ),
     );
@@ -267,7 +270,7 @@ function PreviewStreamDocumentView({
       (text) => {
         if (text) command({ type: "text", text });
       },
-      () => Dialog.alert("Could not read the clipboard"),
+      () => Dialog.alert(t("previewStream.clipboardFailed")),
     );
   const clearBootstrapTimer = () => {
     if (bootstrapTimer.current === null) return;
@@ -326,11 +329,25 @@ function PreviewStreamDocumentView({
       {!compact ? (
         <View className="flex-row items-center justify-between gap-2 border-b border-secondary-border px-3 py-2">
           <AppText className="text-xs text-foreground-muted">
-            {previewStreamControlLabel(control)}
+            {t(
+              !control
+                ? "previewStream.control.connecting"
+                : !control.canOperate
+                  ? "previewStream.control.readOnly"
+                  : control.controller === "you"
+                    ? "previewStream.control.you"
+                    : control.controller === "agent"
+                      ? "previewStream.control.agent"
+                      : control.controller === "another-viewer"
+                        ? "previewStream.control.other"
+                        : "previewStream.control.watching",
+            )}
           </AppText>
           {control?.canOperate ? (
             <Button
-              label={control.controller === "you" ? "Release control" : "Take control"}
+              label={
+                control.controller === "you" ? t("previewStream.release") : t("previewStream.take")
+              }
               tone="secondary"
               disabled={control.controller === "another-viewer"}
               onPress={() =>
@@ -396,7 +413,7 @@ function PreviewStreamDocumentView({
                 void Clipboard.setStringAsync(message.text).catch(() => undefined);
                 return;
               case "download":
-                offerDownload(message);
+                offerDownload(message, t);
                 return;
               case "fileChooser":
                 setFileChooser(message.chooser);
@@ -431,12 +448,18 @@ function PreviewStreamDocumentView({
       {!compact && fileChooser && control?.controller === "you" ? (
         <View className="absolute inset-x-3 top-16 gap-3 rounded-xl border border-secondary-border bg-secondary p-4">
           <AppText className="text-sm text-secondary-foreground">
-            The page asks for {fileChooser.multiple ? "files" : "a file"}.
+            {t(fileChooser.multiple ? "previewStream.asksFiles" : "previewStream.asksFile")}
           </AppText>
           <View className="flex-row justify-end gap-3">
-            <Button label="Cancel" tone="text" onPress={() => answerFileChooser(false)} />
             <Button
-              label={`Choose ${fileChooser.multiple ? "files" : "file"}`}
+              label={t("previewStream.cancel")}
+              tone="text"
+              onPress={() => answerFileChooser(false)}
+            />
+            <Button
+              label={t(
+                fileChooser.multiple ? "previewStream.chooseFiles" : "previewStream.chooseFile",
+              )}
               tone="secondary"
               onPress={() => answerFileChooser(true)}
             />
@@ -450,7 +473,7 @@ function PreviewStreamDocumentView({
             <>
               {control.dialog.type === "prompt" ? (
                 <TextInput
-                  accessibilityLabel="Dialog response"
+                  accessibilityLabel={t("previewStream.response")}
                   className="rounded-lg border border-input-border bg-input px-3 py-2 text-foreground"
                   placeholderTextColorClassName="accent-placeholder"
                   selectionColorClassName="accent-focus/32"
@@ -460,12 +483,12 @@ function PreviewStreamDocumentView({
               ) : null}
               <View className="flex-row justify-end gap-3">
                 <Button
-                  label="Dismiss"
+                  label={t("previewStream.dismiss")}
                   tone="text"
                   onPress={() => command({ type: "dialog", accept: false })}
                 />
                 <Button
-                  label="Accept"
+                  label={t("previewStream.accept")}
                   tone="secondary"
                   onPress={() =>
                     command({
@@ -478,7 +501,9 @@ function PreviewStreamDocumentView({
               </View>
             </>
           ) : (
-            <AppText className="text-xs text-foreground-muted">Take control to respond.</AppText>
+            <AppText className="text-xs text-foreground-muted">
+              {t("previewStream.takeToRespond")}
+            </AppText>
           )}
         </View>
       ) : null}
@@ -493,13 +518,21 @@ function PreviewStreamDocumentView({
               accessibilityLiveRegion="polite"
               className="text-center text-sm text-foreground-muted"
             >
-              {status === "error" ? error : "Connecting to browser..."}
+              {status === "error"
+                ? hostSetup
+                  ? t(
+                      hostSetup.need === "sandbox"
+                        ? "previewStream.sandbox"
+                        : "previewStream.libraries",
+                    )
+                  : localizePreviewError(error, t)
+                : t("previewStream.connecting")}
             </AppText>
           )}
           {status === "error" && hostSetup && !compact ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Copy ${hostSetup.command}`}
+              accessibilityLabel={t("previewStream.copyCommand", { command: hostSetup.command })}
               className="w-full flex-row items-center gap-2 rounded-xl border border-secondary-border bg-secondary px-4 py-3"
               onPress={() => {
                 void Clipboard.setStringAsync(hostSetup.command).catch(() => undefined);
@@ -508,13 +541,13 @@ function PreviewStreamDocumentView({
               <AppText selectable className="flex-1 font-mono text-sm text-secondary-foreground">
                 {hostSetup.command}
               </AppText>
-              <AppText className="text-xs text-foreground-muted">Copy</AppText>
+              <AppText className="text-xs text-foreground-muted">{t("previewStream.copy")}</AppText>
             </Pressable>
           ) : null}
           {status === "error" && !gone && !compact ? (
             <View className="items-center">
               <Button
-                label={hostSetup ? "Try again" : "Reconnect"}
+                label={hostSetup ? t("previewStream.tryAgain") : t("previewStream.reconnect")}
                 tone="secondary"
                 onPress={onRetry}
               />
@@ -524,4 +557,19 @@ function PreviewStreamDocumentView({
       ) : null}
     </View>
   );
+}
+
+function localizePreviewError(message: string | null, t: UiTranslator) {
+  const english = makeTranslator("en");
+  for (const key of [
+    "previewStream.error.start",
+    "previewStream.error.stopped",
+    "previewStream.error.load",
+    "previewStream.error.session",
+    "previewStream.error.closed",
+    "previewStream.error.stream",
+  ] as const) {
+    if (message === english(key)) return t(key);
+  }
+  return message;
 }

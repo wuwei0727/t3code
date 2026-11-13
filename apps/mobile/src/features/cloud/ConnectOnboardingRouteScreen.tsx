@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { AppBar } from "../../components/ui/AppBar";
 import { Button } from "../../components/ui/Button";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
@@ -24,6 +25,7 @@ export function ConnectOnboardingRouteScreen() {
 }
 
 function ConfiguredConnectOnboardingRouteScreen() {
+  const { t } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { isSignedIn, userId } = useAuth({ treatPendingAsSignedOut: false });
@@ -59,10 +61,10 @@ function ConfiguredConnectOnboardingRouteScreen() {
   return (
     <View collapsable={false} className="flex-1 bg-sheet">
       <AppBar
-        title="Set up T3 Connect"
+        title={t("connectOnboarding.title")}
         onClose={handleClose}
         refresh={{
-          accessibilityLabel: "Refresh environments",
+          accessibilityLabel: t("connectOnboarding.refresh"),
           disabled: isRefreshing,
           onPress: handleRefresh,
         }}
@@ -91,13 +93,17 @@ function ConfiguredConnectOnboardingRouteScreen() {
         ) : (
           <View collapsable={false} className="rounded-[24px] bg-grouped-card p-5">
             <Text className="text-sm leading-normal text-foreground-muted">
-              Sign in to your T3 account to set up T3 Connect.
+              {t("connectOnboarding.signIn")}
             </Text>
           </View>
         )}
 
         {userId ? (
-          <Button label={"Don't show this again"} tone="text" onPress={handleDontShowAgain} />
+          <Button
+            label={t("connectOnboarding.dontShow")}
+            tone="text"
+            onPress={handleDontShowAgain}
+          />
         ) : null}
       </ScrollView>
     </View>

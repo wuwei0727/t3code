@@ -1,3 +1,4 @@
+import { useLanguage } from "../../../i18n/LanguageProvider";
 import { resolveDefaultBranchActionDialogCopy } from "@t3tools/client-runtime/state/vcs";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { resolveAutoFeatureBranchName } from "@t3tools/shared/git";
@@ -28,6 +29,7 @@ type GitConfirmSheetProps = StaticScreenProps<{
 }>;
 
 export function GitConfirmSheet(props: GitConfirmSheetProps) {
+  const { t, locale } = useLanguage();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -52,7 +54,7 @@ export function GitConfirmSheet(props: GitConfirmSheetProps) {
   const environmentId = params.environmentId ?? "";
   const threadId = params.threadId ?? "";
 
-  const copy = useMemo(
+  const englishCopy = useMemo(
     () =>
       confirmAction
         ? resolveDefaultBranchActionDialogCopy({
@@ -64,6 +66,46 @@ export function GitConfirmSheet(props: GitConfirmSheetProps) {
         : null,
     [branchName, confirmAction, includesCommit, terminology],
   );
+
+  const request = terminology.shortLabel;
+  const copy =
+    locale === "en" || !confirmAction
+      ? englishCopy
+      : (() => {
+          const push = confirmAction === "push" || confirmAction === "commit_push";
+          return {
+            title: t(
+              push
+                ? includesCommit
+                  ? "git.commitPushTitle"
+                  : "git.pushTitle"
+                : includesCommit
+                  ? "git.commitPrTitle"
+                  : "git.pushPrTitle",
+              { request },
+            ),
+            description: t(
+              push
+                ? includesCommit
+                  ? "git.commitPushDescription"
+                  : "git.pushDescription"
+                : includesCommit
+                  ? "git.commitPrDescription"
+                  : "git.pushPrDescription",
+              { branch: branchName, request },
+            ),
+            continueLabel: t(
+              push
+                ? includesCommit
+                  ? "git.commitPushBranch"
+                  : "git.pushBranch"
+                : includesCommit
+                  ? "git.commitPr"
+                  : "git.pushPr",
+              { branch: branchName, request },
+            ),
+          };
+        })();
 
   const continuePendingAction = async () => {
     if (!canWriteSourceControl || !confirmAction) return;
@@ -135,14 +177,14 @@ export function GitConfirmSheet(props: GitConfirmSheetProps) {
           <View className="android:gap-2 android:rounded-[20px] android:bg-card android:p-3 ios:items-center ios:gap-1 ios:px-5 ios:pb-3 ios:pt-4">
             {Platform.OS !== "android" ? (
               <Text className="text-xs font-t3-bold tracking-[1px] uppercase text-foreground-muted">
-                Confirm
+                {t("git.confirm")}
               </Text>
             ) : null}
             <Text className="android:text-xl android:font-t3-medium ios:text-center ios:text-3xl ios:font-t3-bold">
-              {copy?.title ?? "Run action on default branch?"}
+              {copy?.title ?? t("git.confirmTitle")}
             </Text>
             <Text className="text-foreground-secondary leading-normal android:text-base ios:text-center ios:text-sm ios:font-medium">
-              {copy?.description ?? "Choose how to continue."}
+              {copy?.description ?? t("git.chooseContinue")}
             </Text>
           </View>
 
@@ -156,13 +198,13 @@ export function GitConfirmSheet(props: GitConfirmSheetProps) {
           >
             <SheetActionButton
               icon="arrow.right.circle"
-              label={copy?.continueLabel ?? "Continue"}
+              label={copy?.continueLabel ?? t("git.continue")}
               disabled={!canWriteSourceControl}
               onPress={() => void continuePendingAction()}
             />
             <SheetActionButton
               icon="arrow.branch"
-              label="Feature branch & continue"
+              label={t("git.featureContinue")}
               disabled={!canChangeThreadBranch}
               tone="primary"
               onPress={() => void movePendingActionToFeatureBranch()}
@@ -170,7 +212,7 @@ export function GitConfirmSheet(props: GitConfirmSheetProps) {
           </View>
         </ScrollView>
       </ScreenContent>
-      <SheetHeader title="Confirm action" onClose={() => navigation.goBack()} />
+      <SheetHeader title={t("git.confirmAction")} onClose={() => navigation.goBack()} />
     </View>
   );
 }

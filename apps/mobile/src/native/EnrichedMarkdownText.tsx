@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageProvider";
+import { nativeMarkdownUi } from "./nativeMarkdownUi";
 import { decodeComposerContextFragment } from "@t3tools/shared/composerContextClipboard";
 import {
   collectComposerContextReferences,
@@ -179,6 +181,7 @@ function codeBlockElement(
   markdownStyle: MarkdownStyle,
   mathRenderingEnabled: boolean,
   scheme: HighlightScheme,
+  ui: ReturnType<typeof nativeMarkdownUi>,
 ): ReactElement | undefined {
   const renderer = codeFenceRenderer(block.language, mathRenderingEnabled);
   if (renderer.kind === "mermaid") {
@@ -189,6 +192,7 @@ function codeBlockElement(
   if (renderer.kind === "math") {
     return block.isComplete ? (
       <EnrichedMarkdownText
+        {...ui}
         // A blank line would end the paragraph, and so the math, early.
         markdown={`$$\n${block.code.replace(/\n\s*\n/g, "\n").trim()}\n$$`}
         markdownStyle={markdownStyle}
@@ -218,6 +222,8 @@ function codeBlockElement(
 }
 
 export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
+  const { t } = useLanguage();
+  const ui = useMemo(() => nativeMarkdownUi(t), [t]);
   const { renderImage, resolveImageSource, fileEmbedLabel } = props;
   const { themeAppearance, mathRenderingEnabled } = useAppearancePreferences();
   const { markdown, fileHrefs } = useMemo(() => {
@@ -280,8 +286,8 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
       ? {
           title: model.label,
           actions: [
-            { id: "enriched-copy-link", title: "Copy model reference" },
-            { id: "enriched-share-link", title: "Share model reference" },
+            { id: "enriched-copy-link", title: t("markdownMenu.modelCopy") },
+            { id: "enriched-share-link", title: t("markdownMenu.modelShare") },
           ],
         }
       : undefined;
@@ -300,9 +306,9 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
               fileContextMenu?.(url) ?? {
                 title: url,
                 actions: [
-                  { id: "enriched-open-link", title: "Open link" },
-                  { id: "enriched-copy-link", title: "Copy link" },
-                  { id: "enriched-share-link", title: "Share link" },
+                  { id: "enriched-open-link", title: t("markdownMenu.open") },
+                  { id: "enriched-copy-link", title: t("markdownMenu.copy") },
+                  { id: "enriched-share-link", title: t("markdownMenu.share") },
                 ],
               };
             return [
@@ -375,6 +381,7 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
         baseMarkdownStyle,
         mathRenderingEnabled,
         themeAppearance,
+        ui,
       ),
   };
   const resolveNativeImageSource = useRetryingImageSource(resolveImageSource);
@@ -386,8 +393,8 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
               props.fileContextMenu?.(url) ?? {
                 title: url,
                 actions: [
-                  { id: "enriched-open-link", title: "Open link" },
-                  { id: "enriched-copy-link", title: "Copy link" },
+                  { id: "enriched-open-link", title: t("markdownMenu.open") },
+                  { id: "enriched-copy-link", title: t("markdownMenu.copy") },
                 ],
               };
             setActiveMenu({ url, menu });
@@ -405,6 +412,7 @@ export function MobileEnrichedMarkdownText(props: SelectableMarkdownTextProps) {
         }}
       >
         <EnrichedMarkdownText
+          {...ui}
           markdown={markdown}
           markdownStyle={markdownStyle}
           writingDirection={props.writingDirection}

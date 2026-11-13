@@ -5,35 +5,30 @@ import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppText as Text } from "../../components/ui/AppText";
-import {
-  DEFAULT_COMPOSER_ENTER_BEHAVIOR,
-  type ComposerEnterBehavior,
-} from "../../lib/composerEnterBehavior";
+import { DEFAULT_COMPOSER_ENTER_BEHAVIOR } from "../../lib/composerEnterBehavior";
 import { mobilePreferencesAtom, updateMobilePreferencesAtom } from "../../state/preferences";
 import { ListChoiceRow as SettingsChoiceRow } from "../../components/ui/ListChoiceRow";
 import { SettingsScreen } from "./components/SettingsScreen";
 import { SettingsSection } from "./components/SettingsSection";
+import { useLanguage } from "../../i18n/LanguageProvider";
 
 const SEND_MODIFIER = Platform.OS === "android" ? "Ctrl" : "Command";
 
-const ENTER_BEHAVIOR_OPTIONS: ReadonlyArray<{
-  readonly behavior: ComposerEnterBehavior;
-  readonly label: string;
-  readonly description: string;
-}> = [
+const ENTER_BEHAVIOR_OPTIONS = [
   {
     behavior: "send",
-    label: "Send message",
-    description: "Return sends the message. Shift-Return inserts a new line.",
+    label: "settings.keyboard.send",
+    description: "settings.keyboard.sendDescription",
   },
   {
     behavior: "newline",
-    label: "Insert new line",
-    description: `Return inserts a new line. ${SEND_MODIFIER}-Return sends the message.`,
+    label: "settings.keyboard.newline",
+    description: "settings.keyboard.newlineDescription",
   },
-];
+] as const;
 
 export function SettingsKeyboardRouteScreen() {
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
   const savePreferences = useAtomSet(updateMobilePreferencesAtom);
@@ -43,7 +38,7 @@ export function SettingsKeyboardRouteScreen() {
     : null;
 
   return (
-    <SettingsScreen title="Keyboard">
+    <SettingsScreen title={t("settings.keyboard.title")}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
@@ -51,12 +46,12 @@ export function SettingsKeyboardRouteScreen() {
         contentContainerClassName="gap-3 px-5 pt-4"
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 18) + 18 }}
       >
-        <SettingsSection title="Return key">
+        <SettingsSection title={t("settings.keyboard.returnKey")}>
           {ENTER_BEHAVIOR_OPTIONS.map((option, index) => (
             <SettingsChoiceRow
               key={option.behavior}
-              label={option.label}
-              description={option.description}
+              label={t(option.label)}
+              description={t(option.description, { modifier: SEND_MODIFIER })}
               selected={selectedBehavior === option.behavior}
               separated={index > 0}
               disabled={!preferencesReady}
@@ -65,7 +60,7 @@ export function SettingsKeyboardRouteScreen() {
           ))}
         </SettingsSection>
         <Text className="px-2 text-sm text-foreground-muted">
-          Applies to the composer when a hardware keyboard is connected.
+          {t("settings.keyboard.hardwareHint")}
         </Text>
       </ScrollView>
     </SettingsScreen>

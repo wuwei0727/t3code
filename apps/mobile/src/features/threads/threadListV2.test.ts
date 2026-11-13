@@ -1307,6 +1307,7 @@ function buildTickList(
   clockMs: number,
   pendingTasks: ReadonlyArray<PendingNewTask>,
   options?: {
+    readonly locale?: "en" | "zh-CN";
     readonly snoozeEnvironmentIds?: ReadonlySet<EnvironmentId>;
     readonly queuedThreadKeys?: ReadonlySet<string>;
     readonly moveAvailability?: ReadonlyMap<string, ThreadMoveAvailability>;
@@ -1330,6 +1331,7 @@ function buildTickList(
     settledCount: layout.settledCount,
     settledShelfHeaderIndex: layout.settledShelfHeaderIndex,
     snoozeLabelNow: now,
+    ...(options?.locale ? { locale: options.locale } : {}),
     ...(options?.snoozeEnvironmentIds
       ? { snoozeEnvironmentIds: options.snoozeEnvironmentIds }
       : {}),
@@ -1565,7 +1567,7 @@ describe("buildThreadListV2ListItems row-state stamps", () => {
   it("ages a read row from its latest reply", () => {
     using _timers = { [Symbol.dispose]: () => vi.useRealTimers() };
     vi.useFakeTimers({ now: BASE_MS });
-    const label = (latestUserMessageAt: string, completedAt: string) => {
+    const label = (latestUserMessageAt: string, completedAt: string, locale?: "en" | "zh-CN") => {
       const thread = makeThread({
         id: ThreadId.make("stamp-read"),
         title: "stamp read",
@@ -1580,10 +1582,13 @@ describe("buildThreadListV2ListItems row-state stamps", () => {
           assistantMessageId: null,
         },
       });
-      const row = buildTickList([thread], BASE_MS, [])[0]!;
+      const row = buildTickList([thread], BASE_MS, [], locale ? { locale } : {})[0]!;
       return row.type === "v2-thread" ? row.timeLabel : null;
     };
     expect(label(isoAt(BASE_MS - 40 * MINUTE_MS), isoAt(BASE_MS - 2 * MINUTE_MS))).toBe("2m");
+    expect(label(isoAt(BASE_MS - 40 * MINUTE_MS), isoAt(BASE_MS - 2 * MINUTE_MS), "zh-CN")).toBe(
+      "2分",
+    );
   });
 
   it("stamps queued outbox messages onto the matching row and notices removal", () => {

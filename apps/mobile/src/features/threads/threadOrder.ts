@@ -1,3 +1,5 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiLocale } from "../../i18n/locale";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/shell";
 import {
   generateSpreadPinOrderKeys,
@@ -287,12 +289,17 @@ export function threadDropLifecycle(
 
 export type ThreadDragSection = "pinned" | "active" | "snoozed" | "settled";
 
-export function threadDragAction(source: ThreadDragSection, destination: ThreadDragSection) {
+export function threadDragAction(
+  source: ThreadDragSection,
+  destination: ThreadDragSection,
+  locale: UiLocale = "en",
+) {
+  const t = makeTranslator(locale);
   if (destination === "snoozed") return null;
-  if (destination === "settled") return source === "settled" ? null : "Settle";
-  if (source === destination) return "Reorder";
-  if (destination === "pinned") return "Pin";
-  if (source === "pinned") return "Unpin";
-  if (source === "settled") return "Unsettle";
-  return "Unsnooze";
+  if (destination === "settled") return source === "settled" ? null : t("threadDrag.settle");
+  if (source === destination) return t("threadDrag.reorder");
+  if (destination === "pinned") return t("threadDrag.pin");
+  if (source === "pinned") return t("threadDrag.unpin");
+  if (source === "settled") return t("threadDrag.unsettle");
+  return t("threadDrag.unsnooze");
 }

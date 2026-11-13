@@ -1,3 +1,5 @@
+import type { UiLocale } from "../../i18n/locale";
+import { makeTranslator } from "../../i18n/translator";
 import {
   alternateComposerDispatchAction,
   type ActiveTurnComposerAction,
@@ -18,22 +20,26 @@ export interface ComposerSendPresentation {
   readonly offersFollowUpChoice: boolean;
 }
 
-const ACTION_LABEL: Record<ActiveTurnComposerAction, string> = {
-  queue: "Queue",
-  steer: "Steer",
-  restart: "Restart",
-};
+const ACTION_LABEL = {
+  queue: "composerUi.send.queue",
+  steer: "composerUi.send.steer",
+  restart: "composerUi.send.restart",
+} as const satisfies Record<ActiveTurnComposerAction, string>;
 
-export function resolveComposerSendPresentation(input: {
-  readonly editingQueuedMessage: boolean;
-  readonly running: boolean;
-  readonly canSteer: boolean;
-  readonly followUpBehavior: FollowUpBehavior;
-  readonly deliveryDeferred: boolean;
-}): ComposerSendPresentation {
+export function resolveComposerSendPresentation(
+  input: {
+    readonly editingQueuedMessage: boolean;
+    readonly running: boolean;
+    readonly canSteer: boolean;
+    readonly followUpBehavior: FollowUpBehavior;
+    readonly deliveryDeferred: boolean;
+  },
+  locale: UiLocale = "en",
+): ComposerSendPresentation {
+  const t = makeTranslator(locale);
   if (input.editingQueuedMessage) {
     return {
-      label: "Update queued message",
+      label: t("composerUi.send.update"),
       icon: "checkmark",
       action: null,
       alternate: null,
@@ -42,7 +48,7 @@ export function resolveComposerSendPresentation(input: {
   }
   if (!input.running) {
     return {
-      label: input.deliveryDeferred ? "Queue" : "Send",
+      label: t(input.deliveryDeferred ? "composerUi.send.queue" : "composerUi.send.send"),
       icon: input.deliveryDeferred ? "tray.and.arrow.up" : "arrow.up",
       action: null,
       alternate: null,
@@ -52,7 +58,7 @@ export function resolveComposerSendPresentation(input: {
   const action: ActiveTurnComposerAction = input.canSteer ? input.followUpBehavior : "queue";
   const alternate = alternateComposerDispatchAction(action);
   return {
-    label: ACTION_LABEL[action],
+    label: t(ACTION_LABEL[action]),
     icon: action === "steer" ? "arrow.turn.left.up" : "list.number",
     action,
     alternate: input.canSteer ? alternate : null,

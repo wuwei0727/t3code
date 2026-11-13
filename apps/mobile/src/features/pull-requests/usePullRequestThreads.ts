@@ -1,3 +1,4 @@
+import { useLanguage } from "../../i18n/LanguageProvider";
 import { useAtomValue } from "@effect/atom-react";
 import { visibleLinkedThreads } from "@t3tools/client-runtime/state/threads";
 import { AsyncResult } from "effect/reactivity";
@@ -48,6 +49,7 @@ export function usePullRequestThreads(
   pr: PullRequestDetail | null,
   filePath?: string,
 ) {
+  const { t } = useLanguage();
   const target = pullRequestTarget(params);
   const config = useEnvironmentServerConfig(target.environmentId);
   const supported = threadPullRequestLinkMode(config?.environment.capabilities) === "multiple";
@@ -169,7 +171,10 @@ export function usePullRequestThreads(
     setBusy(false);
     if (AsyncResult.isFailure(result)) {
       const cause = squashAtomCommandFailure(result);
-      Dialog.alert("Couldn't open a thread", cause instanceof Error ? cause.message : "Try again.");
+      Dialog.alert(
+        t("prThreadsOpen.failed"),
+        cause instanceof Error ? cause.message : "Try again.",
+      );
     }
   };
   return {

@@ -1,3 +1,5 @@
+import { makeTranslator } from "../../i18n/translator";
+import type { UiLocale } from "../../i18n/locale";
 import type {
   PullRequestActivity,
   PullRequestCheck,
@@ -43,92 +45,121 @@ const STATES = {
   { label: string; icon: AppSymbolName; tint: string; text: string; background: string }
 >;
 
-export function pullRequestStatus(pr: Pick<PullRequestListEntry, "state" | "isDraft">) {
-  return STATES[pr.isDraft && pr.state === "open" ? "draft" : pr.state];
+export function pullRequestStatus(
+  pr: Pick<PullRequestListEntry, "state" | "isDraft">,
+  locale: UiLocale = "en",
+) {
+  const key = pr.isDraft && pr.state === "open" ? "draft" : pr.state;
+  return { ...STATES[key], label: makeTranslator(locale)(`prStatus.state.${key}`) };
 }
 
-export function pullRequestConflict(pr: {
-  readonly state: PullRequestListEntry["state"];
-  readonly isDraft: boolean;
-  readonly mergeability?: PullRequestMergeability | undefined;
-  readonly baseBranch?: string | undefined;
-}) {
+export function pullRequestConflict(
+  pr: {
+    readonly state: PullRequestListEntry["state"];
+    readonly isDraft: boolean;
+    readonly mergeability?: PullRequestMergeability | undefined;
+    readonly baseBranch?: string | undefined;
+  },
+  locale: UiLocale = "en",
+) {
+  const t = makeTranslator(locale);
   if (pr.state !== "open" || pr.isDraft || pr.mergeability !== "conflicting") return null;
-  return { label: pr.baseBranch ? `Conflicts with ${pr.baseBranch}` : "Has conflicts" };
+  return {
+    label: pr.baseBranch
+      ? t("prStatus.conflictsWith", { branch: pr.baseBranch })
+      : t("prStatus.hasConflicts"),
+  };
 }
 
-export function checkStatus(check: PullRequestCheck) {
+export function checkStatus(check: PullRequestCheck, locale: UiLocale = "en") {
+  const t = makeTranslator(locale);
   switch (check.status) {
     case "success":
       return {
-        label: "Passed",
+        label: t("prStatus.passed"),
         icon: "checkmark.circle",
         tint: "accent-adaptive-emerald-600-400",
       } as const;
     case "failure":
       return {
-        label: "Failed",
+        label: t("prStatus.failed"),
         icon: "exclamationmark.circle",
         tint: "accent-danger-foreground",
       } as const;
     case "action-required":
       return {
-        label: "Action required",
+        label: t("prStatus.required"),
         icon: "exclamationmark.circle",
         tint: "accent-warning-foreground",
       } as const;
     case "pending":
-      return { label: "Pending", icon: "clock", tint: "accent-warning-foreground" } as const;
+      return {
+        label: t("prStatus.pending"),
+        icon: "clock",
+        tint: "accent-warning-foreground",
+      } as const;
     case "cancelled":
-      return { label: "Cancelled", icon: "minus", tint: "accent-icon-muted" } as const;
+      return { label: t("prStatus.cancelled"), icon: "minus", tint: "accent-icon-muted" } as const;
     case "skipped":
-      return { label: "Skipped", icon: "slash.circle", tint: "accent-icon-muted" } as const;
+      return {
+        label: t("prStatus.skipped"),
+        icon: "slash.circle",
+        tint: "accent-icon-muted",
+      } as const;
     case "neutral":
-      return { label: "Neutral", icon: "minus", tint: "accent-icon-muted" } as const;
+      return { label: t("prStatus.neutral"), icon: "minus", tint: "accent-icon-muted" } as const;
   }
 }
 
-export function pullRequestChecksSummary(pr: Pick<PullRequestDetail, "checks">) {
+export function pullRequestChecksSummary(
+  pr: Pick<PullRequestDetail, "checks">,
+  locale: UiLocale = "en",
+) {
+  const t = makeTranslator(locale);
   const failed = pr.checks.filter((check) => check.status === "failure").length;
   const required = pr.checks.filter((check) => check.status === "action-required").length;
   const pending = pr.checks.filter((check) => check.status === "pending").length;
   const passed = pr.checks.filter((check) => check.status === "success").length;
-  const count = pr.checks.length ? `${passed} of ${pr.checks.length}` : undefined;
+  const count = pr.checks.length
+    ? t("prStatus.count", { passed, total: pr.checks.length })
+    : undefined;
   if (failed)
     return {
-      label: `${failed} ${failed === 1 ? "check" : "checks"} failing`,
-      title: `${failed} ${failed === 1 ? "check" : "checks"} failing`,
+      label: t(failed === 1 ? "prStatus.failingOne" : "prStatus.failingMany", { count: failed }),
+      title: t(failed === 1 ? "prStatus.failingOne" : "prStatus.failingMany", { count: failed }),
       count,
       icon: "exclamationmark.circle",
       tint: "accent-danger-foreground",
     } as const;
   if (required)
     return {
-      label: `${required} need attention`,
-      title: "Checks need attention",
-      count: `${required} awaiting action`,
+      label: t("prStatus.attentionCount", { count: required }),
+      title: t("prStatus.needAttention"),
+      count: t("prStatus.awaitingCount", { count: required }),
       icon: "exclamationmark.circle",
       tint: "accent-warning-foreground",
     } as const;
   if (pending)
     return {
-      label: `${pending} pending`,
-      title: "Checks running",
-      count: `${pending} pending`,
+      label: t("prStatus.pendingCount", { count: pending }),
+      title: t("prStatus.running"),
+      count: t("prStatus.pendingCount", { count: pending }),
       icon: "clock",
       tint: "accent-warning-foreground",
     } as const;
   if (passed)
     return {
-      label: `${passed} of ${pr.checks.length} passed`,
-      title: passed === pr.checks.length ? "All checks passed" : "Checks completed",
+      label: t("prStatus.passedCount", { passed, total: pr.checks.length }),
+      title: passed === pr.checks.length ? t("prStatus.allPassed") : t("prStatus.completed"),
       count,
       icon: "checkmark.circle",
       tint: "accent-adaptive-emerald-600-400",
     } as const;
   return {
-    label: pr.checks.length ? `${pr.checks.length} completed` : "No checks reported",
-    title: pr.checks.length ? "Checks completed" : "No checks reported",
+    label: pr.checks.length
+      ? t("prStatus.completedCount", { count: pr.checks.length })
+      : t("prStatus.noChecks"),
+    title: pr.checks.length ? t("prStatus.completed") : t("prStatus.noChecks"),
     count,
     icon: "minus",
     tint: "accent-icon-muted",
@@ -143,7 +174,9 @@ export function normalizedReviewState(reviewState: string | null) {
 export function pullRequestReviewSummary(
   pr: Pick<PullRequestDetail, "reviewers">,
   activity: Pick<PullRequestActivity, "comments" | "commits"> | null,
+  locale: UiLocale = "en",
 ) {
+  const t = makeTranslator(locale);
   const latest = new Map<string, PullRequestActivity["comments"][number]>();
   const comments = new Map<string, PullRequestActivity["comments"][number]>();
   for (const review of activity?.comments ?? []) {
@@ -175,8 +208,10 @@ export function pullRequestReviewSummary(
   );
   if (requested.length)
     return {
-      title: "Changes requested",
-      count: `${requested.length} ${requested.length === 1 ? "reviewer" : "reviewers"}`,
+      title: t("prStatus.changes"),
+      count: t(requested.length === 1 ? "prStatus.reviewerOne" : "prStatus.reviewerMany", {
+        count: requested.length,
+      }),
       icon: "xmark.circle.fill",
       tint: "accent-danger-foreground",
       reviews,
@@ -185,9 +220,9 @@ export function pullRequestReviewSummary(
     return {
       title:
         approved.length === 1 && approved[0]?.author
-          ? `Approved by ${approved[0].author.login}`
-          : "Reviews approved",
-      count: `${approved.length} approved`,
+          ? t("prStatus.approvedBy", { login: approved[0].author.login })
+          : t("prStatus.approved"),
+      count: t("prStatus.approvedCount", { count: approved.length }),
       icon: "checkmark.circle",
       tint: "accent-adaptive-emerald-600-400",
       reviews,
@@ -195,15 +230,17 @@ export function pullRequestReviewSummary(
   const commented = reviews.filter((review) => review.reviewState === "COMMENTED");
   if (commented.length && !pr.reviewers.length)
     return {
-      title: "Reviews",
-      count: `${commented.length} commented`,
+      title: t("prStatus.reviews"),
+      count: t("prStatus.commentedCount", { count: commented.length }),
       icon: "bubble.left",
       tint: "accent-icon-muted",
       reviews,
     } as const;
   return {
-    title: pr.reviewers.length ? "Awaiting review" : "Request a review",
-    count: pr.reviewers.length ? `${pr.reviewers.length} requested` : "None assigned",
+    title: pr.reviewers.length ? t("prStatus.awaiting") : t("prStatus.request"),
+    count: pr.reviewers.length
+      ? t("prStatus.requestedCount", { count: pr.reviewers.length })
+      : t("prStatus.none"),
     icon: "person.2",
     tint: "accent-icon-muted",
     reviews,
@@ -212,11 +249,14 @@ export function pullRequestReviewSummary(
 
 export function pullRequestBranchSummary(
   pr: Pick<PullRequestDetail, "mergeability" | "baseComparison" | "behindBy" | "baseBranch">,
+  locale: UiLocale = "en",
 ) {
-  if (pr.mergeability === "conflicting") return "Has conflicts";
-  if (pr.baseComparison === "behind") return `${pr.behindBy ?? ""} behind ${pr.baseBranch}`.trim();
-  if (pr.baseComparison === "up-to-date") return "Up to date";
-  return pr.mergeability === "mergeable" ? "No conflicts" : "Not reported";
+  const t = makeTranslator(locale);
+  if (pr.mergeability === "conflicting") return t("prStatus.hasConflicts");
+  if (pr.baseComparison === "behind")
+    return t("prStatus.behind", { count: pr.behindBy ?? "", branch: pr.baseBranch }).trim();
+  if (pr.baseComparison === "up-to-date") return t("prStatus.upToDate");
+  return pr.mergeability === "mergeable" ? t("prStatus.noConflicts") : t("prStatus.notReported");
 }
 
 export function pullRequestChecksStatus(state: PullRequestChecksState) {
