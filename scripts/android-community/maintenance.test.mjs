@@ -106,8 +106,19 @@ NodeTest.test(
   "unchanged source/context reuses reviewed translation; source/context changes mark it stale without scheduling AI",
   () => {
     const translated = [{ id: source.id, text: "{{count}} 个会话" }];
-    const state = [{ id: source.id, sourceHash: fingerprint(source), humanReviewed: true }];
+    const state = [
+      {
+        id: source.id,
+        sourceHash: fingerprint(source),
+        humanReviewed: true,
+        origin: "manually-authored-community-draft",
+      },
+    ];
     NodeAssert.equal(planTranslation([source], translated, state).pending.length, 0);
+    NodeAssert.equal(
+      planTranslation([source], translated, state).states[0].origin,
+      state[0].origin,
+    );
     for (const change of [{ text: "{{count}} conversations" }, { context: "Another screen" }]) {
       const plan = planTranslation([{ ...source, ...change }], translated, state);
       NodeAssert.deepEqual(plan.stale, [source.id]);

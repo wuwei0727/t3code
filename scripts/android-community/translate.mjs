@@ -227,6 +227,7 @@ export async function runTranslation({
         state.sourceHash = entries.find((entry) => entry.id === value.id).sourceHash;
         state.humanReviewed = false;
         state.status = "current";
+        state.origin = "model-translation";
       }
     }
     writeJson(NodePath.join(directory, "locales/zh-CN.json"), [...targets.values()]);

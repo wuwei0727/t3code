@@ -80,6 +80,7 @@ export function planTranslation(english, chinese, states) {
     const needsReview = Boolean(previous?.humanReviewed && (changed || !target));
     if ((!target || changed) && !needsReview) pending.push({ ...entry, sourceHash: hash });
     nextStates.push({
+      ...previous,
       id: entry.id,
       sourceHash: previous?.sourceHash ?? hash,
       humanReviewed: previous?.humanReviewed ?? false,
