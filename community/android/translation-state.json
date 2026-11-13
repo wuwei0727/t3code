@@ -27,1310 +27,1123 @@
     "id": "settings.title",
     "sourceHash": "b081b091bda86d64f000ec7303bb4521267247d312a40196b66bb1c31b635b75",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.search",
     "sourceHash": "824ddee384694a21ea1b58491c7b6a0b3db13a446da2e368cb50c4fbbb0bbf81",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.appearance",
     "sourceHash": "fca96f99147b0f9302f5b1fcc126ec06f3f0efda2b13cc1949d71b9d76f928cf",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.general",
     "sourceHash": "5bb8a66fe8c0892ee15b77967a410bcdd731863c831dfabb87ec549704ec9dad",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.chat",
     "sourceHash": "d94a6e80aa49143d857c8a07ad4d174eadf9ec3df7f94a06f327e0ac601c669c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.navigationTabs",
     "sourceHash": "2ba6cc5f5b291328ac34179d84c598fec5736adcebb857c15961887f9cf365de",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.keyboard",
     "sourceHash": "91bd415d0248e87259942f9b19025c30d7d01a5220dc26b9257c1e8adc92b8c3",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.voice",
     "sourceHash": "a1d962d80975f46ca4097df94b7975a4fa9033a3fd31a2ab36556e738f9ce72f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.agents",
     "sourceHash": "d48e1bbb923a1a24b26b01d3c1d7f28f22fce8a63ad6326e101b128bda3b0774",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.providers",
     "sourceHash": "56a8ad050ecb459b1243760bb70eca5e3ba8357b0f00de9c56d4ebeecfa49130",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.threads",
     "sourceHash": "713429e43eb9063bf65c90af72ea63057d4a0b9288f4d899826fb2b82212c396",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.scheduledTasks",
     "sourceHash": "c25865ef8d389414ead3d0bf6c5a5af45ec42f0fcaa56315c1679a8e7730801d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.code",
     "sourceHash": "c92b03f2f9959d5b61ed5577fe963fcd5e2467eb145d60f38fec270b96909768",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.projects",
     "sourceHash": "b13b66e13cc6abbda2a3a27ef8d9dc613ce2ed037a018368a338dd0cb254c46d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.sourceControl",
     "sourceHash": "51ce44b2212dad2ea49c2e3d3a880ac8a8d5fa3cedd9f360306699a2331dbc5f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.worktrees",
     "sourceHash": "273441a533b5723e5d9a4c5e34681dceca903b98cd97b7eabefb26960888d737",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.maintenance",
     "sourceHash": "3e41bf829d3993a2d2ba98246fec064969a65976787fb69edc5b0285249c1478",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.labs",
     "sourceHash": "0cc61b6d996aa65d5c4326c1d7cda2df5b8733746ff462ee73500a46b63d59de",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.about",
     "sourceHash": "68ee38a1cfa5588ba5dbb9e9bebe613a2babb86846a38ff53f79637c28708059",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.archive",
     "sourceHash": "63a777dbeb23c3b4d326106893e6437e8895d4be2482969d244da1bce5ef1353",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.connections",
     "sourceHash": "0bf7698aad6f622cb67a535051e7da0713f69cd68007e7813f6cae402227a9bc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.unavailableProject",
     "sourceHash": "b9e88afbca0cf01672f84db43aa52d860d96e04d9eaddc62809baba456b35780",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.checking",
     "sourceHash": "057be9374323176b198e11931bd3da5a23c14331e4571d38f117e5b2a9220ff0",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.signIn",
     "sourceHash": "cd12656599384f3825b9c1417777348ac5a473e77189b8839b60d53d2b42e346",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.signedIn",
     "sourceHash": "006b763f0b8375603d9829da8f1e3dd37fbc2bb07309637e490c120369cd8b15",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.account",
     "sourceHash": "85b32a6a373cf94ca9cfa4eb8e8b6031f4dbd2aaa3556e1bee20ca1f97e652eb",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.notifications",
     "sourceHash": "f99af338829f1dde7c37c3f6e657bd7b520cd20b6a07a1d1c0bf9b7617c14421",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.noResults",
     "sourceHash": "bbb7fc5e45eeb0af3c2e181efc30dbb0a93edff60e0a0821a94ff7a974466d63",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "settings.noMatch",
     "sourceHash": "e8c9c71c06d866d3cd8c9016b6f54c695f69359870174d7c28134389ee0393f2",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.threads",
     "sourceHash": "443f9f861cad08200c9c45a49b2e555a98d630a5e21aa5a96c909a3578f8e243",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.chats",
     "sourceHash": "27018045cb61bc6a003d85170eadb0983ace518fcffc9310b2540881236bc3fa",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.pulls",
     "sourceHash": "469ff0c069f2619683d00c1ec534a7bd1bd302ebfc449054c91ef7a3c4d6d213",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.prs",
     "sourceHash": "c9e77480b23f9be076f202fd7b4682984b52defe3f96450371ff75208e1a45a9",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.pullRequests",
     "sourceHash": "7d0a58557eaaad8773f38fa868b9303a5778dda819cdbb66b911cec8ef027194",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.usage",
     "sourceHash": "0b6270b8aad6286b2c836937c1700f59b639f1b58a4b1059785aec641ba1ec94",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.title",
     "sourceHash": "ef25bb860d14a3318d9c22bd7bb2cab26aa177c72709485b12be4e3d7de8dad7",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.newThread",
     "sourceHash": "2164d47f383b75e2cfbbeafe85e190e693e13d3a01e8c9661a1538cd9e31f310",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.newChat",
     "sourceHash": "005ddd71aa7e4909f27f41d4d155631c9f1f7c4b191e1d778ad0744b80db7ab5",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.closeRail",
     "sourceHash": "fe854245f934fad5d903b1bcb0c0e62f9a1ebbc3df9dea40638f053eabc3697b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.collapseRail",
     "sourceHash": "a630512f2b3a707a5e78bc328e3bfd5449f24b0e850b56e137a13b5bf2c68558",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.expandRail",
     "sourceHash": "fec7ac5c4b761f77ae6b4586a326d94a26dea846adecae56eb43e8eabe05f993",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.searchThreads",
     "sourceHash": "d90e1230379b1ad11ccd442998b808fef7cd5899f52f89b8e42160c9eccbee5a",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "navigation.searchPullRequests",
     "sourceHash": "f092ac0422cd1199f87882f1d8313ff5091717d1928a46f3f849ec4e47bd6899",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.environments",
     "sourceHash": "d99d8b319921cce993d8df0dd0dec2318f55f36068922e18d4ce289eba7340fc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.close",
     "sourceHash": "dadf30c18dc54884e4c7ee12798cf6e931870db92d4c766798ba1db86c2b89a8",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.add",
     "sourceHash": "9e8770884015eceb11376581af32f0a28546daf61dc10362d2076be486d6777a",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.connecting",
     "sourceHash": "c6d50637de6da74f21d9392cd6b2f6150902e0779a877b6d9cd32db72c863f62",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.enter",
     "sourceHash": "ad646fa9d2f8dfa252730bc51db3a5207dce934285ab02db3c151634977a7579",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.address",
     "sourceHash": "b25ed7dedebfbc99389cc04249f8e4f45fac2966f57c8ac3787d26da63cb195e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.code",
     "sourceHash": "d17961b179f7970c3ec5964c96c1e27f24b76943694212899d9679e902a9c49e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.pairingCode",
     "sourceHash": "bd5df21e7a23df08df4db6c304e5eb1ae0b1b271653869436f6a84410bc09d01",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.localHint",
     "sourceHash": "4a3e9ff2ed86ca1a74fef745e23b37cf5147f7cc52e1e9c11d57b8623fa86c90",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.scan",
     "sourceHash": "0cf1d9e8dab0e74a6026b9a6ff74033d4d7ee6b3b1dd0042b004f33d6f2b5a15",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.tapScan",
     "sourceHash": "47745f26d659d8c410795c642772b336c6fea7a36731f2d93070a5f0875da512",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.scanHint",
     "sourceHash": "5a4fbb01216d4841e7abb1d12daab48222f7bc2f41356b53d3aa12da07b3b7b5",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.managed",
     "sourceHash": "b470ac94a507a75b23682c8741ac77af12b3b67cc85a90f56ea9d45e1492aa2b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.signIn",
     "sourceHash": "69c5ac9ac0c4f68757c7a93a8b0f980a771703f9b9942b83f27589235539777f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.relayHint",
     "sourceHash": "7a2019d04beebbb5be1f0b1e91c28bd81596efacb9c50b1bebc8c385b960f53d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "home.loading",
     "sourceHash": "dea8f8f86853b7bfa7f402e844d383a520a970973de622ea2998ec367ff759ff",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "home.loadingDetail",
     "sourceHash": "acafcd534a8880d9d4a0e1f34017be8d8771c79316be2a4d13efd5d012a41e06",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noEnvironments",
     "sourceHash": "c4d63fc79c7e536bb983186aff65e56316bb9c8ad7a2153b451c42a6a22b1b0c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noEnvironmentsDetail",
     "sourceHash": "443c81cfce883c949ef2767445896e7a3e184685cd68fec914aedbcad08d20fb",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.unsupported",
     "sourceHash": "1b0bfc0739dd942c3b3ed917c4a69b60c3f68d0942d63ceebaaa97d45dd63331",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.unavailable",
     "sourceHash": "04e5793a418fda0845397cebf584590e8567693608a4c8f1b7236addc0cee64d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "home.offlineDetail",
     "sourceHash": "45f790dd926ab5cb88101b8010e25df0fbcfc58b02c9263edd3e347d2abe4dde",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.connecting",
     "sourceHash": "56df80143a975bbd8c83d290424356962787e9dfc29678b841f74ea20c0c02cc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "home.connectingDetail",
     "sourceHash": "71938c28fa81980b7b3c68561d50095cbc076eb645c84522590cc6677838c294",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noProjects",
     "sourceHash": "2fb4021f27b92d22f7a15da7ac6f82ffa629802223e20632987c2b9684809b25",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noProjectsDetail",
     "sourceHash": "589a2f3c7c3a98ed23eaa15d8492bd73e14b6d3ceff9ca1677802d11fd15b98b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noThreads",
     "sourceHash": "70355ee5ba1c2b02c67d71af2e6dbe3248e38fce02babb98427fd19bbd842698",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noThreadsDetail",
     "sourceHash": "d83303e755e621281b4c6a523dc604aa49270315f94f6a89183e6b4180d72faa",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noMatches",
     "sourceHash": "528223d266269db2f462f50aa4601ef2dc3d144482ceac8dd090e5b409de7743",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noThreadsIn",
     "sourceHash": "e8d2b5e6f9513701b55f0c0254e063366954afa2a61946b2aa08ac43017fbe51",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "home.otherProject",
     "sourceHash": "0e523f7b9a0a574599630b77f424cb0643129abe94406acfb2f63b592371d56f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.otherEnvironment",
     "sourceHash": "3d83c52466f2852b996af9e22ffa1e7a95fa2f1d115652ee4ee6d6b88afcc243",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.createTask",
     "sourceHash": "f2ab3f8df1e19eaa2579f1f5a0c732551e9493a61710db996e766348b6d3cbdb",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.floatingHint",
     "sourceHash": "8d855839c5047988adf72ae94b319385d28c295f6bbcea091ae0a310d486a30b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.materialHint",
     "sourceHash": "05d7e3f3efe153a85a000fc59be4de02574d21b2916c18e02c3f2bb2a8eaf72a",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.text",
     "sourceHash": "85466fedeffb9435b9742a34b56e65245e85f458fd839246c6dbbe4b51bd00d5",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.textSize",
     "sourceHash": "d07641175f571bcc7c1600577f641e051e48e9107faa0b61528946f18a1ec3b2",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.renderMath",
     "sourceHash": "309d04afae49ba41930545003d7bd64b4b32ace814ebb995ebd1aea60bb0972b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.terminal",
     "sourceHash": "bba1937fd71e0da42f7d84cb80430b186cad443d63ce45bb3de95f35c9d41468",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.customFont",
     "sourceHash": "bd62ec7c33aa477c779dfaed03bbc293b7555a869f3c2f907c8a57dcd557725b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.fontSize",
     "sourceHash": "bd46aed7c99616691e2e284124ce2dc24565e9e938c5d3869d7949dee602b4eb",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.codeDiffs",
     "sourceHash": "135fccd5a46fb8ccd58eeb6983d673aff3e5a9c93fe2315f86d058d03d2ce3e8",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.wordBreak",
     "sourceHash": "46f4e5de3dcfdb3b4dbd57d939e23f12d3ec23e4e78706d6f8ac1de944b8fe97",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.toolCalls",
     "sourceHash": "5d7dd6979e02e4f743dd6550abfa5f1698bc3ad0f26274b641646550615a18c2",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.showAll",
     "sourceHash": "a580c4212aa6da22a019d8c93093b0fd9ff1fe0b8fe067feba6f0ac9d6735b5a",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.hideSuccessful",
     "sourceHash": "de0662abc82e29149b8b29894f813a074c44e1d6e091aa7fee2a3547706f7550",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.hideAll",
     "sourceHash": "78de514e0ec8a06717baf0ed5fba188f89e40097925fd72b53f7fcbe6a0e335e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.zen",
     "sourceHash": "c022337068692e8289c6eb26372d4a22d965779e5987996a68bd5f4b6ab55f79",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.toolHint",
     "sourceHash": "18282a0225ea6ce4e534cdd177b2134e58ff995b1539f3da3870c98fd10cc515",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.colorScheme",
     "sourceHash": "e349b25bea1a8a22b2f090d13e3b6a2a7352454944d30ee213ebc3124e0c9a9c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.themes",
     "sourceHash": "fc042d510c827c8c7ed209a783a1ee1189e435319e7b8228cbad18eced53007e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.system",
     "sourceHash": "dd6ba3f8026968798c29e3adcdf91dba4d6d178aff0c5334d86cf89885d07b1c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.light",
     "sourceHash": "b54fa2b7bf59483fb916608d05d309f7993d06e9b97ddbb55ae3cb963b32e18b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "appearance.dark",
     "sourceHash": "5c1fa631187635b616021cce13f3d58cfd6a3f65b0ccb6302d6f8789b218012e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.allowOnce",
     "sourceHash": "a28f5403fdecbe567c109953cfc67ea5e94116963cac69cfd17e2fc0d2a86692",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.allowSession",
     "sourceHash": "0c5093df260f5372716e848f8e7fc13316b9f28ec198161747f2ec744bcd637a",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.decline",
     "sourceHash": "a095b66dc7e8e4e6cfd6ffe89c37f99863d9b095a1db08a7f0a79e6eec24d72e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.needed",
     "sourceHash": "7c3cbcb5844f80cdc4cce5cb8323b1a640460fa7eb1a36b79698fb6d08894fd1",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.processUnavailable",
     "sourceHash": "2e733b2a2d166d87edba421e04fef7c67f4927ca29d050dcfd355628bd738199",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "approval.connectionReadOnly",
     "sourceHash": "2ca966f7209c83efbb159371f63c3f6db4896291503ab12714c0cb32f45f7a7b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "composer.photoLibrary",
     "sourceHash": "b40da8f96aa0300571c79f8b9bf747f4f9e9eb5df02ab9a48fefa013e135054f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "composer.chooseFiles",
     "sourceHash": "c4fbf3cbc91237957b4738aca1b77e6021b0d9e45a805d6003abf6248b8837cc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "composer.addAttachment",
     "sourceHash": "560d68a0aedf581128b9a96d6a7d62b3161015239ac238c34b8c086a079154b3",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.emptyTitle",
     "sourceHash": "ea67d63d6a139fab3b243465fc2e65e4268f226bf7dd600cda132556df0eb324",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.emptyAddBefore",
     "sourceHash": "761ea72e39f039315737deed88a55faeabec1bf0919f8730b1a845f1353628fd",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.emptyAddAfter",
     "sourceHash": "a10f4ebaabd0a203cacea71f3f45829ae01426bebc72fd6e6a141196836d1cc4",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "connection.refreshCloud",
     "sourceHash": "2cdb3878966815e8c03f503e5e59f0c73b19d6edffa477e7d09bc3306608f2cd",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.checkStatus",
     "sourceHash": "84a639f930724eeff280a4e7a5c090611d9410e217bef3325b3fe4389a968e08",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.activeCount",
     "sourceHash": "de493c82c2409b337c988316f97c9d6e4acb2db5c50ca33c600ee00b4ea46496",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.labelCount",
     "sourceHash": "45cb58f82a0c01eec6eb1bf108656d8c0590fe5937b1aae320d57b6ac9ae37c1",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.state.open",
     "sourceHash": "9146ee90e1c1b7f40eb3c3c28f1866bb51ac028a4e12cc309e0d27d8ec472768",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.state.closed",
     "sourceHash": "c9db2dd4dde6e008fd0abe53203e0ca923849060fde6e0701e0bd628049f15f9",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.state.merged",
     "sourceHash": "c52804769143d53ff7fe1403602aca49ae9bb1947f9f1ecad55d3191637724fa",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.state.all",
     "sourceHash": "2ca3b9ed1cdd0f04fe1a42b63c9f6e4c0ecf5f7c7c68517f22914b6f40386450",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.involvement.all",
     "sourceHash": "cb77b671e4648c5bd18a525abc794e3ac6f3211a1b09391f1fe7915f6e49a5a7",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.involvement.reviewing",
     "sourceHash": "65b8c419d5c3c25c8db7a11115f82b9003a8f5989d8d9fdcd56376037dcd43f9",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.involvement.authored",
     "sourceHash": "35eee2d0d56bd1f61d5dcd783953719edaa6617b7c62c02694b6a295f4fc1f9c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.drafts.all",
     "sourceHash": "e382ec06b53c46c423b886d777b0d8a3e9115f270fa302f4dbba4cfb47620d39",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.drafts.only",
     "sourceHash": "f0ecfc7cfaf7c01eb77ea09e1aac4b5940d41c8cabe8f0b4bb3adf375f45db48",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.drafts.hide",
     "sourceHash": "f01ec815f974cefd7fa78d06a3161dd2336d1d313279e112f224dacb856897f4",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.reviews.all",
     "sourceHash": "681042f04c5ed82297fc8439d84e03cf29ef0f57820e0eb91bca01d96c816d10",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.reviews.approved",
     "sourceHash": "63c0e4ab0255b460e85c35254edbbf67634b53ba769487716856e53908ec970b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.reviews.changesRequested",
     "sourceHash": "42fef99a575cc269ccd1c99442ed22a883c7567b4e220153b23f92ffa5c5b433",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.reviews.required",
     "sourceHash": "58a2cf68ce2c14491bd70af653bbe31d46970bddef53b6a029b94f2eb0f1ee02",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.reviews.none",
     "sourceHash": "404ed49a7f223b3dceb9a3b1daba5bb1c0e5f9d442c1fee7d91198c6a3056976",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.checks.all",
     "sourceHash": "ae2e825e54a8b60070251e7631f6b4efd3a7e61d60463634a667d781d67c0f03",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.checks.passing",
     "sourceHash": "f7589c6353674ae3d9f248fdc50ed1f41f7d721cf6c445766869e14e36707e2d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.checks.failing",
     "sourceHash": "3ca8788dd773bb5d3d80b40f4f11459a1f10018f6736ed19ab960020890b1434",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.sort.updated",
     "sourceHash": "7dc26a9e31df1df5dd86a5082542a07b5a1ad673d603c0d3812d7846093821e0",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.sort.created",
     "sourceHash": "2c91ab157b0955c7696c91835b350c338c9339feeb74c224233e322dda6a62a9",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.sort.oldest",
     "sourceHash": "8d85b381e7aba13a2921e373e816f39c70e9619245b66b856aaba954ac38835d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.drafts",
     "sourceHash": "d352729f1560ceafb71b50e3ecb6f884a157b6a8298482ee56a74c0560fa5976",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.reviews",
     "sourceHash": "1c2c5977caaea4d8e0c775fcbe28a0ee70ef6db53355e945cd44eb302a141524",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.checks",
     "sourceHash": "adc559c2237ad016300327dc51a8272ffca73cb947a2ee188f7c8755b110e34e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.project",
     "sourceHash": "497d39fea0a40df7ff698cc57dcfecfc7a9c5fef71fbfc58f346318500f78f47",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.allProjects",
     "sourceHash": "725cc0f7b7693365433f9b00c6ddfe6ce45b3264c3df2cbd54aa66b8b547238d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.reset",
     "sourceHash": "393eb5bb38445378aa4a4eea28ef9e677e81f6e8c82d4cbf25328afafaa22d55",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.allEnvironments",
     "sourceHash": "00198d60c2abf05a7cbdca6f9a8646c7a66ec353c530aca1907b7477f6c9a072",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.searchLabelsMenu",
     "sourceHash": "7dda368e3c50d496400fe1bcc9cf672077f5e5246fa199c3e87bb4635b30991b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.allLabels",
     "sourceHash": "d03a75b5cf28b21dde350e6f28e5fd0e198e7ddabc3f0944e0356d67c18e7210",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.searchAuthorsMenu",
     "sourceHash": "8fb27750f2cd8953ff4aee02ab4da11d805b77d908897182add383794b994881",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.allAuthors",
     "sourceHash": "1e7c9f48677928a931b65a8f401c98e98ba5ea31f0307349aa41b6f428b4d0d4",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.me",
     "sourceHash": "160d0d2f49c523c03feb2832b00ded4144b153892d3c297256eb59c2e21b21dc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.environment",
     "sourceHash": "3a45d2cb989964fedd05584ef3aa67737681ab61d02752ae1d14f83a81b44d35",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.state",
     "sourceHash": "469cd8bfffc5d5dedf1f000ef7675201aa691af2a9a5809c872e2a7b10a46f59",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.involvement",
     "sourceHash": "09a219d0ae471905e1ffdbbacf273f3235d31ba79b0ef4ea0803fe58b6a3cc58",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.labels",
     "sourceHash": "1d2b63e536df8d0b2d2ab2d0d93ac59bdd2797602ec57aa1ec353fa3d2d385b6",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.author",
     "sourceHash": "5d2a691d5934be7883fe803e34f1ab6f8ed182eca3250328bc58792ec969719f",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.title",
     "sourceHash": "3b9787353786105da95a932639d604c984d6e76b71dd6c83e8d753f14535dc29",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.more",
     "sourceHash": "879b8596e214d928e1b4036f20d6bfd88acd7b423fc8c5c3027c21ae325f3bd9",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.chooseEnvironment",
     "sourceHash": "20c745a4394ed3b09adf4cab90883a9c43eaeabe1f4bf9b370030961b83f0532",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.byState",
     "sourceHash": "6ec3806544802fe9df3397b453604c4d3312be04bb6069be3373880d72b548fe",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.byInvolvement",
     "sourceHash": "ecf6f429052ed3a5980efb25d22978e46d1682542bebf91f0c205ec7e1b88aab",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.byLabel",
     "sourceHash": "5e095daac6fb39042dab8a1c399d05e4eda88fd663cb0f1b9f145a3c34c27b10",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.byAuthor",
     "sourceHash": "bab43851de3f0e33e827db142071e3126b13149de21bab94b2e46fe2a4f78e6b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.filters.openMenu",
     "sourceHash": "a189e25b1c0cc7cb591da326f15f88a552fb7fa5320d94297214d281867cc828",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.environment",
     "sourceHash": "af7e3259031cd8347d803a8943cdb43c0e18fe647e0752be962bfa11ffb2baca",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.loadingMore",
     "sourceHash": "6e88a107d6be5b42926075318ff90011e7355d204a640bc5124399e2b714a6e6",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.retry",
     "sourceHash": "af437327e7862f863c2b0078c3dd483c9acaebdb5d81b0fd932a78cefe66739b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.retryMore",
     "sourceHash": "4321ffced06ad173bbe15c5f6701a849a3f2a4c596751290a8f3cf8cd8b44ab5",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.loadMore",
     "sourceHash": "d6b62385e2b4b63afc0a4d93d501f49019d6d396d8a09fc6271e57465dcec053",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.loadMoreLabel",
     "sourceHash": "190c7d28acd02c0cb774d50df85622e111c6401590ad6bf419485b55aa1cd0fb",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.loadFailed",
     "sourceHash": "725ed356de5f209a94885554ec8c64a6bf59041ec29a1c6e91e58a8a5caf3576",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.offline",
     "sourceHash": "f5171b5c12fe8666514c8117d9d5fa02fd382da6581109d9006682b3f245befc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.noResults",
     "sourceHash": "37eb83716aaeee172073ec29d224f1e534c0fa8ae66fb1c3663a58b1e6c96413",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.noMatches",
     "sourceHash": "c556b40524d0c0c513b3c38dbfd8719845f46df6af3fb6c263386f4a4eea729e",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.connect",
     "sourceHash": "39140f66d2e80b4d752678e8df5261ccfb0eca7ba830af355cffbe7c7a09fcc6",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.reconnectDetail",
     "sourceHash": "b2b2b7613ee182b9c184cb2d5a4364111a5ea56650a3ecfd495adc06a9828d89",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.projectsDetail",
     "sourceHash": "054ad52f6320d676e3335763dcb67a88a6416bcd6b995d9f7613b5636cccbf65",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.list.connectDetail",
     "sourceHash": "c9c4b51a69153cc60edf0984d1e09e8382e74c00171627b097f0dc5e1d034a98",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.labels",
     "sourceHash": "4d86dbaff03ee09e08236c294c2ef512da21d6ac640823fcaf382c28b9d20972",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.authors",
     "sourceHash": "5fa2667acb6e90ed984023bb06876986e350ad3fd91566c1452baf6bea8060c0",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.byLabel",
     "sourceHash": "3e08dec8aabea05ee8fe6ab58dfb3d16c7930333bc08e9a664f243468cccd8cd",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.byAuthor",
     "sourceHash": "30506ffdecc9dcbccafe7fa12f319201adbdc77d053b4e31d77b0a7e96e75ec3",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.closeLabels",
     "sourceHash": "4ccfc2a058c4835512b01ffc169dc106d0494231a78a9d6f0875a92c9d02992b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.closeAuthors",
     "sourceHash": "79e736ae01e0ed70d6713b5f1f3d76081b2ba55e26019a2766009933372491f7",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.clearLabels",
     "sourceHash": "8cc47f19f14f3d54df5cadebf79357e0d11b163fc95fc8bb1b6a081188719936",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.clearAuthors",
     "sourceHash": "12ca7bec44ed54dc9ee0c650a7808927cce0eac9447046c1d985328bf3bde917",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.failed",
     "sourceHash": "1a00a77182620dc829de85d3051eb98876eecfad7d2da4a9744b1621e850579d",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-polished-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.noLabels",
     "sourceHash": "114010e8eabc775d79087eaab842514b27583b45ad1e383c8b0b03a5cd3ac75b",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.noAuthors",
     "sourceHash": "4e32d7b87dde74178ad79a1b5933a6ca04c53a1d24505c9ffc82b56293ee179c",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.retryDetail",
     "sourceHash": "94204d73a53038efd5ff302cf4afd12763b11cafa2ad42579dcdf947a551e6dc",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "manually-authored-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.labelsDetail",
     "sourceHash": "2eaa76d54758976ec111163ce6b87519ba58503fd8e9c90ea82489555169d3a8",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "pr.search.authorsDetail",
     "sourceHash": "56a345fe93a9cee2a16fef26b0fc6f1ca1c703e3a0ddab4c2c002f0e7027ed74",
     "humanReviewed": false,
-    "status": "current",
-    "origin": "mainland-context-audited-community-draft"
+    "status": "current"
   },
   {
     "id": "home.noResults",
