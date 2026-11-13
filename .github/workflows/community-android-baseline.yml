@@ -28,6 +28,10 @@ jobs:
         with:
           path: tooling
           persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
 
       - name: Read inspected source SHA
         id: baseline
@@ -47,6 +51,10 @@ jobs:
           ref: ${{ steps.baseline.outputs.sha }}
           path: source
           persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
 
       - name: Setup locked Vite+ and Node
         id: setup
